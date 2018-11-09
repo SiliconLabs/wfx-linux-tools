@@ -1,0 +1,16 @@
+#!/bin/bash
+
+. wfx_set_variables
+
+CURRENT=$( ${SUDO} modinfo wfx -F version 2> /dev/null)
+if [ "${CURRENT}" = "" ]
+then
+	CURRENT=$( ${SUDO} modinfo wfx_core -F version 2> /dev/null)
+	if [ "${CURRENT}" = "" ]
+	then
+		echo "No WFX driver loaded. Try 'use_driver' to load the wfx driver."
+		exit
+	fi
+fi
+
+echo ${CURRENT}

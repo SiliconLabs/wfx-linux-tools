@@ -1,0 +1,23 @@
+#!/bin/bash
+
+CAT="wfx_cat1"
+
+${CAT} /boot/cmdline.txt
+${CAT} /boot/config.txt
+${CAT} /etc/modprobe.d/raspi-blacklist.conf
+
+${CAT} /etc/hostname
+${CAT} /etc/hosts
+${CAT} /etc/rc.local
+
+${CAT} /etc/dnsmasq.conf
+${CAT} /etc/dhcpcd.conf
+
+${CAT} /etc/modules
+${CAT} /etc/modprobe.d/wfx.conf
+
+${CAT} /etc/network/interfaces
+
+${CAT} /etc/wpa_supplicant/wpa_supplicant.conf
+
+${CAT} /etc/hostapd/hostapd.conf

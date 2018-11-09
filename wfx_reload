@@ -1,0 +1,12 @@
+#!/bin/bash
+
+. wfx_bus
+. wfx_colors
+
+if [ ${BUS} == "spi" ]; then
+	wfx_spi_reload
+fi
+
+if [ ${BUS} == "sdio" ]; then
+	wfx_sdio_reload
+fi

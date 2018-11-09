@@ -1,0 +1,11 @@
+#!/bin/bash
+
+. wfx_set_variables
+
+${SUDO} modprobe -v wfx -r
+
+if [ "${1}" == "clear" ]; then
+	${SUDO} dmesg -C
+fi
+
+${SUDO} modprobe -v wfx

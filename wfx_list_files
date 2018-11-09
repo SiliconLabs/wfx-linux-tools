@@ -1,0 +1,35 @@
+#!/bin/bash
+
+. wfx_set_variables
+
+LIST="wfx_list1"
+
+if [ ${model} == "Pi" ]; then
+	${LIST} /boot/cmdline.txt             critical
+	${LIST} /boot/config.txt              critical
+	${LIST} /boot/kernel7_4.4.50-v7+.img  critical
+	${LIST} /boot/bcm2710-rpi-3-b_4.4.50-v7+.dtb critical
+	${LIST} /boot/overlays/pi3-disable-bt.dtbo   critical
+	${LIST} /boot/overlays/wfx-sdio.dtbo   critical
+	${LIST} /boot/overlays/wfx-spi.dtbo    critical
+	${LIST} /etc/modprobe.d/raspi-blacklist.conf
+fi
+if [ ${model} == "i.MX6" ]; then
+	${LIST}  /boot/uEnv.txt                 critical
+fi
+
+${LIST} /lib/firmware/wfm_wf200.sec         critical
+${LIST} /lib/firmware/wf200.pds             critical
+${LIST} /lib/modules/${kernel}/extra/wfx.ko critical
+
+${LIST} /etc/modules
+${LIST} /etc/modprobe.d/wfx.conf
+
+${LIST} /etc/network/interfaces
+
+${LIST} /etc/wpa_supplicant/wpa_supplicant.conf
+
+${LIST} /etc/hostapd/hostapd.conf
+
+${LIST} /etc/dnsmasq.conf
+${LIST} /etc/dhcpcd.conf                    critical

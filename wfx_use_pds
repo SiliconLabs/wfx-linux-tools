@@ -1,0 +1,69 @@
+#!/bin/bash
+
+PDS_SET=0
+
+if [ $# == 0 ];
+then
+	echo "Select a PDS file from the following lists and call 'use_pds <pds>'..."
+	. wfx_pdss
+	exit 0
+fi
+
+. wfx_pdss  quiet
+. wfx_colors
+
+if [ ${model} == "Pi" ]; then
+	if [ "${BOARD}" != "" ];
+	then
+		printf "Board info from hat eeprom: ${LGREEN}${BOARD}${NO}\n"
+	fi
+fi
+
+if [ "${PDS_SET}" == 0 ];
+then
+	for pds in ${STORED_PDSS}
+	do
+		if [ "${1}" == "${pds}" ];
+		then
+			pds_path=${STORED_DIR}/${pds}
+			echo "  ${pds} is 'in store' (${pds_path})"
+			set -ex
+			${SUDO} ln -sf ${pds_path}   /lib/firmware/${PDS_FILE}
+			set +ex
+			PDS_SET=1
+		fi
+	done
+fi
+
+if [ "${PDS_SET}" == 0 ];
+then
+	for pds in ${GIT_PDSS}
+	do
+		if [ "${1}" == "${pds}" ];
+		then
+			test=$( echo "${pds}" | grep pds.in )
+			if [ "$test" != "" ];
+			then
+				pds_in=${pds}
+				pds=$(echo ${pds_in} | sed -e 's\pds.in\pds\' )
+				echo "  ${pds_in} is a pds.in file in GIT. Compressing it to local 'store' as ${pds}"
+				origin=$(pwd)
+				set -ex
+				cd ${GIT_DIR}
+				python3 pds_compress ${pds_in} ${pds}
+				cd ${origin}
+				set +ex
+			fi
+			git_pds_path=${GIT_DIR}/${pds}
+			pds_path=${STORED_DIR}/${pds}
+			echo "  ${pds} is in GIT. Adding it to local 'store' (${pds_path})"
+			set -ex
+			${SUDO} cp ${git_pds_path}   ${pds_path}
+			${SUDO} ln -sf ${pds_path}   /lib/firmware/${PDS_FILE}
+			set +ex
+			PDS_SET=1
+		fi
+	done
+fi
+
+. wfx_pds

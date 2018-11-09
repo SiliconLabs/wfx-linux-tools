@@ -1,0 +1,12 @@
+#!/bin/sh
+# wfx_ap_status retrieves the AP status.
+# If 'grep_string' is set, uses it to filter the results
+
+if [ -n "$1" ];
+then
+	HOSTAPD_STATUS=$( hostapd_cli status | grep ${1} )
+else
+	HOSTAPD_STATUS=$( hostapd_cli status )
+fi
+
+echo "$HOSTAPD_STATUS"

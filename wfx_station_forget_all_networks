@@ -1,0 +1,27 @@
+#!/bin/sh
+
+if [ ! -d /var/run/wpa_supplicant ]; then 
+  echo "wpa_supplicant is not launched" >&2
+  exit 2
+fi
+
+# Calculate the number of networks to remove
+nbNetwork="$(/sbin/wpa_cli list_network -i wlan0 | wc -l)"
+nbNetwork="$(($nbNetwork-1))"
+
+# If there is at least one network
+if [ $nbNetwork -gt 0 ]; then
+  # Remove all network
+  echo "Remove $nbNetwork network(s)..."
+
+  networkIndex=0
+  set -ex
+  while [ $networkIndex -lt $nbNetwork ]	
+  do 
+     /sbin/wpa_cli remove_network -i wlan0 $networkIndex 1> /dev/null
+     networkIndex="$(($networkIndex+1))" 
+  done
+  set +ex
+fi
+
+exit 0

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+NO="\e[0m"
+INV="\e[7m"
+DIM="\e[2m"
+DEF="\e[39m"
+WHITE="\e[97m"
+GREY="\e[90m"
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+LBLUE="\e[94m"
+LRED="\e[91m"
+LGREEN="\e[92m"
+LYELLOW="\e[93m"
+LBLUE="\e[94m"

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -ex
+wpa_cli scan
+sleep 3
+wpa_cli scan_results
+set +ex

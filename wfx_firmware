@@ -1,0 +1,44 @@
+#!/bin/bash
+
+. wfx_set_variables
+
+FW_FILE="wfm_wf200.sec"
+FW_GREP="wfm_wf200_"
+LAST_FW=""
+
+if [ -f /lib/firmware/${FW_FILE} ];
+then
+	FW=$( ls /lib/firmware/${FW_FILE}  )
+else
+	FW=""
+fi
+
+for last_fw in ${FW}
+do
+	LAST_FW=${last_fw}
+done
+
+if [ "${1}" != "quiet" ];
+then
+	if [ "${LAST_FW}" == "" ]; then
+		echo "no FW loaded"
+		echo "${FW_FILE}"
+	else
+		real_fw=$( realpath ${LAST_FW} )
+		if [ -f ${real_fw} ]; then
+			echo "${LAST_FW} -> ${real_fw} "
+		else
+			echo "ERROR: ${LAST_FW} is pointing at ${real_fw}, which doesn't exist!. Use 'wfx_use_firmware' to select a valid firmware"
+		fi
+		loaded_FWS=$( dmesg | grep ${FW_DMESG_GREP} )
+		for loaded_fw in "${loaded_FWS}"
+		do
+			LOADED_FW=${loaded_fw}
+		done
+		if [ "${LOADED_FW}" == "" ]; then
+			echo "Firmware is not loaded. Use 'wfx_reload' to load it"
+		else
+			echo "Last loaded firmware: ${LOADED_FW}"
+		fi
+	fi
+fi

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+. wfx_set_variables
+. wfx_board quiet
+. wfx_colors
+
+PDS_FILE="wf200.pds"
+PDS_GREP=".pds"
+PDS=""
+LAST_PDS=""
+
+if [ -f /lib/firmware/${PDS_FILE} ];
+then
+	PDS=/lib/firmware/${PDS_FILE}
+fi
+
+if [ "${1}" != "quiet" ];
+then
+	if [ "${PDS}" == "" ]; then
+		printf "no PDS loaded ${RED}(missing /lib/firmware/${PDS_FILE})${NO}\n"
+	else
+		echo "${PDS}   ( $( realpath ${PDS} ) )"
+	fi
+fi

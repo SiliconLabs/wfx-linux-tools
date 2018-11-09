@@ -1,0 +1,10 @@
+#!/bin/bash
+
+. wfx_set_variables
+
+if [ -n ${1} ]
+then
+	echo "Available (compiled) WFX drivers for ${kernel}"
+	STORED_SOURCES=$( ls -l ${STORED_DRIVERS_PATH}/${kernel}/ | grep wfx- | awk '{ split($0,r); print r[9] }' )
+	for folder in ${STORED_SOURCES}; do echo "  $folder" ; done
+fi

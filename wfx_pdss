@@ -1,0 +1,62 @@
+#!/bin/bash
+
+. wfx_pds quiet
+
+GIT_PDSS=""
+GIT_DIR="${HOME}/github_siliconlabs/wfx_firmware/pds"
+
+STORED_PDS=""
+STORED_DIR="/lib/firmware"
+
+if [ -d "${GIT_DIR}" ];
+then
+	GIT_PDSS=$( ls -v ${GIT_DIR} | grep ${PDS_GREP} )
+fi
+
+if [ -d "${STORED_DIR}" ];
+then
+	STORED_PDSS=$(ls -v ${STORED_DIR} | grep ${PDS_GREP} )
+fi
+
+if [ "${1}" != "quiet" ];
+then
+	if [ ${model} == "Pi" ]; then
+		if [ "${BOARD}" != "" ];
+		then
+			printf "Board info from hat eeprom: ${LGREEN}${BOARD}${NO}\n"
+		fi
+	fi
+	if [ "${STORED_PDSS}" != "" ];
+	then
+		echo "PDSs available from /lib/firmware local copies"
+		for pds in ${STORED_PDSS}
+		do
+			if [ "${BOARD}" != "" ];
+			then
+				test=$(echo ${pds} | grep "${BOARD}")
+			fi
+			if [ ! -z "$test" ]; then
+				printf "  ${LGREEN}${pds}${NO}  (matching board info)\n"
+			else
+				printf "  ${pds}\n"
+			fi
+		done
+	fi
+	if [ "${GIT_PDSS}" != "" ];
+	then
+		echo "PDSs available from 'wfx_firmware' GIT clone (there may be more available if you pull from Github)"
+		for pds in ${GIT_PDSS}
+		do
+			if [ "${BOARD}" != "" ];
+			then
+				test=$(echo ${pds} | grep "${BOARD}")
+			fi
+			test=$(echo ${pds} | grep "${BOARD}")
+			if [ ! -z "$test" ]; then
+				printf "  ${LGREEN}${pds}${NO}  (matching board info)\n"
+			else
+				printf "  ${pds}\n"
+			fi
+		done
+	fi
+fi

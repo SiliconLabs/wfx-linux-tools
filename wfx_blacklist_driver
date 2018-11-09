@@ -1,0 +1,60 @@
+#!/bin/bash
+
+. wfx_set_variables
+. wfx_colors
+
+blacklist_file="/etc/modprobe.d/raspi-blacklist.conf"
+
+if [ "$#" == 0 ]; then
+	cat $blacklist_file
+else
+	new_lines=""
+	nl=$"\n"
+	match=0
+	this_line_matches=0
+
+	my_line=""
+	if [ "${2}" == "" ]; then
+		my_line="blacklist ${1}"
+	fi
+	if [ "${2}" == "+" ]; then
+		my_line="blacklist ${1}"
+	fi
+
+	if [ "${2}" == "-" ]; then
+		my_line="#blacklist ${1}"
+	fi
+
+	if [ "${2}" == "x" ]; then
+		my_line=""
+	fi
+
+	c=1
+	while read -r line
+	do
+		this_line_matches=0
+		((c=c+1))
+		test1=$(echo $line | grep "blacklist")
+		test2=$(echo $line | grep "${1}$")
+		new_line="${line}"
+		if [ "${test1}" != "" ]; then
+			if [ "${test2}" != "" ]; then
+				new_line=${my_line}
+				match=1
+				this_line_matches=1
+			fi
+		fi
+		if [ "${new_line}" != "" ]; then
+			new_lines=${new_lines}${new_line}${nl}
+		fi
+	done < $blacklist_file
+
+	if [ ${match} == 0 ]; then
+		if [ "${my_line}" != "" ]; then
+			new_lines=${new_lines}${my_line}${nl}
+		fi
+	fi
+
+	printf "${new_lines}" | ${SUDO} tee $blacklist_file > /dev/null
+
+fi

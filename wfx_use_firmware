@@ -1,0 +1,44 @@
+#!/bin/bash
+
+FW_SET=0
+
+if [ $# == 0 ];
+then
+	echo "Select a firmware from the following lists and call 'use_firmware <firmware>'..."
+	. wfx_firmwares
+	exit 0
+fi
+
+. wfx_firmwares quiet
+
+if [ "${FW_SET}" == 0 ];
+then
+	for fw in ${STORED_FWS}
+	do
+		if [ "${1}" == "${fw}" ];
+		then
+			fw_path=${STORED_DIR}/${fw}
+			echo "  ${fw} is 'in store' (${fw_path})"
+			${SUDO} ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
+			FW_SET=1
+		fi
+	done
+fi
+
+if [ "${FW_SET}" == 0 ];
+then
+	for fw in ${GIT_FWS}
+	do
+		if [ "${1}" == "${fw}" ];
+		then
+			git_fw_path=${GIT_DIR}/${fw}
+			fw_path=${STORED_DIR}/${fw}
+			echo "  ${fw} is in GIT. Adding it to local 'store' (${fw_path})"
+			${SUDO} cp ${git_fw_path}   ${fw_path}
+			${SUDO} ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
+			FW_SET=1
+		fi
+	done
+fi
+
+. wfx_firmware

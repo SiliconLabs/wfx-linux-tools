@@ -1,0 +1,36 @@
+#!/bin/sh
+# wfx_start_ap [configuration_file]
+# Start AP with configuration file from command line, otherwise use /etc/hostapd/hostapd.conf
+
+. wfx_set_variables
+WFX_MODE=$(wfx_mode)
+
+if [ "${WFX_MODE}" = "station" ];
+then
+        echo  "ERROR: Currently in station mode! Use 'wfx_station_stop' before starting ap mode"
+        exit 0
+fi
+
+if [ "${WFX_MODE}" = "conflict" ];
+then
+        echo  "ERROR: Currently in conflict! Use 'wfx_ap_stop' and 'wfx_station_stop' before starting station mode"
+        exit 0
+fi
+
+if [ $# -eq 0 ];
+then
+	HOSTAPD_CONF="/etc/hostapd/hostapd.conf"
+else
+	if [ -f "${1}" ];
+	then
+		HOSTAPD_CONF=${1}
+	else
+		echo "ERROR: unknown ${1} configuration file"
+		exit 0
+	fi
+fi
+
+set -ex
+${SUDO} hostapd ${HOSTAPD_CONF} -B -t
+${SUDO} systemctl restart dnsmasq
+set +ex

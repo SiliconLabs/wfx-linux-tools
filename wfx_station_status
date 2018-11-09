@@ -1,0 +1,5 @@
+#!/bin/sh
+# wfx_station_status
+set -ex
+wpa_cli status
+set +ex

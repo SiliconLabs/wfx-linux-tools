@@ -1,0 +1,86 @@
+#!/bin/bash
+
+. wfx_set_variables
+
+if [ -n "$1" ]; then
+	i=$1
+else
+	i=0
+fi
+
+# Check which overlays are enabled
+conf_sdio[$i]=$(cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "sdio")
+conf_spi[$i]=$( cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "spi" )
+
+if [ -n "${conf_sdio[$i]}" ]; then
+	echo ${conf_sdio[$i]}
+fi
+
+if [ -n "${conf_spi[$i]}" ]; then
+	echo ${conf_spi[$i]}
+fi
+
+# Check which drivers are blacklisted
+blck_sdio[$i]=$(cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v ^$ | grep sdio)
+blck_spi[$i]=$( cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v ^$ | grep spi )
+blck_wfx[$i]=$( cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v ^$ | grep wfx$)
+
+if [ -n "${blck_sdio[$i]}" ]; then
+	echo ${blck_sdio[$i]}
+fi
+
+if [ -n "${blck_spi[$i]}" ]; then
+	echo ${blck_spi[$i]}
+fi
+
+if [ -n "${blck_wfx[$i]}" ]; then
+	echo ${blck_wfx[$i]}
+fi
+
+# Check which overlays are enabled
+modules_sdio[$i]=$(cat /etc/modules  | grep -v ^# | grep -v ^$ | grep "sdio")
+modules_spi[$i]=$( cat /etc/modules  | grep -v ^# | grep -v ^$ | grep "spi" )
+
+if [ -n "${modules_sdio[$i]}" ]; then
+	echo "modules: ${modules_sdio[$i]}"
+fi
+
+if [ -n "${modules_spi[$i]}" ]; then
+	echo "modules: ${modules_spi[$i]}"
+fi
+
+bus_changes=0
+config_changes=0
+config_message=""
+startup_message=""
+
+if [ -n "$2" ]; then
+	if [ "${conf_sdio[$1]}" != "${conf_sdio[$2]}" ]; then
+		bus_changes=$((bus_changes+1))
+	fi
+	if [ "${conf_spi[$1]}" != "${conf_spi[$2]}" ]; then
+		bus_changes=$((bus_changes+1))
+	fi
+	if [ "${blck_sdio[$1]}" != "${blck_sdio[$2]}" ]; then
+		config_changes=$(($config_changes+1))
+	fi
+	if [ "${blck_spi[$1]}" != "${blck_spi[$2]}" ]; then
+		config_changes=$(($config_changes+1))
+	fi
+	if [ "${blck_wfx[$1]}" != "${blck_wfx[$2]}" ]; then
+		config_changes=$(($config_changes+1))
+	fi
+	if [ "${modules_sdio[$1]}" != "${modules_sdio[$2]}" ]; then
+		config_changes=$(($config_changes+1))
+	fi
+	if [ "${modules_spi[$1]}" != "${modules_spi[$2]}" ]; then
+		config_changes=$(($config_changes+1))
+	fi
+	if [ "$bus_changes" != 0 ]; then
+		config_message="use '${SUDO} halt' (wait for the led to stop blinking) and then power-cycle the Pi (since you changed the bus configuration)"
+	else
+		if [ "$config_changes" != 0 ]; then
+			startup_message="the startup result will be changed on your next reboot (since you changed the configuration)"
+		fi
+	fi
+fi

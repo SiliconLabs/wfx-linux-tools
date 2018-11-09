@@ -1,0 +1,23 @@
+#!/bin/bash
+
+STATION=$(pidof wpa_supplicant)
+AP=$(pidof hostapd)
+
+if [ "${STATION}" = "" ];
+then
+	if [ "${AP}" = "" ];
+	then
+		WFX_MODE="none"
+	else
+		WFX_MODE="ap"
+	fi
+else
+	if [ "${AP}" = "" ];
+	then
+		WFX_MODE="station"
+	else
+		WFX_MODE="conflict (both hostapd and wpa_supplicant processes running!)"
+	fi
+fi
+
+echo ${WFX_MODE}

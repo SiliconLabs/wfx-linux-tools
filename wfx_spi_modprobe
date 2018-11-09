@@ -1,0 +1,31 @@
+#!/bin/bash
+
+. wfx_set_variables
+
+echo "Start   configuration:"
+. wfx_config 0
+echo ""
+
+wfx_disable_sdio_overlay
+wfx_disable_spi_overlay
+
+wfx_blacklist_driver brcmfmac
+wfx_blacklist_driver wfx_wlan_sdio
+wfx_blacklist_driver wfx_wlan_spi
+wfx_blacklist_driver wfx
+
+echo "Final configuration:"
+. wfx_config 1 0
+
+echo ""
+
+if [ -n "$config_message" ]; then
+	echo "Make sure you set the switch in the 'SPI' position,"
+	echo "${config_message}, then"
+	echo "use 'spi_reload' to load the WFx200 driver"
+else
+	if [ -n "$startup_message" ]; then
+		echo "${startup_message}"
+		echo "you will need to use 'spi_reload' to load the WFx200 driver"
+	fi
+fi

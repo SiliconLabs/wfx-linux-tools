@@ -1,0 +1,24 @@
+#!/bin/bash
+
+kernel=$(uname -r)
+model=$(cat /sys/firmware/devicetree/base/model | cut -d ' ' -f 2 )
+
+if [ "${model}" = "Pi" ]; then
+	SUDO="sudo"
+fi
+if [ "${model}" = "i.MX6" ]; then
+	SUDO=""
+fi
+
+GITHUB_DRIVER_PATH="${HOME}/siliconlabs/wfx_linux_driver_code"
+GITHUB_FIRMWARE_PATH="${HOME}/siliconlabs/wfx_firmware"
+GITHUB_PDS_PATH="${HOME}/siliconlabs/wfx_pds"
+GITHUB_TOOLS_PATH="${HOME}/siliconlabs/wfx_tools"
+
+STORED_DRIVERS_PATH="${HOME}/siliconlabs/wfx_tools/driver"
+STORED_DRIVERS_SOURCES_PATH="${HOME}/siliconlabs/wfx_tools/driver/src"
+STORED_FIRMWARES_PATH="${HOME}/siliconlabs/wfx_tools/firmware"
+STORED_PDS_PATH="${HOME}/siliconlabs/wfx_tools/pds"
+
+FW_DMESG_GREP="Label."
+ORIGIN_PWD=$(pwd)

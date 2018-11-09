@@ -1,0 +1,41 @@
+#!/bin/bash
+
+. wfx_set_variables
+. wfx_firmware quiet
+
+GIT_FWS=""
+GIT_DIR="${GITHUB_FIRMWARE_PATH}/wfx"
+
+STORED_FWS=""
+STORED_DIR="${STORED_FIRMWARES_PATH}"
+LIB_DIR="/lib/firmware"
+
+if [ -d "${GIT_DIR}" ];
+then
+	GIT_FWS=$( ls -v ${GIT_DIR} | grep ${FW_GREP} )
+fi
+
+if [ -d "${STORED_DIR}" ];
+then
+	STORED_FWS=$(ls -v ${STORED_DIR} | grep ${FW_GREP} )
+fi
+
+if [ "${1}" != "quiet" ];
+then
+	if [ "${STORED_FWS}" != "" ];
+	then
+		echo "FWs available from /lib/firmware local copies"
+		for fw in ${STORED_FWS}
+		do
+			echo "  ${fw}"
+		done
+	fi
+	if [ "${GIT_FWS}" != "" ];
+	then
+		echo "FWs available from 'wfx_firmware' GIT clone (there may be more recent ones available from Github)"
+		for fw in ${GIT_FWS}
+		do
+			echo "  ${fw}"
+		done
+	fi
+fi

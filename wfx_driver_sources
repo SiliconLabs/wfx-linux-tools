@@ -1,0 +1,33 @@
+#!/bin/bash
+
+. wfx_set_variables
+
+if [ -d ${STORED_DRIVERS_SOURCES_PATH} ]; then
+	STORED_LOCAL_SOURCES=$(ls ${STORED_DRIVERS_SOURCES_PATH})
+	if [ "${1}" != "quiet" ]; then
+		if [ -n "${STORED_LOCAL_SOURCES}" ]; then
+			echo "Available local WFX drivers sources"
+			for folder in ${STORED_LOCAL_SOURCES}; 
+			do 
+				echo "  $folder"
+			done
+		fi
+	fi
+else
+	STORED_LOCAL_SOURCES=""
+fi
+
+if [ -d ${GITHUB_DRIVER_PATH} ]; then
+	GIT_DRIVER_TAGS=$(git -C ${GITHUB_DRIVER_PATH}/ tag --list)
+	if [ "${1}" != "quiet" ]; then
+		if [ -n "${GIT_DRIVER_TAGS}" ]; then
+			echo "Available sources from Github (https://github.com/SiliconLabs/wfx_linux_driver_code)"
+			for tag in ${GIT_DRIVER_TAGS};
+			do
+				echo "  $tag"
+			done
+		fi
+	fi
+else
+	GIT_DRIVER_TAGS=""
+fi

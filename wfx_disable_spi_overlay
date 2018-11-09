@@ -1,0 +1,7 @@
+#!/bin/bash
+
+. wfx_set_variables
+
+# 'wfx-wlan-spi' is for compatibility with early drivers. obsolete as from DRV-1.3.0
+${SUDO} sed -i~ 's/^dtoverlay=wfx-wlan-spi/#dtoverlay=wfx-wlan-spi/m' /boot/config.txt
+${SUDO} sed -i~ 's/^dtoverlay=wfx-spi/#dtoverlay=wfx-spi/m' /boot/config.txt
