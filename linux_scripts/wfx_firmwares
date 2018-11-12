@@ -4,36 +4,41 @@
 . wfx_firmware quiet
 
 GIT_FWS=""
-GIT_DIR="${GITHUB_FIRMWARE_PATH}/wfx"
-
 STORED_FWS=""
-STORED_DIR="${STORED_FIRMWARES_PATH}"
-LIB_DIR="/lib/firmware"
 
-if [ -d "${GIT_DIR}" ];
-then
-	GIT_FWS=$( ls -v ${GIT_DIR} | grep ${FW_GREP} )
+if [ -d "${GIT_WFX_DIR}" ]; then
+	GIT_FWS=$( ls -v ${GIT_WFX_DIR} | grep ${FW_GREP} )
+	GIT_FIRMWARE_TAGS=$(git -C ${GITHUB_FIRMWARE_PATH}/ tag --list)
+	if [ "${1}" != "quiet" ]; then
+		if [ -n "${GIT_FIRMWARE_TAGS}" ]; then
+			echo "Available firmware versions from github (tags from https://github.com/SiliconLabs/wfx_firmware)"
+			for tag in ${GIT_FIRMWARE_TAGS};
+			do
+				echo "  $tag"
+			done
+			if [ "${GIT_FWS}" != "" ];
+			then
+				echo " FW files available from current 'wfx_firmware' GIT checkout (this depends on the version)"
+				for fw in ${GIT_FWS}
+				do
+					echo "  ${fw}"
+				done
+			fi
+		fi
+	fi
+else
+	GIT_DRIVER_TAGS=""
 fi
 
-if [ -d "${STORED_DIR}" ];
-then
-	STORED_FWS=$(ls -v ${STORED_DIR} | grep ${FW_GREP} )
+if [ -d "${STORED_FIRMWARES_PATH}" ]; then
+	STORED_FWS=$(ls -v ${STORED_FIRMWARES_PATH} | grep ${FW_GREP} )
 fi
 
-if [ "${1}" != "quiet" ];
-then
+if [ "${1}" != "quiet" ]; then
 	if [ "${STORED_FWS}" != "" ];
 	then
-		echo "FWs available from /lib/firmware local copies"
+		echo "FW files available from local copies"
 		for fw in ${STORED_FWS}
-		do
-			echo "  ${fw}"
-		done
-	fi
-	if [ "${GIT_FWS}" != "" ];
-	then
-		echo "FWs available from 'wfx_firmware' GIT clone (there may be more recent ones available from Github)"
-		for fw in ${GIT_FWS}
 		do
 			echo "  ${fw}"
 		done

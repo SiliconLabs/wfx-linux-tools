@@ -10,15 +10,29 @@ if [ "${model}" = "i.MX6" ]; then
 	SUDO=""
 fi
 
-GITHUB_DRIVER_PATH="${HOME}/siliconlabs/wfx_linux_driver_code"
-GITHUB_FIRMWARE_PATH="${HOME}/siliconlabs/wfx_firmware"
-GITHUB_PDS_PATH="${HOME}/siliconlabs/wfx_pds"
-GITHUB_TOOLS_PATH="${HOME}/siliconlabs/wfx_tools"
+# Silicon labs root
+SILABS_HOME="${HOME}/siliconlabs"
 
-STORED_DRIVERS_PATH="${HOME}/siliconlabs/wfx_tools/driver"
-STORED_DRIVERS_SOURCES_PATH="${HOME}/siliconlabs/wfx_tools/driver/src"
-STORED_FIRMWARES_PATH="${HOME}/siliconlabs/wfx_tools/firmware"
-STORED_PDS_PATH="${HOME}/siliconlabs/wfx_tools/pds"
+# github clone directories
+GITHUB_TOOLS_PATH="${SILABS_HOME}/wfx_tools"
+GITHUB_DRIVER_PATH="${SILABS_HOME}/wfx_linux_driver_code"
+GITHUB_FIRMWARE_PATH="${SILABS_HOME}/wfx_firmware"
+GIT_WFX_DIR="${GITHUB_FIRMWARE_PATH}/wfx"
+GIT_PDS_DIR="${GITHUB_FIRMWARE_PATH}/pds"
 
+# locally generated files root
+SILABS_OUT="${SILABS_HOME}/out"
+# local driver versions ( .ko files under <kernel>/<wfx_release> )
+STORED_DRIVERS_PATH="${SILABS_OUT}/driver"
+# local driver sources ( .c/.h/Makefile files under <wfx_release> )
+STORED_DRIVERS_SOURCES_PATH="${SILABS_OUT}/driver/src"
+# local firmware files ( generally empty )
+STORED_FIRMWARES_PATH="${SILABS_OUT}/firmware"
+# local pds files ( .pds.in and .pds files )
+STORED_PDS_PATH="${SILABS_OUT}/pds"
+
+# Other useful variables
 FW_DMESG_GREP="Label."
+
+# Current folder
 ORIGIN_PWD=$(pwd)

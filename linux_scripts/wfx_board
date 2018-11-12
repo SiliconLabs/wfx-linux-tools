@@ -2,7 +2,7 @@
 
 . wfx_set_variables
 
-BOARD=""
+BOARD="none"
 BOARD_DONE=0
 
 if [ ${model} != "Pi" ];
@@ -11,6 +11,7 @@ then
 	then
 		echo "No HAT on ${model}..."
 	fi
+	BOARD="no_pi"
 	BOARD_DONE=1
 fi
 
@@ -22,6 +23,7 @@ then
 	then
 		echo "No 'dtparam=i2c_vc=on' in /boot/config.txt. Can not read eeprom on bus 0."
 	fi
+	BOARD="no_i2c"
 	BOARD_DONE=1
 fi
 
@@ -31,6 +33,7 @@ then
 	then
 		echo "No /proc/device-tree/hat/  directory present. Empty eeprom?"
 	fi
+	BOARD="no_hat"
 	BOARD_DONE=1
 fi
 

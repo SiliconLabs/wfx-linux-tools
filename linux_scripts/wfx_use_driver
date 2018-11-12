@@ -43,14 +43,19 @@ then
 		echo "    wfx_compile_driver <path>"
 		echo "  to compile the driver first"
 	else
-		# get rid of 'old style' driver folders to use 'extra' instead
+		# Compatibility with older file organisation: get rid of 'old style' driver folders to use 'extra' instead
 		${SUDO} rm -fr /lib/modules/${kernel}/kernel/drivers/net/wireless/siliconlabs
+
+		set -ex
+		# Remove previous driver symbolic link
 		${SUDO} rm -fr /lib/modules/${kernel}/extra
+		# Create new driver symbolic link
 		${SUDO} ln -s -f ${KOS}   /lib/modules/${kernel}/extra
-		echo "updating modules dependencies..."
-		${SUDO} depmod -a | grep wfx
-		echo "updating modules dependencies done"
+		# Update modules dependencies
+		${SUDO} depmod -a -w | grep wfx
+		# Display new driver info
 		${SUDO} modinfo wfx_core
+		set +ex
 	fi
 else
 	echo "${KOS} directory doesn't exist! Please use one of the following values:"

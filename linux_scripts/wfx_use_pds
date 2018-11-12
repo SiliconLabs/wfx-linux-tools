@@ -25,10 +25,10 @@ then
 	do
 		if [ "${1}" == "${pds}" ];
 		then
-			pds_path=${STORED_DIR}/${pds}
-			echo "  ${pds} is 'in store' (${pds_path})"
+			echo "  ${pds} is 'in store' (${STORED_PDS_PATH})"
 			set -ex
-			${SUDO} ln -sf ${pds_path}   /lib/firmware/${PDS_FILE}
+			${SUDO} rm -f /lib/firmware/${PDS_FILE}
+			${SUDO} ln -sf ${STORED_PDS_PATH}/${pds}   /lib/firmware/${PDS_FILE}
 			set +ex
 			PDS_SET=1
 		fi
@@ -37,31 +37,23 @@ fi
 
 if [ "${PDS_SET}" == 0 ];
 then
-	for pds in ${GIT_PDSS}
+	for pds_listed in ${GIT_PDS_FILES}
 	do
-		if [ "${1}" == "${pds}" ];
+		if [ "${1}" == "${pds_listed}" ];
 		then
-			test=$( echo "${pds}" | grep pds.in )
-			if [ "$test" != "" ];
+			pds_in_test=$( echo "${pds_listed}" | grep pds.in )
+			if [ "$pds_in_test" != "" ];
 			then
-				pds_in=${pds}
-				pds=$(echo ${pds_in} | sed -e 's\pds.in\pds\' )
-				echo "  ${pds_in} is a pds.in file in GIT. Compressing it to local 'store' as ${pds}"
-				origin=$(pwd)
+				pds_in=${pds_listed}
+				pds_out=$(echo ${pds_in} | sed -e 's\pds.in\pds\' )
+				echo "  ${pds_in} is a pds.in file in GIT. Compressing it to ${STORED_PDS_PATH} as ${pds_out}"
+				wfx_pds_compress ${GIT_PDS_DIR}/${pds_in}  ${STORED_PDS_PATH}/${pds_out}
 				set -ex
-				cd ${GIT_DIR}
-				python3 pds_compress ${pds_in} ${pds}
-				cd ${origin}
+				${SUDO} rm -f /lib/firmware/${PDS_FILE}
+				${SUDO} ln -sf ${STORED_PDS_PATH}/${pds_out}   /lib/firmware/${PDS_FILE}
 				set +ex
+				PDS_SET=1
 			fi
-			git_pds_path=${GIT_DIR}/${pds}
-			pds_path=${STORED_DIR}/${pds}
-			echo "  ${pds} is in GIT. Adding it to local 'store' (${pds_path})"
-			set -ex
-			${SUDO} cp ${git_pds_path}   ${pds_path}
-			${SUDO} ln -sf ${pds_path}   /lib/firmware/${PDS_FILE}
-			set +ex
-			PDS_SET=1
 		fi
 	done
 fi

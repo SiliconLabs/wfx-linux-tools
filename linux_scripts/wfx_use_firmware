@@ -4,12 +4,12 @@ FW_SET=0
 
 if [ $# == 0 ];
 then
-	echo "Select a firmware from the following lists and call 'use_firmware <firmware>'..."
+	echo "Select a firmware from the following lists and call 'wfx_use_firmware <tag> <filename.sec>'..."
 	. wfx_firmwares
 	exit 0
 fi
 
-. wfx_firmwares quiet
+. wfx_firmwares "quiet"
 
 if [ "${FW_SET}" == 0 ];
 then
@@ -19,24 +19,63 @@ then
 		then
 			fw_path=${STORED_DIR}/${fw}
 			echo "  ${fw} is 'in store' (${fw_path})"
+			set -ex
 			${SUDO} ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
+			set +ex
 			FW_SET=1
 		fi
 	done
 fi
 
-if [ "${FW_SET}" == 0 ];
-then
-	for fw in ${GIT_FWS}
+if [ "${FW_SET}" == 0 ]; then
+	for fw_tag in ${GIT_FIRMWARE_TAGS}
 	do
-		if [ "${1}" == "${fw}" ];
+		if [ "${1}" == "${fw_tag}" ];
 		then
-			git_fw_path=${GIT_DIR}/${fw}
-			fw_path=${STORED_DIR}/${fw}
-			echo "  ${fw} is in GIT. Adding it to local 'store' (${fw_path})"
-			${SUDO} cp ${git_fw_path}   ${fw_path}
-			${SUDO} ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
-			FW_SET=1
+			set -ex
+			git -C ${GITHUB_FIRMWARE_PATH}/ checkout ${fw_tag}
+			set +ex
+			GIT_FWS=$( ls -v ${GIT_WFX_DIR} | grep ${FW_GREP} )
+			nb_fw_files=0
+			# Count FW files in the tag
+			for fw in ${GIT_FWS}
+			do
+				nb_fw_files=$(( $nb_fw_files + 1))
+			done
+			if [ ${nb_fw_files} = 1 ]; then
+				# There is a single FW file for the tag: create the symbolic link
+				fw_path="${GIT_WFX_DIR}/${fw}"
+				set -ex
+				${SUDO} ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
+				set +ex
+				FW_SET=1
+			else
+				# There are several FWs file for the tag: check that the selected file is valid
+				for fw in ${GIT_FWS}
+				do
+					if [ "${2}" = "${fw}" ]; then
+						# tag and file are valid, create the symbolic link
+						fw_path="${GIT_WFX_DIR}/${fw}"
+						set -ex
+						${SUDO} ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
+						set +ex
+						FW_SET=1
+					fi
+				done
+				if [ "${FW_SET}" == 0 ]; then
+					if [ -z "${2}" ]; then
+						# no file selected, ask the user to select one
+						echo "Please select a FW file as well, since there are several in ${fw_tag}:"
+					else
+						# invalid file selected, ask the user to select one valid file
+						echo "Invalid FW file '${2}' for '${fw_tag}'. Please select a valid FW file among these:"
+					fi
+					for fw in ${GIT_FWS}
+					do
+						echo "  ${fw}"
+					done
+				fi
+			fi
 		fi
 	done
 fi

@@ -2,15 +2,45 @@
 
 . wfx_set_variables
 
-CURRENT=$( ${SUDO} modinfo wfx -F version 2> /dev/null)
-if [ "${CURRENT}" = "" ]
+CURRENT_DRIVER=$( ${SUDO} modinfo wfx -F version 2> /dev/null)
+if [ "${CURRENT_DRIVER}" = "" ]
 then
-	CURRENT=$( ${SUDO} modinfo wfx_core -F version 2> /dev/null)
-	if [ "${CURRENT}" = "" ]
+	# for compatibility with preliminary versions, alos test with old naming
+	CURRENT_DRIVER=$( ${SUDO} modinfo wfx_core -F version 2> /dev/null)
+	if [ "${CURRENT_DRIVER}" = "" ]
 	then
 		echo "No WFX driver loaded. Try 'use_driver' to load the wfx driver."
 		exit
 	fi
 fi
 
-echo ${CURRENT}
+if [ "${1}" = "version" ]; then
+	echo "${CURRENT_DRIVER}"
+	exit 0
+else
+	echo "Current driver 'modinfo' version: ${CURRENT_DRIVER}"
+fi
+
+real_driver_path=$( realpath /lib/modules/${kernel}/extra )
+if [ -d ${real_driver_path} ]; then
+	if [ "${1}" != "quiet" ]; then
+		echo "/lib/modules/${kernel}/extra -> ${real_driver_path}"
+		ls -l ${real_driver_path} | grep -v ^total
+	fi
+else
+	if [ "${1}" != "quiet" ]; then
+		echo "ERROR: ${CURRENT_DRIVER} is pointing at ${real_driver_path}, which doesn't exist!. Use 'wfx_use_drivere' to select a valid driver"
+	fi
+fi
+
+loaded_test=$( dmesg | grep "wfx: Silicon Labs " )
+if [ "${loaded_test}" != "" ]; then
+	if [ "${1}" != "quiet" ]; then
+		echo "Driver has been loaded: ${loaded_test}"
+	fi
+else
+	if [ "${1}" != "quiet" ]; then
+		echo "Driver not loaded yet. Use 'wfx_reload' to load it (will use 'sudo modprobe wfx')"
+	fi
+fi
+

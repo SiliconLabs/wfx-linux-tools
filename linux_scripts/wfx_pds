@@ -1,7 +1,6 @@
 #!/bin/bash
 
 . wfx_set_variables
-. wfx_board quiet
 . wfx_colors
 
 PDS_FILE="wf200.pds"
@@ -11,7 +10,7 @@ LAST_PDS=""
 
 if [ -f /lib/firmware/${PDS_FILE} ];
 then
-	PDS=/lib/firmware/${PDS_FILE}
+	 PDS=/lib/firmware/${PDS_FILE}
 fi
 
 if [ "${1}" != "quiet" ];

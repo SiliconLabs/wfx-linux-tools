@@ -5,6 +5,7 @@
 FW_FILE="wfm_wf200.sec"
 FW_GREP="wfm_wf200_"
 LAST_FW=""
+CURRENT_FW_TAG=""
 
 if [ -f /lib/firmware/${FW_FILE} ];
 then
@@ -13,28 +14,35 @@ else
 	FW=""
 fi
 
-for last_fw in ${FW}
-do
-	LAST_FW=${last_fw}
-done
-
-if [ "${1}" != "quiet" ];
-then
-	if [ "${LAST_FW}" == "" ]; then
+if [ "${FW}" == "" ]; then
+	if [ "${1}" != "quiet" ]; then
 		echo "no FW loaded"
-		echo "${FW_FILE}"
-	else
-		real_fw=$( realpath ${LAST_FW} )
-		if [ -f ${real_fw} ]; then
-			echo "${LAST_FW} -> ${real_fw} "
+	fi
+else
+	real_fw=$( realpath ${FW} )
+	if [ -f ${real_fw} ]; then
+		git_path_check=$( echo ${real_fw} | grep ${GIT_WFX_DIR} )
+		if [ ! -z $git_path_check ]; then
+			CURRENT_FW_TAG=$( git  -C ${GITHUB_FIRMWARE_PATH}/ describe --exact-match --tags )
+			if [ "${1}" != "quiet" ]; then
+				echo "${FW} -> ${real_fw}  (from git tag ${CURRENT_FW_TAG})"
+			fi
 		else
-			echo "ERROR: ${LAST_FW} is pointing at ${real_fw}, which doesn't exist!. Use 'wfx_use_firmware' to select a valid firmware"
+			if [ "${1}" != "quiet" ]; then
+				echo "${FW} -> ${real_fw} "
+			fi
 		fi
-		loaded_FWS=$( dmesg | grep ${FW_DMESG_GREP} )
-		for loaded_fw in "${loaded_FWS}"
-		do
-			LOADED_FW=${loaded_fw}
-		done
+	else
+		if [ "${1}" != "quiet" ]; then
+			echo "ERROR: ${FW} is pointing at ${real_fw}, which doesn't exist!. Use 'wfx_use_firmware' to select a valid firmware"
+		fi
+	fi
+	loaded_FWS=$( dmesg | grep ${FW_DMESG_GREP} )
+	for loaded_fw in "${loaded_FWS}"
+	do
+		LOADED_FW=${loaded_fw}
+	done
+	if [ "${1}" != "quiet" ]; then
 		if [ "${LOADED_FW}" == "" ]; then
 			echo "Firmware is not loaded. Use 'wfx_reload' to load it"
 		else
