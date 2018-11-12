@@ -15,7 +15,7 @@ SILABS_HOME="${HOME}/siliconlabs"
 
 # github clone directories
 GITHUB_TOOLS_PATH="${SILABS_HOME}/wfx_tools"
-GITHUB_DRIVER_PATH="${SILABS_HOME}/wfx_linux_driver_code"
+GITHUB_DRIVER_PATH="${SILABS_HOME}/wfx_linux_driver"
 GITHUB_FIRMWARE_PATH="${SILABS_HOME}/wfx_firmware"
 GIT_WFX_DIR="${GITHUB_FIRMWARE_PATH}/wfx"
 GIT_PDS_DIR="${GITHUB_FIRMWARE_PATH}/pds"
