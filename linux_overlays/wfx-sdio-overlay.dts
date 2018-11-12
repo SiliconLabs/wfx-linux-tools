@@ -1,0 +1,81 @@
+/include/ "sdio-overlay.dts"
+
+/*
+ * In order to allow compilation out of kernel tree, avoid including headers
+ * nor define macros in this overlay.
+ *
+ * Reminder about usefull defines:
+ *   - from <dt-bindings/interrupt-controller/irq.h>
+ *       #define IRQ_TYPE_EDGE_RISING    1
+ *   - from <dt-bindings/gpio/gpio.h>
+ *       #define GPIO_ACTIVE_LOW         0
+ *       #define GPIO_ACTIVE_HIGH        1
+ */
+
+/ {
+	compatible = "brcm,bcm2708";
+
+	fragment@0 {
+		target = <&gpio>;
+		__overlay__ {
+			wfx_irq: wfx_irq {
+				brcm,pins = <16>;
+				brcm,function = <0>; /* in */
+				brcm,pull = <1>; /* pull-down */
+			};
+			wfx_wakeup: wfx_wakeup {
+				brcm,pins = <12>;
+				brcm,function = <1>; /* out */
+			};
+			wfx_reset: wfx_reset {
+				brcm,pins = <13>;
+				brcm,function = <1>; /* out */
+			};
+		};
+	};
+
+	fragment@1 {
+		target-path = "/";
+		__overlay__ {
+			wfx_pwrseq: wfx_pwrseq {
+				// mmc-pwrseq-simple and mmc-pwrseq-emmc looks
+				// very similar. However:
+				//   1. WFx does not respect timing imposed by
+				//      mmc-pwrseq-emmc
+				//   2. mmc-pwrseq-simple allow to keep WFx in
+				//      stand-by mode when SDIO bus is power off
+				compatible = "mmc-pwrseq-simple";
+				pinctrl-names = "default";
+				pinctrl-0 = <&wfx_reset>;
+				reset-gpios = <&gpio 13 0>;
+			};
+		};
+	};
+
+	fragment@2 {
+		target = <&mmc>;
+		__overlay__ {
+			#address-cells = <1>; /* needed to avoid dtc warning */
+			#size-cells = <0>; /* needed to avoid dtc warning */
+			mmc-pwrseq = <&wfx_pwrseq>;
+
+			// Uncomment following line to allow automatic chip
+			// detect after a hard reset:
+			//   /delete-property/ non-removable;
+			wfx: mmc@1 {
+				compatible = "silabs,wfx-sdio";
+				reg = <1>;
+				pinctrl-names = "default";
+				pinctrl-0 = <&wfx_irq &wfx_wakeup>;
+				wakeup-gpios = <&gpio 12 1>;
+				// Allow to use external GPIO (not yet implemented):
+				//interrupts-extended = <&gpio 16 1>;
+				config-file = "wf200.pds";
+			};
+		};
+	};
+
+	__overrides__ {
+		config_file = <&wfx>,"config-file";
+	};
+};
