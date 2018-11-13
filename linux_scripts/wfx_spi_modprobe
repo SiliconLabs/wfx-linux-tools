@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
 
 echo "Start   configuration:"
 . wfx_config 0

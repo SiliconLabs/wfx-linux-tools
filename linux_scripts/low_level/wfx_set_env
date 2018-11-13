@@ -7,7 +7,7 @@ model=$(cat /sys/firmware/devicetree/base/model | cut -d ' ' -f 2 )
 HOME="/home/pi"
 
 # Set SILABS_ROOT if not already done
-${SILABS_ROOT:=/home/pi/siliconlabs}
+: ${SILABS_ROOT:=/home/pi/siliconlabs}
 
 # github clone directories
 GITHUB_TOOLS_PATH="${SILABS_ROOT}/wfx_tools"
@@ -32,3 +32,9 @@ FW_DMESG_GREP="Label."
 
 # Current folder
 ORIGIN_PWD=$(pwd)
+
+# Check that the script is run by root
+check_root ()
+{
+    ! [ $(id -u) = 0 ] && echo "Please run this script as root (running 'sudo $0' should work)" && return 1 || true
+}

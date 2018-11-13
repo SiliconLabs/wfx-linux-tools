@@ -3,7 +3,7 @@
 # NB: only works for the default hostapd configuration file if not currently in AP mode!
 #     To configure dedicated hostapd files, it is recommended to edit them
 
-. wfx_set_variables
+. wfx_set_env
 WFX_MODE=$(wfx_mode)
 
 if [ ! $# -eq 0 ];

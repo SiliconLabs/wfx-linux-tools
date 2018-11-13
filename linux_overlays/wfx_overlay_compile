@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
 
 set -ex
 dtc -I dts -O dtb -o ${1}.dtbo ${1}-overlay.dts

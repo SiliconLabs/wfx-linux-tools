@@ -1,5 +1,5 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
 
 ${SUDO} tail -n 100 -f /var/log/syslog

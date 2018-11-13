@@ -2,7 +2,7 @@
 # wfx_station_start [configuration_file]
 # Start station with configuration file from command line, otherwise use /etc/wpa_supplicant/wpa_supplicant.conf
 
-. wfx_set_variables
+. wfx_set_env
 WFX_MODE=$(wfx_mode)
 
 if [ "${WFX_MODE}" = "ap" ];

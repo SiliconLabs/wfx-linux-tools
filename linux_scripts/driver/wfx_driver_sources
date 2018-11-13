@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
 
 if [ -d ${STORED_DRIVERS_SOURCES_PATH} ]; then
 	STORED_LOCAL_SOURCES=$(ls ${STORED_DRIVERS_SOURCES_PATH})

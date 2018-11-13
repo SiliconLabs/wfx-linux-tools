@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. wfx_set_variables
+. wfx_set_env
 
 if [ -d /var/run/wpa_supplicant ]; then
   set -ex

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
 
 if [ ${model} == "Pi" ]; then
 	i2cdump -y 0 0x50 i
