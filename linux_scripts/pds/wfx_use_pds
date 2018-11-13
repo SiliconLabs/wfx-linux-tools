@@ -1,5 +1,8 @@
 #!/bin/bash
 
+. wfx_set_env
+check_root
+
 PDS_SET=0
 
 if [ $# == 0 ];
@@ -27,8 +30,8 @@ then
 		then
 			echo "  ${pds} is 'in store' (${STORED_PDS_PATH})"
 			set -ex
-			${SUDO} rm -f /lib/firmware/${PDS_FILE}
-			${SUDO} ln -sf ${STORED_PDS_PATH}/${pds}   /lib/firmware/${PDS_FILE}
+			rm -f /lib/firmware/${PDS_FILE}
+			ln -sf ${STORED_PDS_PATH}/${pds}   /lib/firmware/${PDS_FILE}
 			set +ex
 			PDS_SET=1
 		fi
@@ -49,8 +52,8 @@ then
 				echo "  ${pds_in} is a pds.in file in GIT. Compressing it to ${STORED_PDS_PATH} as ${pds_out}"
 				wfx_pds_compress ${GIT_PDS_DIR}/${pds_in}  ${STORED_PDS_PATH}/${pds_out}
 				set -ex
-				${SUDO} rm -f /lib/firmware/${PDS_FILE}
-				${SUDO} ln -sf ${STORED_PDS_PATH}/${pds_out}   /lib/firmware/${PDS_FILE}
+				rm -f /lib/firmware/${PDS_FILE}
+				ln -sf ${STORED_PDS_PATH}/${pds_out}   /lib/firmware/${PDS_FILE}
 				set +ex
 				PDS_SET=1
 			fi

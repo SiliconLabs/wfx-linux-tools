@@ -3,6 +3,7 @@
 # Start station with configuration file from command line, otherwise use /etc/wpa_supplicant/wpa_supplicant.conf
 
 . wfx_set_env
+check_root
 WFX_MODE=$(wfx_mode)
 
 if [ "${WFX_MODE}" = "ap" ];
@@ -38,7 +39,7 @@ if [ -d /var/run/wpa_supplicant ]; then
 fi
 
 set -ex
-${SUDO} wpa_supplicant -B -i wlan0 -c  ${WPA_CONF}
+wpa_supplicant -B -i wlan0 -c  ${WPA_CONF}
 set +ex
 
 exit 0

@@ -4,12 +4,14 @@
 #     To configure dedicated hostapd files, it is recommended to edit them
 
 . wfx_set_env
+check_root
+
 WFX_MODE=$(wfx_mode)
 
 if [ ! $# -eq 0 ];
 then
 	AP_SSID="${1}"
-	${SUDO} sed -i~ 's/ssid=.*$/ssid='${AP_SSID}'/m' /etc/hostapd/hostapd.conf
+	sed -i~ 's/ssid=.*$/ssid='${AP_SSID}'/m' /etc/hostapd/hostapd.conf
 else
 	if [ "${WFX_MODE}" = "ap" ];
 	then

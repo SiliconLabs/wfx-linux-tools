@@ -77,7 +77,7 @@ if [ -n "$2" ]; then
 		config_changes=$(($config_changes+1))
 	fi
 	if [ "$bus_changes" != 0 ]; then
-		config_message="use '${SUDO} halt' (wait for the led to stop blinking) and then power-cycle the Pi (since you changed the bus configuration)"
+		config_message="use 'sudo halt' (wait for the led to stop blinking) and then power-cycle the Pi (since you changed the bus configuration)"
 	else
 		if [ "$config_changes" != 0 ]; then
 			startup_message="the startup result will be changed on your next reboot (since you changed the configuration)"

@@ -1,11 +1,12 @@
 #!/bin/bash
 
 . wfx_set_env
+check_root
 
-${SUDO} modprobe -v wfx -r
+modprobe -v wfx -r
 
 if [ "${1}" == "clear" ]; then
-	${SUDO} dmesg -C
+    dmesg -C
 fi
 
-${SUDO} modprobe -v wfx
+modprobe -v wfx

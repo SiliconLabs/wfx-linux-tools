@@ -6,7 +6,7 @@ cd ${SCRIPT_FOLDER}
 
 all_valid_scripts=$( find -type f | grep wfx_ )
 
-sudo rm -f /usr/local/bin/wfx_*
+rm -f /usr/local/bin/wfx_*
 
 # Create a link under /usr/local/bin for all files matching wfx_ and not containing '.'
 for script in ${all_valid_scripts}; do 
@@ -14,7 +14,7 @@ for script in ${all_valid_scripts}; do
 	basename=$( basename ${script} )
 	dot_test=$( echo {$basename} | grep "." )
 	if [ "${dot_test}" != "" ]; then
-		sudo ln -fs ${script_realpath} /usr/local/bin/${basename}
+	    ln -fs ${script_realpath} /usr/local/bin/${basename}
 	fi
 done
 
