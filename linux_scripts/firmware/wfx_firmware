@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
 
 FW_FILE="wfm_wf200.sec"
 FW_GREP="wfm_wf200_"

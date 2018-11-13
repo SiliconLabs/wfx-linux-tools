@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
+check_root
 . wfx_colors
 
 blacklist_file="/etc/modprobe.d/raspi-blacklist.conf"
@@ -55,6 +56,6 @@ else
 		fi
 	fi
 
-	printf "${new_lines}" | ${SUDO} tee $blacklist_file > /dev/null
+	printf "${new_lines}" > $blacklist_file
 
 fi

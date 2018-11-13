@@ -1,7 +1,9 @@
 #!/bin/sh
 # wfx_ap_stop stops the ap
-. wfx_set_variables
+. wfx_set_env
+check_root
 
 set -ex
-${SUDO} killall hostapd
+# TODO: check if -w is needed
+killall hostapd
 set +ex

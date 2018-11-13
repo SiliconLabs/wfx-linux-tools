@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
 . wfx_firmware quiet
 
 GIT_FWS=""

@@ -1,12 +1,13 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
+check_root
 
-CURRENT_DRIVER=$( ${SUDO} modinfo wfx -F version 2> /dev/null)
+CURRENT_DRIVER=$(modinfo wfx -F version 2> /dev/null)
 if [ "${CURRENT_DRIVER}" = "" ]
 then
 	# for compatibility with preliminary versions, alos test with old naming
-	CURRENT_DRIVER=$( ${SUDO} modinfo wfx_core -F version 2> /dev/null)
+	CURRENT_DRIVER=$(modinfo wfx_core -F version 2> /dev/null)
 	if [ "${CURRENT_DRIVER}" = "" ]
 	then
 		echo "No WFX driver loaded. Try 'use_driver' to load the wfx driver."

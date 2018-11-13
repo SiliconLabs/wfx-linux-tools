@@ -1,19 +1,17 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
+check_root
+check_rpi
 
-${SUDO} modprobe -v wfx -r
+modprobe -v wfx -r
 
-if [ ${model} == "Pi" ]; then
-	echo 3f300000.mmc | sudo tee /sys/bus/platform/drivers/mmc-bcm2835/unbind
+echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind
+
+if [ "${1}" == "-C" || "${1}" == "--clear"]; then
+	dmesg -C
 fi
 
-if [ "${1}" == "clear" ]; then
-	${SUDO} dmesg -C
-fi
+echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/bind
 
-if [ ${model} == "Pi" ]; then
-	echo 3f300000.mmc | sudo tee /sys/bus/platform/drivers/mmc-bcm2835/bind
-fi
-
-${SUDO} modprobe -v wfx
+modprobe -v wfx

@@ -1,8 +1,0 @@
-#!/bin/bash
-
-if [ -e "$1" ];
-then
-	cat $1 | grep -v ^# | grep -v ^$
-else
-	echo "-- No such file. $1 is not a valid file"
-fi

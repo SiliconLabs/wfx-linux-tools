@@ -1,23 +1,20 @@
 #!/bin/bash
 
-SCRIPT_FOLDER="/home/pi/siliconlabs/wfx_tools/linux_scripts/"
-PWD=$(pwd)
-cd ${SCRIPT_FOLDER}
+set -e
 
-all_valid_scripts=$( find -type f | grep wfx_ )
-
-sudo rm -f /usr/local/bin/wfx_*
+[ $(id -u) != 0 ] && echo "Please run this script as root (running 'sudo $0' should work)" && exit 1 || true
+! [ -e install.sh ] && echo "This script must be run from wfx_tools" && exit 1 || true
+rm -f /usr/local/bin/wfx_*
+rm -f /usr/local/bin/pds_compress
 
 # Create a link under /usr/local/bin for all files matching wfx_ and not containing '.'
-for script in ${all_valid_scripts}; do 
-	script_realpath=$( realpath ${script} )
-	basename=$( basename ${script} )
-	dot_test=$( echo {$basename} | grep "." )
-	if [ "${dot_test}" != "" ]; then
-		sudo ln -fs ${script_realpath} /usr/local/bin/${basename}
-	fi
+# TODO: add pds_compress
+for f in $(find -type f -name "wfx_*" -perm -100); do
+    b=$(basename $f)
+    if [[ $b != *.* && $b != *~ ]]; then
+	ln -s $(realpath ${f}) /usr/local/bin/$b
+    fi
 done
 
-ls -l /usr/local/bin/* --color=auto
-
-cd ${PWD}
+dtc linux_overlays/wfx-spi-overlay.dts > /boot/overlays/wfx-spi.dtbo
+dtc linux_overlays/wfx-sdio-overlay.dts > /boot/overlays/wfx-sdio.dtbo

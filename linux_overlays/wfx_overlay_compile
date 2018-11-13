@@ -1,8 +1,9 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
+check_root
 
 set -ex
 dtc -I dts -O dtb -o ${1}.dtbo ${1}-overlay.dts
-sudo cp -f ${1}.dtbo /boot/overlays
+cp -f ${1}.dtbo /boot/overlays
 set +ex

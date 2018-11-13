@@ -1,13 +1,13 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
 
 echo "Start   configuration:"
 . wfx_config 0
 echo ""
 
 wfx_disable_sdio_overlay
-wfx_disable_spi_overlay
+wfx_enable_spi_overlay
 
 wfx_blacklist_driver brcmfmac
 wfx_blacklist_driver wfx_wlan_sdio
@@ -26,7 +26,7 @@ if [ -n "$config_message" ]; then
 else
 	if [ -n "$startup_message" ]; then
 		echo "${startup_message}"
-		echo "you can now use 'spi_reload' to load the WFx200 driver."
+		echo "you can now use 'sudo wfx_spi_reload' to load the WFx200 driver."
 		echo "the WFx200 SPI driver will be loaded automatically at boot"
 	fi
 fi

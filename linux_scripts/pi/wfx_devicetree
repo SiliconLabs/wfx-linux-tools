@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
 
 dtc -I fs -O dts /sys/firmware/devicetree/base
 

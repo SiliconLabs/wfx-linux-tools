@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
 
 if [ -n "$1" ]; then
 	i=$1
@@ -24,6 +24,8 @@ fi
 blck_sdio[$i]=$(cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v ^$ | grep sdio)
 blck_spi[$i]=$( cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v ^$ | grep spi )
 blck_wfx[$i]=$( cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v ^$ | grep wfx$)
+blck_brcm[$i]=$( cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v ^$ | grep brcmfmac$)
+
 
 if [ -n "${blck_sdio[$i]}" ]; then
 	echo ${blck_sdio[$i]}
@@ -35,6 +37,10 @@ fi
 
 if [ -n "${blck_wfx[$i]}" ]; then
 	echo ${blck_wfx[$i]}
+fi
+
+if [ -n "${blck_brcm[$i]}" ]; then
+	echo ${blck_brcm[$i]}
 fi
 
 # Check which overlays are enabled
@@ -77,7 +83,7 @@ if [ -n "$2" ]; then
 		config_changes=$(($config_changes+1))
 	fi
 	if [ "$bus_changes" != 0 ]; then
-		config_message="use '${SUDO} halt' (wait for the led to stop blinking) and then power-cycle the Pi (since you changed the bus configuration)"
+		config_message="use 'sudo halt' (wait for the led to stop blinking) and then power-cycle the Pi (since you changed the bus configuration)"
 	else
 		if [ "$config_changes" != 0 ]; then
 			startup_message="the startup result will be changed on your next reboot (since you changed the configuration)"

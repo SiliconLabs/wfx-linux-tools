@@ -1,5 +1,8 @@
 #!/bin/bash
 
+. wfx_set_env
+check_root
+
 FW_SET=0
 
 if [ $# == 0 ];
@@ -20,7 +23,7 @@ then
 			fw_path=${STORED_DIR}/${fw}
 			echo "  ${fw} is 'in store' (${fw_path})"
 			set -ex
-			${SUDO} ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
+			ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
 			set +ex
 			FW_SET=1
 		fi
@@ -46,7 +49,7 @@ if [ "${FW_SET}" == 0 ]; then
 				# There is a single FW file for the tag: create the symbolic link
 				fw_path="${GIT_WFX_DIR}/${fw}"
 				set -ex
-				${SUDO} ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
+				ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
 				set +ex
 				FW_SET=1
 			else
@@ -57,7 +60,7 @@ if [ "${FW_SET}" == 0 ]; then
 						# tag and file are valid, create the symbolic link
 						fw_path="${GIT_WFX_DIR}/${fw}"
 						set -ex
-						${SUDO} ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
+						ln -sf ${fw_path}   /lib/firmware/${FW_FILE}
 						set +ex
 						FW_SET=1
 					fi

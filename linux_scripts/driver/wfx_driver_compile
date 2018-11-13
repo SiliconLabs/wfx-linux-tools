@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. wfx_set_variables
+. wfx_set_env
+check_root
 
 if [ -z ${1} ];
 then
@@ -21,7 +22,7 @@ do
 		match=1
 		set -ex
 		cd ${STORED_DRIVERS_SOURCES_PATH}/${folder}
-		${SUDO} make clean modules
+		make clean modules
 		KOS=${STORED_DRIVERS_PATH}/${kernel}/${DRV}
 		mkdir -p ${KOS}
 		cp -f *.ko ${KOS}
@@ -63,13 +64,13 @@ then
 		echo "  to compile the driver first"
 	else
 		# get rid of 'old style' driver folders to use 'extra' instead
-		${SUDO} rm -fr /lib/modules/${kernel}/kernel/drivers/net/wireless/siliconlabs
-		${SUDO} rm -fr /lib/modules/${kernel}/extra
-		${SUDO} ln -s -f ${KOS}   /lib/modules/${kernel}/extra
+		rm -fr /lib/modules/${kernel}/kernel/drivers/net/wireless/siliconlabs
+		rm -fr /lib/modules/${kernel}/extra
+		ln -s -f ${KOS}   /lib/modules/${kernel}/extra
 		echo "updating modules dependencies..."
-		${SUDO} depmod -a | grep wfx
+		depmod -a | grep wfx
 		echo "updating modules dependencies done"
-		${SUDO} modinfo wfx_core
+		modinfo wfx_core
 	fi
 else
 	echo "${KOS} directory doesn't exist! Please use one of the following values:"

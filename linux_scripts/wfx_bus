@@ -1,36 +1,18 @@
 #!/bin/bash
 
-. wfx_set_variables
-. wfx_colors
+. wfx_set_env
+check_rpi
 
-BUS=""
-
-if [ ${model} == "Pi" ]; then
-	SDIO_OVERLAY=$(cat /boot/config.txt | grep ^dtoverlay= | grep sdio )
-	SPI_OVERLAY=$( cat /boot/config.txt | grep ^dtoverlay= | grep spi  )
-	if [ "$SDIO_OVERLAY" == "" ]; then
-		if [ "$SPI_OVERLAY" == "" ]; then
-			exit 0
-		else
-			BUS="spi"
-		fi
-	else
-		BUS="sdio"
-	fi
-fi
-
-if [ "${BUS}" != "spi" ]; then
-	if [ "${BUS}" != "sdio" ]; then
-		printf "${LRED}No bus selected! check your overlay settings in /boot/config.txt!${NO}"
-	fi
-fi
-
-if [ "${1}" != "quiet" ];
-then
-	if [ "${BUS}" == "spi" ]; then
-		echo ${BUS}
-	fi
-	if [ "${BUS}" == "sdio" ]; then
-		echo ${BUS}
-	fi
-fi
+OVERLAY=$(cat /boot/config.txt | grep ^dtoverlay=wfx-)
+case "$OVERLAY" in
+    *spi*)
+        echo spi
+        ;;
+    *sdio*)
+        echo sdio
+        ;;
+    *)
+        echo "Cannot find dtoverlay in /boot/config.txt" >&2
+        exit 1
+        ;;
+esac
