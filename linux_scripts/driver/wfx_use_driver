@@ -52,7 +52,7 @@ then
 		# Create new driver symbolic link
 		${SUDO} ln -s -f ${KOS}   /lib/modules/${kernel}/extra
 		# Update modules dependencies
-		${SUDO} depmod -a -w | grep wfx
+		${SUDO} depmod -a | grep wfx
 		# Display new driver info
 		${SUDO} modinfo wfx_core
 		set +ex
