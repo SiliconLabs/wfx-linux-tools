@@ -1,27 +1,23 @@
-#!/bin/bash
+# This file is to be sourced by other wfx scripts
 
 kernel=$(uname -r)
 model=$(cat /sys/firmware/devicetree/base/model | cut -d ' ' -f 2 )
 
-if [ "${model}" = "Pi" ]; then
-	SUDO="sudo"
-fi
-if [ "${model}" = "i.MX6" ]; then
-	SUDO=""
-fi
+# Set home directory to work even when used by root
+HOME="/home/pi"
 
-# Silicon labs root
-SILABS_HOME="${HOME}/siliconlabs"
+# Set SILABS_ROOT if not already done
+${SILABS_ROOT:=/home/pi/siliconlabs}
 
 # github clone directories
-GITHUB_TOOLS_PATH="${SILABS_HOME}/wfx_tools"
-GITHUB_DRIVER_PATH="${SILABS_HOME}/wfx_linux_driver"
-GITHUB_FIRMWARE_PATH="${SILABS_HOME}/wfx_firmware"
+GITHUB_TOOLS_PATH="${SILABS_ROOT}/wfx_tools"
+GITHUB_DRIVER_PATH="${SILABS_ROOT}/wfx_linux_driver"
+GITHUB_FIRMWARE_PATH="${SILABS_ROOT}/wfx_firmware"
 GIT_WFX_DIR="${GITHUB_FIRMWARE_PATH}/wfx"
 GIT_PDS_DIR="${GITHUB_FIRMWARE_PATH}/pds"
 
 # locally generated files root
-SILABS_OUT="${SILABS_HOME}/out"
+SILABS_OUT="${SILABS_ROOT}/out"
 # local driver versions ( .ko files under <kernel>/<wfx_release> )
 STORED_DRIVERS_PATH="${SILABS_OUT}/driver"
 # local driver sources ( .c/.h/Makefile files under <wfx_release> )
