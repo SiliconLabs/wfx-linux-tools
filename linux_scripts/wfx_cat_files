@@ -1,23 +1,34 @@
 #!/bin/bash
 
-CAT="wfx_cat1"
+. wfx_colors
 
-${CAT} /boot/cmdline.txt
-${CAT} /boot/config.txt
-${CAT} /etc/modprobe.d/raspi-blacklist.conf
+tiny_cat()
+{
+    if [ -e "$1" ]; then
+        printf "───────────────────  %-40s\n" "$(realpath $1)"
+        grep -v -e '^#' -e '^$' $1
+    else
+        printf "───────────────────  %-40s ${INV}NO_SUCH_FILE${NO}\n" "$1"
+    fi
+}
 
-${CAT} /etc/hostname
-${CAT} /etc/hosts
-${CAT} /etc/rc.local
+tiny_cat /boot/cmdline.txt
+tiny_cat /boot/config.txt
+tiny_cat /etc/modprobe.d/raspi-blacklist.conf
 
-${CAT} /etc/dnsmasq.conf
-${CAT} /etc/dhcpcd.conf
+tiny_cat /etc/hostname
+tiny_cat /etc/hosts
+tiny_cat /etc/rc.local
 
-${CAT} /etc/modules
-${CAT} /etc/modprobe.d/wfx.conf
+tiny_cat /etc/dnsmasq.conf
+tiny_cat /etc/dhcpcd.conf
 
-${CAT} /etc/network/interfaces
+tiny_cat /etc/modules
+tiny_cat /etc/modprobe.d/wfx.conf
 
-${CAT} /etc/wpa_supplicant/wpa_supplicant.conf
+tiny_cat /etc/network/interfaces
 
-${CAT} /etc/hostapd/hostapd.conf
+tiny_cat /etc/wpa_supplicant/wpa_supplicant.conf
+
+tiny_cat /etc/hostapd/hostapd.conf
+
