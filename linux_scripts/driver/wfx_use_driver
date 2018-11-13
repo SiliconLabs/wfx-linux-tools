@@ -53,7 +53,7 @@ then
 		# Create new driver symbolic link
 		ln -s -f ${KOS}   /lib/modules/${kernel}/extra
 		# Update modules dependencies
-		depmod -a -w | grep wfx
+		depmod -a | grep wfx
 		# Display new driver info
 		modinfo wfx_core
 		set +ex
