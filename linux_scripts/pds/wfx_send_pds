@@ -1,13 +1,18 @@
 #!/bin/bash
 
 . wfx_set_env
-. wfx_colors
+check_root
 
-if [ -f "${1}" ];
-then
-	set -ex
-	pds_compress ${1} /sys/kernel/debug/ieee80211/phy*/wfx/send_pds
-	set +ex
-else
-	printf "${LRED}No input file for 'send_pds'!${NO}\n"
+if [ "$#" != 1 ]; then
+    echo "Wrong number of arguments. One compressed or plain PDS is expected." >&2
+    exit 1
 fi
+
+if ! [ -f "${1}" ]; then
+    echo "${1} not found" >&2
+    exit 1
+fi
+
+set -ex
+pds_compress ${1} /sys/kernel/debug/ieee80211/phy*/wfx/send_pds
+set +ex
