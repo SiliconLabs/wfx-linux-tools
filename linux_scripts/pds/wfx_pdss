@@ -1,8 +1,8 @@
 #!/bin/bash
 
 . wfx_pds quiet
-. wfx_board quiet
 
+BOARD=$(wfx_board)
 GIT_PDS_FILES=""
 STORED_PDS=""
 

@@ -2,62 +2,30 @@
 
 . wfx_set_env
 check_rpi
+check_hat
 
-BOARD="none"
-BOARD_DONE=0
+get_letter()
+{
+    local hex=$(printf "%x" $1+0x41)
+    printf "\x$hex"
+}
 
-I2C=$(cat /boot/config.txt | grep ^dtparam=i2c_vc=on)
+vendor=$(cat /proc/device-tree/hat/vendor)
+product=$(cat /proc/device-tree/hat/product)
+product_id=$(cat /proc/device-tree/hat/product_id)
+product_ver=$(cat /proc/device-tree/hat/product_ver)
+uuid=$(cat /proc/device-tree/hat/uuid)
 
-if [ "$I2C" == "" ];
-then
-	if [ "${1}" != "quiet" ];
-	then
-		echo "No 'dtparam=i2c_vc=on' in /boot/config.txt. Can not read eeprom on bus 0."
-	fi
-	BOARD="no_i2c"
-	BOARD_DONE=1
+variant_ver=$((($product_ver >> 12) & 0x0F))
+  major_ver=$((($product_ver >>  8) & 0x0F))
+  minor_ver=$((($product_ver >>  0) & 0xFF))
+
+board_id=$(($product_id))
+variant=$(get_letter $variant_val)
+major=$(get_letter $major_val)
+minor=$(printf "%02d" $minor_val)
+
+if [[ "$1" == "-v" ]]; then
+    printf "%20s %20s " $vendor $product
 fi
-
-if [ ! -d /proc/device-tree/hat ];
-then
-	if [ "${1}" != "quiet" ];
-	then
-		echo "No /proc/device-tree/hat/  directory present. Empty eeprom?"
-	fi
-	BOARD="no_hat"
-	BOARD_DONE=1
-fi
-
-if [ "${BOARD_DONE}" == 0 ];
-then
-
-	HAT=$(ls  /proc/device-tree/hat/)
-
-	vendor=$(cat /proc/device-tree/hat/vendor)
-	product=$(cat /proc/device-tree/hat/product)
-	product_id=$(cat /proc/device-tree/hat/product_id)
-	product_ver=$(cat /proc/device-tree/hat/product_ver)
-	uuid=$(cat /proc/device-tree/hat/uuid)
-
-	board_id=$(( $product_id ))
-
-	variant_val=$(( ( ($product_ver >> 12)&0x0F) + 0x41 ))
-	major_val=$((   ( ($product_ver >>  8)&0x0F) + 0x41 ))
-	minor=$((       ( ($product_ver >>  0)&0xFF)        ))
-
-	variant_hex=$( printf "%x" $variant_val )
-	variant=$( printf "\x$variant_hex" )
-
-	major_hex=$( printf "%x" $major_val )
-	major=$( printf "\x$major_hex" )
-
-	board_revision=$( printf "%s%02d" ${major} ${minor} )
-	BOARD="BRD${board_id}${variant}_Rev_${board_revision}"
-
-	if [ "${1}" != "quiet" ];
-	then
-		echo "$vendor  \
-		 ${product}  \
-		 ${BOARD}"
-	fi
-fi
+echo "BRD${board_id}${variant}_Rev_${major}${minor}"
