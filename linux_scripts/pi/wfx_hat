@@ -2,24 +2,8 @@
 
 . wfx_set_env
 check_rpi
+check_hat
 
-I2C=$(cat /boot/config.txt | grep ^dtparam=i2c_vc=on)
-
-if [ "$I2C" == "" ]
-then
-	echo "No 'dtparam=i2c_vc=on' in /boot/config.txt. Can not read eeprom on bus 0."
-	exit 0
-fi
-
-if [ ! -e /proc/device-tree/hat ]
-then
-	echo "No /proc/device-tree/hat/  directory present. Empty eeprom?"
-	exit 0
-fi
-
-HAT=$(ls  /proc/device-tree/hat/)
-
-for hat_item in ${HAT}
-do
-	printf "%-20s %s\n" "${hat_item}" "$(cat /proc/device-tree/hat/$hat_item)"
+for f in /proc/device-tree/hat/*; do
+    printf "%-20s %s\n" "$(basename $f)" "$(cat $f)"
 done

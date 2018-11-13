@@ -45,3 +45,15 @@ check_rpi()
         exit 1
     fi
 }
+
+check_hat()
+{
+    if [ ! -d /proc/device-tree/hat ]; then
+        if  grep -q '^dtparam=i2c_vc=on' /boot/config.txt; then
+            echo "Cannot identify board, /proc/device-tree/hat/ does not exist. Empty eeprom?" >&2
+        else
+            echo "Cannot identify board, 'dtparam=i2c_vc=on' is not present in /boot/config.txt." >&2
+        fi
+        exit 1
+    fi
+}
