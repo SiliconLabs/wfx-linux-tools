@@ -57,3 +57,12 @@ check_hat()
         exit 1
     fi
 }
+
+# Check that no process <name> is running
+check_no_process ()
+{
+    if pidof "$1"; then
+	>&2 echo "Process $1 is already running, exiting"
+	exit 1
+    fi
+}
