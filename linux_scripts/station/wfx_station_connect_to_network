@@ -3,40 +3,40 @@
 wfx_station_forget_all_networks
 
 set -ex
-/sbin/wpa_cli add_network -i wlan0 1> /dev/null
+/sbin/wpa_cli add_network 1> /dev/null
 /sbin/wpa_cli bss_flush
 
 if [ $# -eq 1 ]; then
-	/sbin/wpa_cli set_network 0 -i wlan0 ssid \"$1\" 1> /dev/null
-	/sbin/wpa_cli set_network 0 -i wlan0 auth_alg OPEN 1> /dev/null
-	/sbin/wpa_cli set_network 0 -i wlan0 key_mgmt NONE 1> /dev/null
+	/sbin/wpa_cli set_network 0 ssid \"$1\" 1> /dev/null
+	/sbin/wpa_cli set_network 0 auth_alg OPEN 1> /dev/null
+	/sbin/wpa_cli set_network 0 key_mgmt NONE 1> /dev/null
 fi
 
 if [ $# -eq 3 ]; then
 	if [ $3 -eq 1 ]; then
 	  echo WPA
-	  /sbin/wpa_cli set_network 0 -i wlan0 ssid \"$1\" 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 psk \"$2\" 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 proto WPA 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 key_mgmt WPA-PSK 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 pairwise TKIP 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 auth_alg OPEN 1> /dev/null
+	  /sbin/wpa_cli set_network 0 ssid \"$1\" 1> /dev/null
+	  /sbin/wpa_cli set_network 0 psk \"$2\" 1> /dev/null
+	  /sbin/wpa_cli set_network 0 proto WPA 1> /dev/null
+	  /sbin/wpa_cli set_network 0 key_mgmt WPA-PSK 1> /dev/null
+	  /sbin/wpa_cli set_network 0 pairwise TKIP 1> /dev/null
+	  /sbin/wpa_cli set_network 0 auth_alg OPEN 1> /dev/null
 	elif [ $3 -eq 2 ]; then
 	  echo WPA2
-	  /sbin/wpa_cli set_network 0 -i wlan0 ssid \"$1\" 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 psk \"$2\" 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 proto WPA2 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 key_mgmt WPA-PSK 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 pairwise CCMP 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 auth_alg OPEN 1> /dev/null
+	  /sbin/wpa_cli set_network 0 ssid \"$1\" 1> /dev/null
+	  /sbin/wpa_cli set_network 0 psk \"$2\" 1> /dev/null
+	  /sbin/wpa_cli set_network 0 proto WPA2 1> /dev/null
+	  /sbin/wpa_cli set_network 0 key_mgmt WPA-PSK 1> /dev/null
+	  /sbin/wpa_cli set_network 0 pairwise CCMP 1> /dev/null
+	  /sbin/wpa_cli set_network 0 auth_alg OPEN 1> /dev/null
 	elif [ $3 -eq 3 ]; then
 	  echo WPA3
-	  /sbin/wpa_cli set_network 0 -i wlan0 ssid \"$1\" 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 psk \"$2\" 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 proto WPA2 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 key_mgmt WPA-EAP 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 pairwise CCMP 1> /dev/null
-	  /sbin/wpa_cli set_network 0 -i wlan0 auth_alg OPEN 1> /dev/null
+	  /sbin/wpa_cli set_network 0 ssid \"$1\" 1> /dev/null
+	  /sbin/wpa_cli set_network 0 psk \"$2\" 1> /dev/null
+	  /sbin/wpa_cli set_network 0 proto WPA2 1> /dev/null
+	  /sbin/wpa_cli set_network 0 key_mgmt WPA-EAP 1> /dev/null
+	  /sbin/wpa_cli set_network 0 pairwise CCMP 1> /dev/null
+	  /sbin/wpa_cli set_network 0 auth_alg OPEN 1> /dev/null
 	fi
 fi
 
