@@ -1,11 +1,7 @@
 #!/bin/bash
 
 . wfx_set_env
-
-if [ ${model} != "Pi" ]; then
-	echo "No HAT on ${model}..."
-	exit 0
-fi
+check_rpi
 
 I2C=$(cat /boot/config.txt | grep ^dtparam=i2c_vc=on)
 

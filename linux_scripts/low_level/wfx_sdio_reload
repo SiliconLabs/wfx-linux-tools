@@ -2,19 +2,16 @@
 
 . wfx_set_env
 check_root
+check_rpi
 
 modprobe -v wfx -r
 
-if [ ${model} == "Pi" ]; then
-	echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind
-fi
+echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind
 
 if [ "${1}" == "clear" ]; then
 	dmesg -C
 fi
 
-if [ ${model} == "Pi" ]; then
-	echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/bind
-fi
+echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/bind
 
 modprobe -v wfx

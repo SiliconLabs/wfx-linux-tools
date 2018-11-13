@@ -1,19 +1,10 @@
 #!/bin/bash
 
 . wfx_set_env
+check_rpi
 
 BOARD="none"
 BOARD_DONE=0
-
-if [ ${model} != "Pi" ];
-then
-	if [ "${1}" != "quiet" ];
-	then
-		echo "No HAT on ${model}..."
-	fi
-	BOARD="no_pi"
-	BOARD_DONE=1
-fi
 
 I2C=$(cat /boot/config.txt | grep ^dtparam=i2c_vc=on)
 

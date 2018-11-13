@@ -4,6 +4,7 @@
 
 LIST="wfx_list1"
 
+model=$(cat /sys/firmware/devicetree/base/model)
 if [ ${model} == "Pi" ]; then
 	${LIST} /boot/cmdline.txt             critical
 	${LIST} /boot/config.txt              critical

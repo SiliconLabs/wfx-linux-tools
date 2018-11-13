@@ -1,7 +1,6 @@
 # This file is to be sourced by other wfx scripts
 
 kernel=$(uname -r)
-model=$(cat /sys/firmware/devicetree/base/model | cut -d ' ' -f 2 )
 
 # Set SILABS_ROOT if not already done
 : ${SILABS_ROOT:=/home/pi/siliconlabs}
@@ -35,4 +34,10 @@ check_root ()
 {
     # true is used to allow this script to run with -e option
     [ $(id -u) != 0 ] && echo "Please run this script as root (running 'sudo $0' should work)" && exit 1 || true
+}
+
+check_rpi()
+{
+    # 'true' is used to allow this script to run with -e option
+    ! grep -q 'NAME="Raspbian GNU/Linux"' /etc/os-release && echo "You must run this script from a Raspberry" && exit 1 || true
 }

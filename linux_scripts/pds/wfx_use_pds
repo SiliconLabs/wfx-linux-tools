@@ -2,6 +2,7 @@
 
 . wfx_set_env
 check_root
+check_rpi
 
 PDS_SET=0
 
@@ -15,11 +16,9 @@ fi
 . wfx_pdss  quiet
 . wfx_colors
 
-if [ ${model} == "Pi" ]; then
-	if [ "${BOARD}" != "" ];
-	then
-		printf "Board info from hat eeprom: ${LGREEN}${BOARD}${NO}\n"
-	fi
+if [ "${BOARD}" != "" ];
+then
+	printf "Board info from hat eeprom: ${LGREEN}${BOARD}${NO}\n"
 fi
 
 if [ "${PDS_SET}" == 0 ];

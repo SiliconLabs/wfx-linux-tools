@@ -2,21 +2,20 @@
 
 . wfx_set_env
 . wfx_colors
+check_rpi
 
 BUS=""
 
-if [ ${model} == "Pi" ]; then
-	SDIO_OVERLAY=$(cat /boot/config.txt | grep ^dtoverlay= | grep sdio )
-	SPI_OVERLAY=$( cat /boot/config.txt | grep ^dtoverlay= | grep spi  )
-	if [ "$SDIO_OVERLAY" == "" ]; then
-		if [ "$SPI_OVERLAY" == "" ]; then
-			exit 0
-		else
-			BUS="spi"
-		fi
+SDIO_OVERLAY=$(cat /boot/config.txt | grep ^dtoverlay= | grep sdio )
+SPI_OVERLAY=$( cat /boot/config.txt | grep ^dtoverlay= | grep spi  )
+if [ "$SDIO_OVERLAY" == "" ]; then
+	if [ "$SPI_OVERLAY" == "" ]; then
+		exit 0
 	else
-		BUS="sdio"
+		BUS="spi"
 	fi
+else
+	BUS="sdio"
 fi
 
 if [ "${BUS}" != "spi" ]; then
