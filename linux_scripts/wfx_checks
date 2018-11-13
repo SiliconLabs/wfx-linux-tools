@@ -9,33 +9,19 @@ kernel=$(uname -r)
 echo "System:   $(cat /sys/firmware/devicetree/base/model)"
 echo "System:   Linux kernel $kernel"
 
-wfx_core_base=/lib/modules/$kernel/kernel/drivers/net/wireless/siliconlabs/wfx/wfx_core.ko
-wfx_sdio_base=/lib/modules/$kernel/kernel/drivers/net/wireless/siliconlabs/wfx/wfx_wlan_sdio.ko
-wfx_spi_base=/lib/modules/$kernel/kernel/drivers/net/wireless/siliconlabs/wfx/wfx_wlan_spi.ko
+wfx_drv_base=/lib/modules/$kernel/extra/wfx.ko
 wfx_fw_base=/lib/firmware/wfm_wf200.sec
 wfx_pds_base=/lib/firmware/wf200.pds
-wfx_core_conf=/etc/modprobe.d/wfx.conf
+wfx_conf=/etc/modprobe.d/wfx.conf
+wfx_spi_overlay=/boot/overlays/wfx-spi.dtbo
+wfx_sdio_overlay=/boot/overlays/wfx-sdio.dtbo
 
 # if using symbolic links, use the links, otherwise use the files
-wfx_core_link=$(readlink $wfx_core_base)
-if [ -n "$wfx_core_link" ]; then
-	wfx_core_module=$(ls $wfx_core_base)
+wfx_drv_base_link=$(readlink $wfx_drv_base)
+if [ -n "$wfx_drv_base_link" ]; then
+	wfx_drv_module=$(ls $wfx_drv_base)
 else
-	wfx_core_module=$wfx_core_base
-fi
-
-wfx_sdio_link=$(readlink $wfx_sdio_base)
-if [ -n "$wfx_sdio_link" ]; then
-	wfx_sdio_module=$(ls $wfx_sdio_base)
-else
-	wfx_sdio_module=$wfx_sdio_base
-fi
-
-wfx_spi_link=$(readlink $wfx_spi_base)
-if [ -n "$wfx_spi_link" ]; then
-	wfx_spi_module=$(ls $wfx_spi_base)
-else
-	wfx_spi_module=$wfx_spi_base
+	wfx_drv_module=$wfx_drv_base
 fi
 
 wfx_fw_link=$(readlink $wfx_fw_base)
@@ -52,9 +38,14 @@ else
 	wfx_pds_file=$wfx_pds_base
 fi
 
-wfx_power_mode_option=$(cat $wfx_core_conf | grep ^options | grep wfx_power_mode)
+if [ -f $wfx_conf ]; then
+	wfx_power_mode_option=$(cat $wfx_conf | grep ^options | grep power_mode)
+else
+	wfx_power_mode_option="not set (in ${wfx_conf} file)"
+fi
 
 missing_files=0
+startup_errors=0
 
 # SDIO test: first of all, check if SDIO overlay is enabled in .boot/config.txt
 SDIO_overlay=$(cat /boot/config.txt | grep ^dtoverlay= | grep sdio)
@@ -66,6 +57,13 @@ else
 	echo "User:     WFX SDIO overlay enabled         (in /boot/config.txt)"
 	# SDIO detection at boot will only occur if sdio overlay is enabled in boot/config.txt
 	if [ "$WFX_SDIO_Overlay_enabled" = 1 ]; then
+		# Check if SDIO overlay is present
+		if [ -f $wfx_sdio_overlay ]; then
+			echo "Setup:    $wfx_sdio_overlay file present"
+		else
+			echo "Setup:    Error: $wfx_sdio_overlay file missing"
+			missing_files=$(( $missing_files + 1 ))
+		fi
 		# Check if SDIO has been detected at boot, and proceed only if yes
 		mmc=$(dmesg | grep "new high speed SDIO card")
 		if [ -n "$mmc" ]; then
@@ -86,12 +84,12 @@ else
 			fi
 			# Check WFx SDIO driver modules existence
 			if [ -z "$wfx_core_module" ]; then
-				missing_files=$missing_files + 1
+				missing_files=$(( $missing_files + 1 ))
 				echo "Setup:    Error: Missing WFX core driver   ($wfx_core_link)"
 				echo "                 You need to check you WFX driver installation! Make sure you have the $wfx_core_link file!"
 			fi
 			if [ -z "$wfx_sdio_module" ]; then
-				missing_files=$missing_files + 1
+				missing_files=$(( $missing_files + 1 ))
 				echo "Setup:    Error: Missing WFX SDIO driver   ($wfx_sdio_link)"
 				echo "                 You need to check you WFX driver installation! Make sure you have the $wfx_sdio_link file!"
 			fi
@@ -107,7 +105,7 @@ else
 		else
 			echo "Startup:  Error: No part detected at boot on SDIO bus!"
 			echo "                 Is there an EVB attached to the Pi, with the bus selection switch set to 'SDIO'?"
-			exit 1
+			startup_errors=$(( $startup_errors + 1 ))
 		fi
 	fi
 fi
@@ -131,14 +129,21 @@ else
 			WFX_SPI_Driver_blacklisted=1
 			echo "User:     WFX SPI  Driver blacklisted      (it must be loaded using 'sudo modprobe -v wfx_wlan_spi')"
 		fi
+		# Check if SPI overlay is present
+		if [ -f $wfx_spi_overlay ]; then
+			echo "Setup:    $wfx_spi_overlay file present"
+		else
+			echo "Setup:    Error: $wfx_spi_overlay file missing"
+			missing_files=$(( $missing_files + 1 ))
+		fi
 		# Check WFx SPI driver modules existence
 		if [ -z "$wfx_core_module" ]; then
-			missing_files=$missing_files + 1
+			missing_files=$(( $missing_files + 1 ))
 			echo "Setup:    Error: Missing WFX core driver   ($wfx_core_link)"
 			echo "                 You need to check you WFX driver installation! Make sure you have the $wfx_core_link file!"
 		fi
 		if [ -z "$wfx_spi_module" ]; then
-			missing_files=$missing_files + 1
+			missing_files=$(( $missing_files + 1 ))
 			echo "Setup:    Error: Missing WFX SPI  driver   ($wfx_spi_link)"
 			echo "                 You need to check you WFX driver installation! Make sure you have the $wfx_spi_link file!"
 		fi
@@ -155,12 +160,13 @@ else
 fi
 
 if [ -z "$wfx_fw_file" ]; then
-	missing_files=$missing_files + 1
+	missing_files=$(( $missing_files + 1 ))
 	echo "Setup:    Error: Missing WFX FW file driver ($wfx_fw_file)"
 	echo "                 You need to check you WFX driver installation! Make sure you have the $wfx_fw_file file!"
 fi
+
 if [ -z "$wfx_pds_file" ]; then
-	missing_files=$missing_files + 1
+	missing_files=$(( $missing_files + 1 ))
 	echo "Setup:    Error: Missing WFX FW file driver ($wfx_pds_file)"
 	echo "                 You need to check you WFX driver installation! Make sure you have the $wfx_pds_file file!"
 fi
@@ -168,17 +174,23 @@ fi
 if [ -n "$wfx_fw_file" ]; then
 	echo "Setup:    WFX Firmware      $wfx_fw_link ($wfx_fw_base)"
 fi
+
 if [ -n "$wfx_pds_file" ]; then
 	echo "Setup:    WFX PDS           $wfx_pds_link ($wfx_pds_base)"
 fi
+
 if [ -n "$wfx_power_mode_option" ]; then
 	echo "User:     WFX Power mode    $wfx_power_mode_option"
 fi
 
+if [ $startup_errors -gt 0 ]; then
+	echo "Startup:  ERROR: There are $startup_errors error(s)!"
+fi
 if [ $missing_files -gt 0 ]; then
-	echo "Setup:   ERROR: There are $missing_files missing files!"
-	echo "         Check your installation based on the above recommendations, and try again."
-	echo "         It may be worth using 'sudo halt' (to make sure any change is saved), waiting for the activity led to stop blinking then power-cycling the Pi."
+	echo "Setup:    ERROR: There are $missing_files missing file(s)!"
+	echo "           Check your installation based on the above recommendations, and try again."
+	echo "           It may be worth using 'sudo halt' (to make sure any change is saved),"
+	echo "           waiting for the activity led to stop blinking, then power-cycling the Pi."
 	exit 1
 else
 	# Check if driver has already been loaded
