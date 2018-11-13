@@ -25,7 +25,7 @@ sudo wget https://github.com/raspberrypi/linux/archive/$LINUX_GIT_HASH.zip
 unzip $LINUX_GIT_HASH.zip
 mv linux-$LINUX_GIT_HASH/* $BUILD_DIR
 rm --recursive --force linux-$LINUX_GIT_HASH
-rm $LINUX_GIT_HASH.zip
+rm --force  $LINUX_GIT_HASH.zip
 
 ## Retrieve the original Pi kernel configuration file
 sudo modprobe configs
