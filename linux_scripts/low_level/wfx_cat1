@@ -2,10 +2,11 @@
 
 . wfx_colors
 
-if [ -e "$1" ];
-then
-	echo "───────────────────   $(realpath $1)"
-	wfx_cat0 $1
-else
-	printf "───────────────────   %-40s ${INV}NO_SUCH_FILE${NO}\n" "$1"
-fi
+for f in "$@"; do
+    if [ -e "$f" ]; then
+        printf "───────────────────   %-40s\n" "$(realpath $f)"
+        grep -v -e '^#' -e '^$' $1
+    else
+        printf "───────────────────   %-40s ${INV}NO_SUCH_FILE${NO}\n" "$f"
+    fi
+done
