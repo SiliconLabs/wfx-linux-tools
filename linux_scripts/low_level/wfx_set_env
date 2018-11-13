@@ -58,11 +58,13 @@ check_hat()
     fi
 }
 
-# Check that no process <name> is running
-check_no_process ()
+# Kill process if need be and check that it is not restarted
+kill_check ()
 {
-    if pidof "$1"; then
-	>&2 echo "Process $1 is already running, exiting"
+    killall -q "$@"
+    sleep 2
+    if pidof "$@"; then
+	>&2 echo "At least one of the process ($1) is still running, exiting"
 	exit 1
     fi
 }
