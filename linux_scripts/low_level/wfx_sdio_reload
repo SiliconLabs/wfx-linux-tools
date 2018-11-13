@@ -6,7 +6,7 @@ check_root
 modprobe -v wfx -r
 
 if [ ${model} == "Pi" ]; then
-	echo 3f300000.mmc | tee /sys/bus/platform/drivers/mmc-bcm2835/unbind
+	echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind
 fi
 
 if [ "${1}" == "clear" ]; then
@@ -14,7 +14,7 @@ if [ "${1}" == "clear" ]; then
 fi
 
 if [ ${model} == "Pi" ]; then
-	echo 3f300000.mmc | tee /sys/bus/platform/drivers/mmc-bcm2835/bind
+	echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/bind
 fi
 
 modprobe -v wfx

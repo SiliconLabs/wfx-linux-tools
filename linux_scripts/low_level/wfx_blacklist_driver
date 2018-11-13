@@ -56,6 +56,6 @@ else
 		fi
 	fi
 
-	printf "${new_lines}" | tee $blacklist_file > /dev/null
+	printf "${new_lines}" > $blacklist_file
 
 fi

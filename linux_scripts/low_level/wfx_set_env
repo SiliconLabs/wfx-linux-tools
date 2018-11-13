@@ -3,9 +3,6 @@
 kernel=$(uname -r)
 model=$(cat /sys/firmware/devicetree/base/model | cut -d ' ' -f 2 )
 
-# Set home directory to work even when used by root
-HOME="/home/pi"
-
 # Set SILABS_ROOT if not already done
 : ${SILABS_ROOT:=/home/pi/siliconlabs}
 
