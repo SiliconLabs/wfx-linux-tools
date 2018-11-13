@@ -34,5 +34,4 @@ fi
 
 set -ex
 hostapd ${HOSTAPD_CONF} -B -t
-systemctl restart dnsmasq
 set +ex
