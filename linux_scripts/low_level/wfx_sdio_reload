@@ -8,7 +8,7 @@ modprobe -v wfx -r
 
 echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind
 
-if [ "${1}" == "clear" ]; then
+if [ "${1}" == "-C" || "${1}" == "--clear"]; then
 	dmesg -C
 fi
 

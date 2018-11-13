@@ -5,7 +5,7 @@ check_root
 
 modprobe -v wfx -r
 
-if [ "${1}" == "clear" ]; then
+if [ "${1}" == "-C" || "${1}" == "--clear"]; then
     dmesg -C
 fi
 
