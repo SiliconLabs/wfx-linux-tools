@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Current configuration"
-. ./wfx_config.sh
+. wfx_config
 echo ""
 
 kernel=$(uname -r)
@@ -13,8 +13,8 @@ wfx_core_base=/lib/modules/$kernel/kernel/drivers/net/wireless/siliconlabs/wfx/w
 wfx_sdio_base=/lib/modules/$kernel/kernel/drivers/net/wireless/siliconlabs/wfx/wfx_wlan_sdio.ko
 wfx_spi_base=/lib/modules/$kernel/kernel/drivers/net/wireless/siliconlabs/wfx/wfx_wlan_spi.ko
 wfx_fw_base=/lib/firmware/wfm_wf200.sec
-wfx_pds_base=/lib/firmware/pds_wf200.json
-wfx_core_conf=/etc/modprobe.d/wfx_core.conf
+wfx_pds_base=/lib/firmware/wf200.pds
+wfx_core_conf=/etc/modprobe.d/wfx.conf
 
 # if using symbolic links, use the links, otherwise use the files
 wfx_core_link=$(readlink $wfx_core_base)
