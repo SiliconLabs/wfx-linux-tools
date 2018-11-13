@@ -7,7 +7,7 @@ echo "Start   configuration:"
 echo ""
 
 wfx_disable_sdio_overlay
-wfx_disable_spi_overlay
+wfx_enable_spi_overlay
 
 wfx_blacklist_driver brcmfmac
 wfx_blacklist_driver wfx_wlan_sdio
