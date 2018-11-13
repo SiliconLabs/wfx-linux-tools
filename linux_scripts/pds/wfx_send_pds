@@ -6,7 +6,7 @@
 if [ -f "${1}" ];
 then
 	set -ex
-	wfx_pds_compress ${1} /sys/kernel/debug/ieee80211/phy0/wfx/send_pds
+	pds_compress ${1} /sys/kernel/debug/ieee80211/phy*/wfx/send_pds
 	set +ex
 else
 	printf "${LRED}No input file for 'send_pds'!${NO}\n"
