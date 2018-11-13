@@ -24,6 +24,8 @@ fi
 blck_sdio[$i]=$(cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v ^$ | grep sdio)
 blck_spi[$i]=$( cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v ^$ | grep spi )
 blck_wfx[$i]=$( cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v ^$ | grep wfx$)
+blck_brcm[$i]=$( cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v ^$ | grep brcmfmac$)
+
 
 if [ -n "${blck_sdio[$i]}" ]; then
 	echo ${blck_sdio[$i]}
@@ -35,6 +37,10 @@ fi
 
 if [ -n "${blck_wfx[$i]}" ]; then
 	echo ${blck_wfx[$i]}
+fi
+
+if [ -n "${blck_brcm[$i]}" ]; then
+	echo ${blck_brcm[$i]}
 fi
 
 # Check which overlays are enabled
