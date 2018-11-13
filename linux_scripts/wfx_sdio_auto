@@ -26,7 +26,7 @@ if [ -n "$config_message" ]; then
 else
 	if [ -n "$startup_message" ]; then
 		echo "${startup_message}"
-		echo "you can now use 'sdio_reload' to load the WFx200 driver."
+		echo "you can now use 'sudo wfx_sdio_reload' to load the WFx200 driver."
 		echo "the WFx200 SDIO driver will be loaded automatically at boot"
 	fi
 fi
