@@ -30,14 +30,18 @@ FW_DMESG_GREP="Label."
 ORIGIN_PWD=$(pwd)
 
 # Check that the script is run by root
-check_root ()
+check_root()
 {
-    # true is used to allow this script to run with -e option
-    [ $(id -u) != 0 ] && echo "Please run this script as root (running 'sudo $0' should work)" && exit 1 || true
+    if [ $(id -u) != 0 ]; then
+        echo "Please run this script as root (running 'sudo $0' should work)" >&2
+        exit 1
+    fi
 }
 
 check_rpi()
 {
-    # 'true' is used to allow this script to run with -e option
-    ! grep -q 'NAME="Raspbian GNU/Linux"' /etc/os-release && echo "You must run this script from a Raspberry" && exit 1 || true
+    if ! grep -q 'NAME="Raspbian GNU/Linux"' /etc/os-release; then
+        echo "You must run this script from a Raspberry" >&2
+        exit 1
+    fi
 }
