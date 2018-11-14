@@ -33,6 +33,4 @@ dnsmasq -C "$DNSMASQ_CONF"
 # Start hostapd
 hostapd -B "$HOSTAPD_CONF"
 
-# Enable ip forward and masquerading
-echo 1 > /proc/sys/net/ipv4/ip_forward
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+# TODO: start HTTP server with a static page
