@@ -49,6 +49,7 @@ then
 				pds_in=${pds_listed}
 				pds_out=$(echo ${pds_in} | sed -e 's\pds.in\pds\' )
 				echo "  ${pds_in} is a pds.in file in GIT. Compressing it to ${STORED_PDS_PATH} as ${pds_out}"
+				mkdir -p ${STORED_PDS_PATH}
 				pds_compress ${GIT_PDS_DIR}/${pds_in} ${STORED_PDS_PATH}/${pds_out}
 				set -ex
 				rm -f /lib/firmware/${PDS_FILE}
