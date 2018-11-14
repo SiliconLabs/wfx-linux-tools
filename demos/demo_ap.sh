@@ -1,13 +1,15 @@
 #!/bin/bash -ex
 
-# Configure WLAN interface for access point mode
+# Start a demo in access point mode with a local web server
 
 . wfx_set_env
 check_root
 
 INTERFACE="wlan0"
 ADDRESS="192.168.51.1/24"
+# TODO: write dnsmasq.conf
 DNSMASQ_CONF=$SILABS_ROOT/wfx_tools/demos/conf/dnsmasq.conf
+# TODO: write hostapd.conf
 HOSTAPD_CONF=$SILABS_ROOT/wfx_tools/demos/conf/hostapd.conf
 
 # Check wlan0
