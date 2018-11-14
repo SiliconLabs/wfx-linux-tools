@@ -12,7 +12,7 @@ tiny_cat()
         printf "───────────────────  %-40s\n" "$(realpath $1)"
         grep -v -e '^#' -e '^$' $1
     else
-        printf "───────────────────  %-40s ${INV}NO_SUCH_FILE${NO}\n" "$1"
+        printf "───────────────────  ${INV}%-40s NO_SUCH_FILE${NO}\n" "$1"
     fi
 }
 
