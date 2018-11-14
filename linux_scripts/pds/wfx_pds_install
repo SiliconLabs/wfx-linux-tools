@@ -1,0 +1,44 @@
+#!/bin/bash
+
+. wfx_set_env
+check_root
+
+if [ ! -d "$GITHUB_PDS_PATH" ] && ! [ -e "$1" ]; then
+    echo "Cannot find directory $GITHUB_PDS_PATH" >&2
+    exit 1
+fi
+
+if [ $# -gt 0 ]; then
+    INFILE=$1
+    if [ ! -e "$INFILE" ] && [ -e $GITHUB_PDS_PATH/$1 ]; then
+        INFILE=$GITHUB_PDS_PATH/$1
+    fi
+else
+    BOARD=$(wfx_board)
+    if [ -z "$BOARD" ]; then
+        echo "Cannot identify your board" >&2
+        exit 1
+    fi
+    INFILE=$GITHUB_PDS_PATH/$(wfx_board).pds.in
+fi
+
+if [ ! -e "$INFILE" ]; then
+    echo "Cannot find PDS $INFILE" >&2
+    echo "Possible PDS:"
+    (cd $GITHUB_PDS_PATH; ls -1 *.pds.in | sed 's/^/  /')
+    exit 1
+fi
+
+INFILE_BASE=$(basename $INFILE)
+OUTFILE_BASE=${INFILE_BASE%.pds.in}.pds
+OUTFILE=/lib/firmware/$OUTFILE_BASE
+
+if [ "$INFILE_BASE" = "$OUTFILE_BASE" ]; then
+    echo "Input file is expected to end with '.pds.in'" >&2
+    exit 1
+fi
+
+printf "Installing PDS %s\n" "$INFILE"
+set -ex
+pds_compress $INFILE $OUTFILE
+ln -sfn $OUTFILE_BASE /lib/firmware/wf200.pds
