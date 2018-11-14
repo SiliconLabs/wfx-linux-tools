@@ -29,7 +29,9 @@ then
 		then
 			echo "  ${pds} is 'in store' (${STORED_PDS_PATH})"
 			set -ex
+			# Remove previous PDS link
 			rm -f /lib/firmware/${PDS_FILE}
+			# Create new PDS link
 			ln -sf ${STORED_PDS_PATH}/${pds}   /lib/firmware/${PDS_FILE}
 			set +ex
 			PDS_SET=1
@@ -50,11 +52,17 @@ then
 				pds_out=$(echo ${pds_in} | sed -e 's\pds.in\pds\' )
 				echo "  ${pds_in} is a pds.in file in GIT. Compressing it to ${STORED_PDS_PATH} as ${pds_out}"
 				mkdir -p ${STORED_PDS_PATH}
-				pds_compress ${GIT_PDS_DIR}/${pds_in} ${STORED_PDS_PATH}/${pds_out}
 				set -ex
+				LOCAL_PWD=$(pwd)
+				cd ${GIT_PDS_DIR}
+				# Compress PDS file
+				pds_compress ${GIT_PDS_DIR}/${pds_in} ${STORED_PDS_PATH}/${pds_out}
+				# Remove previous PDS link
 				rm -f /lib/firmware/${PDS_FILE}
+				# Create new PDS link
 				ln -sf ${STORED_PDS_PATH}/${pds_out}   /lib/firmware/${PDS_FILE}
 				set +ex
+				cd ${LOCAL_PWD}
 				PDS_SET=1
 			fi
 		fi
