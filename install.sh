@@ -15,6 +15,4 @@ for f in $(find -type f -name "wfx_*") pds_compress; do
     fi
 done
 
-# wfx_overlay_compile linux_overlays/wfx-spi-overlay.dts linux_overlays/wfx-sdio-overlay.dts
-install -m 644 linux_overlays/wfx-spi.dtbo /boot/overlays/
-install -m 644 linux_overlays/wfx-sdio.dtbo /boot/overlays/
+wfx_overlay_compile linux_overlays/wfx-spi-overlay.dts linux_overlays/wfx-sdio-overlay.dts
