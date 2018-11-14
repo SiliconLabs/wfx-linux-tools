@@ -36,7 +36,7 @@ if [ "${FW_SET}" == 0 ]; then
 		if [ "${1}" == "${fw_tag}" ];
 		then
 			set -ex
-			git -C ${GITHUB_FIRMWARE_PATH}/ checkout ${fw_tag}
+			git -C ${GITHUB_FIRMWARE_PATH}/ checkout --quiet ${fw_tag}
 			set +ex
 			GIT_FWS=$( ls -v ${GIT_WFX_DIR} | grep ${FW_GREP} )
 			nb_fw_files=0
