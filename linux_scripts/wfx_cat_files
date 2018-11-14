@@ -2,7 +2,7 @@
 
 . wfx_set_env
 check_root
-check_pi
+check_rpi
 
 . wfx_colors
 
