@@ -8,8 +8,6 @@ model=$(cat /sys/firmware/devicetree/base/model | cut -d ' ' -f 2)
 if [ ${model} == "Pi" ]; then
 	${LIST} /boot/cmdline.txt             critical
 	${LIST} /boot/config.txt              critical
-	${LIST} /boot/kernel7_4.4.50-v7+.img  critical
-	${LIST} /boot/bcm2710-rpi-3-b_4.4.50-v7+.dtb critical
 	${LIST} /boot/overlays/pi3-disable-bt.dtbo   critical
 	${LIST} /boot/overlays/wfx-sdio.dtbo   critical
 	${LIST} /boot/overlays/wfx-spi.dtbo    critical
