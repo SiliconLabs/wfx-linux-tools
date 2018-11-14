@@ -3,7 +3,23 @@
 . wfx_set_env
 check_root
 
-set -ex
-dtc -I dts -O dtb -o ${1}.dtbo ${1}-overlay.dts
-cp -f ${1}.dtbo /boot/overlays
-set +ex
+if [ $# -lt 1 ]; then
+    echo "Expecting at least one argument" >&2
+    exit 1
+fi
+
+for f in "$@"; do
+    INFILE=$f
+    INFILE_BASE=$(basename $INFILE)
+    OUTFILE_BASE=${INFILE_BASE%-overlay.dts}
+    OUTFILE=/boot/overlays/$OUTFILE_BASE
+
+    if [ "$INFILE_BASE" = "$OUTFILE_BASE" ]; then
+        echo "Input file is expected to end with '-overlay.dts'" >&2
+        exit 1
+    fi
+
+    set -ex
+    dtc -W no-unit_address_vs_reg $INFILE -o $OUTFILE
+    set +ex
+done
