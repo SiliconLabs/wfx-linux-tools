@@ -11,7 +11,7 @@ rm -f /usr/local/bin/pds_compress
 for f in $(find -type f -name "wfx_*") pds_compress; do
     b=$(basename $f)
     if [[ $b != *.* && $b != *~ ]]; then
-	ln -s $(realpath ${f}) /usr/local/bin/$b
+        ln -s $(realpath ${f}) /usr/local/bin/$b
     fi
 done
 
