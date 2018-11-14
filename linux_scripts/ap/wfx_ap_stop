@@ -1,9 +1,0 @@
-#!/bin/sh
-# wfx_ap_stop stops the ap
-. wfx_set_env
-check_root
-
-set -ex
-# TODO: check if -w is needed
-killall hostapd
-set +ex
