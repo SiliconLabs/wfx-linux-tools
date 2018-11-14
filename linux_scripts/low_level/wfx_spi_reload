@@ -3,10 +3,12 @@
 . wfx_set_env
 check_root
 
+set -ex
 modprobe -v wfx -r
 
-if [ "${1}" == "-C" || "${1}" == "--clear"]; then
+if [ "${1}" == "-C" ] || [ "${1}" == "--clear" ]; then
     dmesg -C
 fi
 
 modprobe -v wfx
+set +ex

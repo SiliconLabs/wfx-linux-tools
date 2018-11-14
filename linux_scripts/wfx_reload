@@ -1,5 +1,8 @@
 #!/bin/bash
 
+. wfx_set_env
+check_root
+
 case "$(wfx_bus)" in
     spi)
         wfx_spi_reload "$@"

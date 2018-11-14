@@ -4,14 +4,16 @@
 check_root
 check_rpi
 
+set -ex
 modprobe -v wfx -r
 
 echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind
 
-if [ "${1}" == "-C" || "${1}" == "--clear"]; then
+if [ "${1}" == "-C" ] || [ "${1}" == "--clear" ]; then
 	dmesg -C
 fi
 
 echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/bind
 
 modprobe -v wfx
+set +ex
