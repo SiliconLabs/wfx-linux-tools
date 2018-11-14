@@ -1,5 +1,9 @@
 #!/bin/bash
 
+. wfx_set_env
+check_root
+check_pi
+
 . wfx_colors
 
 tiny_cat()
