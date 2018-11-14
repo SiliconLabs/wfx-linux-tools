@@ -8,72 +8,91 @@ then
 	echo "No WFX driver selected, listing possible driver sources..."
 	echo "You can proceed with:"
 	echo "   wfx_driver_compile <driver> ; wfx_use_driver <driver> for any of the following versions:"
+	echo "   NB: Will not work with old-style drivers, prior to DRV1.4"
 	. wfx_driver_sources
+	exit 1
 else
 	. wfx_driver_sources "quiet"
 	DRV=${1}
 fi
 
-for folder in ${STORED_LOCAL_SOURCES};
-do
-	echo " + ${STORED_DRIVERS_SOURCES_PATH}/${folder}" ;
-	if [ "${folder}" = "${DRV}" ]; then
-		echo "the selected ${DRV} driver exists in ${STORED_DRIVERS_SOURCES_PATH}"
-		match=1
+source_match=0
+git_source=0
+local_source=0
+
+for tag in ${GIT_DRIVER_TAGS}; do
+	if [ "${tag}" = "${DRV}" ]; then
+		echo " ${DRV} found in git driver tags"
+		source_match=1
+		git_source=1
+		# Create STORED_DRIVERS_SOURCES_PATH if not already existing
+		if [ ! -d ${STORED_DRIVERS_SOURCES_PATH} ]; then
+			mkdir -p ${STORED_DRIVERS_SOURCES_PATH}
+		fi
 		set -ex
-		cd ${STORED_DRIVERS_SOURCES_PATH}/${folder}
-		make clean modules
-		KOS=${STORED_DRIVERS_PATH}/${kernel}/${DRV}
-		mkdir -p ${KOS}
-		cp -f *.ko ${KOS}
+		mkdir -p ${STORED_DRIVERS_SOURCES_PATH}/${DRV}
+		# Checkout git tag, and copy files to STORED_DRIVERS_SOURCES_PATH
+		git -C ${GITHUB_DRIVER_PATH}/ checkout ${DRV}
+		cp -rf ${GITHUB_DRIVER_PATH}/wfx/* ${STORED_DRIVERS_SOURCES_PATH}/${DRV}
+		COMPILE_PATH=${STORED_DRIVERS_SOURCES_PATH}/${DRV}
 		set +ex
-		exit 0
 	fi
 done
 
-
-exit 0
-
-
-
-if [ -f ${GIT_LOCAL_SOURCES}/${kernel}/${DRV}/wfx.ko ]
-then
-	MODULE="wfx.ko"
-else
-	if [ -f ${STORED_DRIVERS_PATH}/${kernel}/${DRV}/wfx_core.ko ]
-	then
-		MODULE="wfx_core.ko"
-	else
-		MODULE=""
+for folder in ${STORED_LOCAL_SOURCES}; do
+	if [ "${folder}" = "${DRV}" ]; then
+		echo " ${DRV} found in local sources tags"
+		source_match=1
+		local_source=1
+		COMPILE_PATH=${STORED_LOCAL_SOURCES}/${DRV}
 	fi
+done
+
+if [ $source_match -eq 0 ]; then
+	echo "${DRV} not found in git tags or local folders."
+	echo "Valid values are:"
+	. wfx_driver_sources
+	exit 1
 fi
 
-exit 0
+if [ -d ${COMPILE_PATH} ]; then
+	echo "the selected ${DRV} driver exists in ${COMPILE_PATH}"
+	match=1
+	LOCAL_PWD=$(pwd)
+	set -ex
+	# Compile driver
+	cd ${COMPILE_PATH}
+	make clean modules
+	# Create kernel/tag directory
+	KO_PATH=${STORED_DRIVERS_PATH}/${kernel}/${DRV}
+	mkdir -p ${KO_PATH}
+	# Move .ko to kernel directory
+	mv *.ko ${KO_PATH}
+	MODULE="wfx.ko"
+	set +ex
+fi
 
-echo "DRV '${DRV}'"
-echo "MODULE '${MODULE}'"
-
-if [ -d ${KOS} ];
+if [ -d ${KO_PATH} ];
 then
 	if [ -z MODULE ];
 	then
-		echo "${KOS} directory exists, but doesn't contain WFX modules (.ko)!"
+		echo "${KO_PATH} directory exists, but doesn't contain WFX modules (.ko)!"
 		echo "  Please check the content of this directory before proceeding!"
 		echo "  You may need to use"
 		echo "    wfx_compile_driver <path>"
 		echo "  to compile the driver first"
 	else
-		# get rid of 'old style' driver folders to use 'extra' instead
-		rm -fr /lib/modules/${kernel}/kernel/drivers/net/wireless/siliconlabs
+		set -ex
+		# Remove previous link
 		rm -fr /lib/modules/${kernel}/extra
-		ln -s -f ${KOS}   /lib/modules/${kernel}/extra
-		echo "updating modules dependencies..."
+		# Create link from 'extra' to our new module folder
+		ln -s -f ${KO_PATH}   /lib/modules/${kernel}/extra
 		depmod -a | grep wfx
-		echo "updating modules dependencies done"
-		modinfo wfx_core
+		modinfo wfx -v
+		set -ex
 	fi
 else
-	echo "${KOS} directory doesn't exist! Please use one of the following values:"
+	echo "${KO_PATH} directory doesn't exist! Please use one of the following values:"
 	wfx_drivers
 fi
 
