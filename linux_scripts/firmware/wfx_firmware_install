@@ -1,0 +1,34 @@
+#!/bin/bash
+
+. wfx_set_env
+check_root
+
+DEFAULT_CHIP_KEY=C0
+
+if [ ! -d "$GITHUB_FIRMWARE_PATH" ]; then
+    echo "Cannot find directory $GITHUB_FIRMWARE_PATH" >&2
+    exit 1
+fi
+
+if [ $# -gt 0 ]; then
+    if ! git -C $GITHUB_FIRMWARE_PATH checkout $1; then
+        echo "Cannot get tag $1" >&2
+        echo "Possible tags:"
+        git -C $GITHUB_FIRMWARE_PATH tag | sed 's/^/  /'
+        exit 1
+    fi
+fi
+
+FIRMWARE_VER=$(git -C $GITHUB_DRIVER_PATH describe --tags --dirty)
+
+printf "Installing driver %s\n" "$FIRMWARE_VER"
+set -ex
+for i in $GITHUB_DRIVER_PATH/wfm_wf200_??.sec; do
+    INFILE=$i
+    INFILE_BASE=$(basename $INFILE)
+    OUTFILE_BASE=${INFILE_BASE%.sec}-$FIRMWARE_VER.sec
+    OUTFILE=/lib/firmware/$OUTFILE_BASE
+    cp $INFILE $OUTFILE
+    ln -sfn $OUTFILE_BASE /lib/firmware/$INFILE_BASE
+done
+ln -sfn wfm_wf200_$CHIP_KEY.sec /lib/firmware/wfm_wf200.sec
