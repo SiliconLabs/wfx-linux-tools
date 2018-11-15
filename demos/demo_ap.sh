@@ -7,9 +7,7 @@ check_root
 
 INTERFACE="wlan0"
 ADDRESS="192.168.51.1/24"
-# TODO: write dnsmasq.conf
 DNSMASQ_CONF=$SILABS_ROOT/wfx_tools/demos/conf/dnsmasq.conf
-# TODO: write hostapd.conf
 HOSTAPD_CONF=$SILABS_ROOT/wfx_tools/demos/conf/hostapd.conf
 
 # Check wlan0
@@ -22,6 +20,7 @@ fi
 kill_check wpa_supplicant hostapd dnsmasq
 
 # Tell dhcpcd to release WLAN interface
+# This will also remove control from lxpanel
 dhcpcd --release "$INTERFACE"
 
 # Set static IP configuration
