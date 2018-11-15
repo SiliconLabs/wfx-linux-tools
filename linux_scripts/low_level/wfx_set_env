@@ -24,7 +24,7 @@ check_root()
 check_no_root()
 {
     if [ $(id -u) == 0 ]; then
-        echo "Running this script as root is recommended" >&2
+        echo "Running this script as root is not recommended" >&2
         exit 1
     fi
 }
