@@ -24,6 +24,7 @@
 #    - Recursive defines
 #    - Support for strings (defines in strings, comment in strings, etc...)
 
+import os
 import sys
 import re
 import argparse
@@ -38,6 +39,8 @@ class AnnotOut():
         self.loc = DebugInfo(loc.path, loc.line)
         self.val = val
 
+# Directory to search includes
+g_includes = [ "." ]
 # Definitions declared by user using #define
 g_defs = { }
 # Result. Use of arrays instead of a string is a trick to avoid declaring it global in each function
@@ -115,7 +118,13 @@ def handle_include(dbg_info, line):
             pr_info(dbg_info, 'error: bad #include directive')
             exit(g_ret_value)
         else:
-            with open(m.group(1)) as f_inc:
+            file_list = (os.path.join(dir, m.group(1)) for dir in g_includes)
+            try:
+                file = next(f for f in file_list if os.path.isfile(f))
+            except StopIteration:
+                pr_info(dbg_info, 'error: cannot find file "%s"' % m.group(1))
+                exit(g_ret_value)
+            with open(file) as f_inc:
                 dbg_info_inc = DebugInfo(m.group(1))
                 parse(dbg_info_inc, f_inc)
         return ""
@@ -331,12 +340,15 @@ def formattiny(f_out, pds):
 
 def main(args):
     global g_ret_value
+    global g_includes
     parser = argparse.ArgumentParser(usage="%(prog)s [options] INPUT [OUTPUT]",
             description="Generate a compressed version of PDS from a full PDS")
     parser.add_argument("input", metavar='INPUT',
                   help="input file (except C format, all output formats can be used as input)")
     parser.add_argument("output", metavar='OUTPUT', nargs="?",
                   help="output file (standard output if not specified)")
+    parser.add_argument("-I", "--include", action='append', dest="includes", metavar="DIR",
+                  help="search includes in this subdirectory")
     parser.add_argument("-D", "--define", action='append', dest="defines", metavar="DEF[=VAL]",
                   help="predefine DEF with value VAL")
     parser.add_argument("-f", "--force", action="store_true", dest="force",
@@ -354,6 +366,7 @@ def main(args):
     options = parser.parse_args()
     if options.input:
         f_in = open(options.input, "r")
+        g_includes.insert(0, os.path.dirname(options.input))
         dbg_info = DebugInfo(options.input)
     else:
         f_in = sys.stdin
@@ -367,6 +380,8 @@ def main(args):
         if var in g_defs:
             pr_info(DebugInfo("command line"), 'warning: "%s" redefined' % var)
         g_defs[var] = val
+    if options.includes:
+        g_includes = options.includes + g_includes
 
     parse(dbg_info, f_in)
     if g_ret_value and not options.force:
