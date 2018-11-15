@@ -19,16 +19,20 @@ if [ $# -gt 0 ]; then
     fi
 fi
 
-FIRMWARE_VER=$(git -C $GITHUB_DRIVER_PATH describe --tags --dirty)
+FIRMWARE_VER=$(git -C $GITHUB_FIRMWARE_PATH describe --tags --dirty)
 
 printf "Installing firmware %s\n" "$FIRMWARE_VER"
-set -ex
-for i in $GITHUB_DRIVER_PATH/wfm_wf200_??.sec; do
+for i in $GITHUB_FIRMWARE_PATH/wfm_wf200_??.sec; do
     INFILE=$i
     INFILE_BASE=$(basename $INFILE)
     OUTFILE_BASE=${INFILE_BASE%.sec}-$FIRMWARE_VER.sec
     OUTFILE=/lib/firmware/$OUTFILE_BASE
+    set -ex
     cp $INFILE $OUTFILE
     ln -sfn $OUTFILE_BASE /lib/firmware/$INFILE_BASE
+    set +ex
 done
-ln -sfn wfm_wf200_$CHIP_KEY.sec /lib/firmware/wfm_wf200.sec
+
+set -ex
+ln -sfn wfm_wf200_$DEFAULT_CHIP_KEY.sec /lib/firmware/wfm_wf200.sec
+set +ex

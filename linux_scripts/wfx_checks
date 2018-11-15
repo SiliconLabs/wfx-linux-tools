@@ -208,7 +208,7 @@ else
 				fi
 				wfx_startup_wrong_keyset=$(echo "$wfx_loading" | grep " keyset is incompatible")
 				if [ -n "$wfx_startup_wrong_keyset" ]; then
-						printf "Keyset    ${RED}Error: ($wfx_startup_wrong_keyset)${NO} ${INV}You need to 'sudo wfx_firmware install' the correct keyset for your part${NO}\n"
+						printf "Keyset    ${RED}Error: ($wfx_startup_wrong_keyset)${NO} ${INV}You need to 'sudo wfx_firmware_install' the correct keyset for your part${NO}\n"
 				fi
 				printf "== wfx dmesg information:\n"
 				printf "${INV}$(dmesg | grep wfx)${NO}\n"
