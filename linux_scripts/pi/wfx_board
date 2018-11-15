@@ -6,7 +6,7 @@ check_hat
 
 get_letter()
 {
-    local hex=$(printf "%x" $1+0x41)
+    local hex=$(printf "%x" $(( $1+0x41 )) )
     printf "\x$hex"
 }
 
@@ -16,9 +16,9 @@ product_id=$(cat /proc/device-tree/hat/product_id)
 product_ver=$(cat /proc/device-tree/hat/product_ver)
 uuid=$(cat /proc/device-tree/hat/uuid)
 
-variant_ver=$((($product_ver >> 12) & 0x0F))
-  major_ver=$((($product_ver >>  8) & 0x0F))
-  minor_ver=$((($product_ver >>  0) & 0xFF))
+variant_val=$((($product_ver >> 12) & 0x0F))
+  major_val=$((($product_ver >>  8) & 0x0F))
+  minor_val=$((($product_ver >>  0) & 0xFF))
 
 board_id=$(($product_id))
 variant=$(get_letter $variant_val)
