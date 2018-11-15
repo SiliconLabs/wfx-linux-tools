@@ -1,35 +1,15 @@
 # This file is to be sourced by other wfx scripts
 
-kernel=$(uname -r)
-
 # Set SILABS_ROOT if not already done
 : ${SILABS_ROOT:=/home/pi/siliconlabs}
 
 # github clone directories
-GITHUB_TOOLS_PATH="${SILABS_ROOT}/wfx_tools"
-GITHUB_DRIVER_PATH="${SILABS_ROOT}/wfx_linux_driver"
-GITHUB_FIRMWARE_PATH="${SILABS_ROOT}/wfx_firmware"
-GITHUB_WFX_PATH="${GITHUB_FIRMWARE_PATH}"
-GITHUB_PDS_PATH="${GITHUB_FIRMWARE_PATH}"
+GITHUB_TOOLS_PATH="$SILABS_ROOT/wfx_tools"
+GITHUB_DRIVER_PATH="$SILABS_ROOT/wfx_linux_driver"
+GITHUB_FIRMWARE_PATH="$SILABS_ROOT/wfx_firmware"
+GITHUB_WFX_PATH="$GITHUB_FIRMWARE_PATH"
+GITHUB_PDS_PATH="$GITHUB_FIRMWARE_PATH"
 
-# locally generated files root
-SILABS_OUT="${SILABS_ROOT}/out"
-# local driver versions ( .ko files under <kernel>/<wfx_release> )
-STORED_DRIVERS_PATH="${SILABS_OUT}/driver"
-# local driver sources ( .c/.h/Makefile files under <wfx_release> )
-STORED_DRIVERS_SOURCES_PATH="${SILABS_OUT}/driver/src"
-# local firmware files ( generally empty )
-STORED_FIRMWARES_PATH="${SILABS_OUT}/firmware"
-# local pds files ( .pds.in and .pds files )
-STORED_PDS_PATH="${SILABS_OUT}/pds"
-
-# Other useful variables
-FW_DMESG_GREP="Label."
-
-# Current folder
-ORIGIN_PWD=$(pwd)
-
-# Check that the script is run by root
 check_root()
 {
     if [ $(id -u) != 0 ]; then
