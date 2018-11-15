@@ -38,6 +38,14 @@ check_root()
     fi
 }
 
+check_no_root()
+{
+    if [ $(id -u) == 0 ]; then
+        echo "Running this script as root is recommended" >&2
+        exit 1
+    fi
+}
+
 check_rpi()
 {
     if ! grep -q 'NAME="Raspbian GNU/Linux"' /etc/os-release; then
