@@ -6,7 +6,7 @@ KERNEL_VERSION=$(uname -r)
 
 ## Create a new build directory and cd in this directory
 BUILD_DIR=$HOME/build
-rm -r $BUILD_DIR
+rm -fr $BUILD_DIR
 mkdir -p $BUILD_DIR
 cd $BUILD_DIR
 
