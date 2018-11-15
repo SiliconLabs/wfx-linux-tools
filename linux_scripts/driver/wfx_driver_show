@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (c) 2018, Silicon Laboratories
+# See COPYING for license.
 
 INSTALLED_FILE="$(modinfo -n wfx 2> /dev/null)"
 INSTALLED_VER="$(modinfo -F version wfx 2> /dev/null)"

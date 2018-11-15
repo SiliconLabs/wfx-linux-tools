@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (c) 2018, Silicon Laboratories
+# See COPYING for license.
 
 wfx_station_forget_all_networks
 
@@ -42,4 +44,3 @@ fi
 
 /sbin/wpa_cli enable_network 0 1> /dev/null
 /sbin/wpa_cli select_network 0 1> /dev/null
-set +ex

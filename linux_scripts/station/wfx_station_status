@@ -1,5 +1,6 @@
 #!/bin/sh
-# wfx_station_status
+# Copyright (c) 2018, Silicon Laboratories
+# See COPYING for license.
+
 set -ex
 wpa_cli status
-set +ex

@@ -1,7 +1,9 @@
 #!/bin/bash
+# Copyright (c) 2018, Silicon Laboratories
+# See COPYING for license.
 
-. wfx_set_env
 . wfx_colors
+. wfx_set_env
 
 echo "Current configuration"
 . wfx_config

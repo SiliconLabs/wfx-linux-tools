@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (c) 2018, Silicon Laboratories
+# See COPYING for license.
 
 if [ ! -d /var/run/wpa_supplicant ]; then 
   echo "wpa_supplicant is not launched" >&2

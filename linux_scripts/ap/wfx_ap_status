@@ -1,6 +1,6 @@
 #!/bin/sh
-# wfx_ap_status retrieves the AP status.
-# If 'grep_string' is set, uses it to filter the results
+# Copyright (c) 2018, Silicon Laboratories
+# See COPYING for license.
 
 if [ -n "$1" ];
 then

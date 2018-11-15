@@ -1,10 +1,10 @@
 #!/bin/bash
-
-. wfx_set_env
-check_root
-check_rpi
+# Copyright (c) 2018, Silicon Laboratories
+# See COPYING for license.
 
 . wfx_colors
+. wfx_set_env
+check_rpi
 
 tiny_cat()
 {
@@ -35,4 +35,3 @@ tiny_cat /etc/network/interfaces
 tiny_cat /etc/wpa_supplicant/wpa_supplicant.conf
 
 tiny_cat /etc/hostapd/hostapd.conf
-

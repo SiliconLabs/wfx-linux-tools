@@ -1,8 +1,10 @@
 #!/bin/bash
+# Copyright (c) 2018, Silicon Laboratories
+# See COPYING for license.
 
+. wfx_colors
 . wfx_set_env
 check_root
-. wfx_colors
 
 blacklist_file="/etc/modprobe.d/raspi-blacklist.conf"
 

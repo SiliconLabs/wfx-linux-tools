@@ -1,6 +1,5 @@
 #!/bin/bash
-
-. wfx_set_env
+# Copyright (c) 2018, Silicon Laboratories
+# See COPYING for license.
 
 dtc -I fs -O dts /sys/firmware/devicetree/base
-

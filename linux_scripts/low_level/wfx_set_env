@@ -1,3 +1,6 @@
+# Copyright (c) 2018, Silicon Laboratories
+# See COPYING for license.
+#
 # This file is to be sourced by other wfx scripts
 
 # Set SILABS_ROOT if not already done

@@ -1,7 +1,8 @@
 #!/bin/bash
+# Copyright (c) 2018, Silicon Laboratories
+# See COPYING for license.
 
 set -ex
 wpa_cli scan
 sleep 3
 wpa_cli scan_results
-set +ex
