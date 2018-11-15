@@ -8,11 +8,11 @@ if [ "$#" != 1 ]; then
     exit 1
 fi
 
-if ! [ -f "${1}" ]; then
-    echo "${1} not found" >&2
+INFILE=$1
+if ! [ -f "$INFILE" ]; then
+    echo "$INFILE not found" >&2
     exit 1
 fi
 
 set -ex
-pds_compress ${1} /sys/kernel/debug/ieee80211/phy*/wfx/send_pds
-set +ex
+pds_compress $INFILE /sys/kernel/debug/ieee80211/phy*/wfx/send_pds
