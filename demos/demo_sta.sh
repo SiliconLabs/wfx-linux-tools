@@ -21,11 +21,16 @@ wpa_cli -i "$INTERFACE" terminate 2>/dev/null && sleep 1 || true
 sudo bash -c '. wfx_set_env; kill_check wpa_supplicant hostapd dnsmasq wpa_gui'
 
 # Tell dhcpcd to control WLAN interface (in case of previous demo_AP)
+sudo ip addr flush dev "$INTERFACE"
 sudo dhcpcd --rebind "$INTERFACE"
 
 # Start wpa_supplicant
 sudo wpa_supplicant -i "$INTERFACE" -c "$WPA_SUPPLICANT_CONF" -B -s
 
-# TODO: Start wpagui
-wpa_gui &
-# TODO: check that we have a screen
+# Start wpa_gui
+if [ "$DISPLAY" != '' ]; then
+    wpa_gui &
+else
+    echo "wpa_gui needs a display" >&2
+    exit 1
+fi
