@@ -3,7 +3,7 @@
 # Start a demo in station mode for browsing
 
 . wfx_set_env
-check_no_root
+check_root
 
 INTERFACE="wlan0"
 WPA_SUPPLICANT_CONF=$GITHUB_TOOLS_PATH/demos/conf/wpa_supplicant.conf
@@ -18,21 +18,21 @@ fi
 wpa_cli -i "$INTERFACE" terminate 2>/dev/null || true
 
 # Kill potentially started process
-sudo bash -c '. wfx_set_env; kill_check wpa_supplicant hostapd dnsmasq wpa_gui'
+kill_check wpa_supplicant hostapd dnsmasq wpa_gui
 
 # TODO: find a better way
 sleep 1
 
 # Tell dhcpcd to control WLAN interface (in case of previous demo_AP)
-sudo ip addr flush dev "$INTERFACE"
-sudo dhcpcd --rebind "$INTERFACE"
+ip addr flush dev "$INTERFACE"
+dhcpcd --rebind "$INTERFACE"
 
 # Start wpa_supplicant
-sudo wpa_supplicant -i "$INTERFACE" -c "$WPA_SUPPLICANT_CONF" -B -s
+wpa_supplicant -i "$INTERFACE" -c "$WPA_SUPPLICANT_CONF" -B -s
 
 # Start wpa_gui
 if [ "$DISPLAY" != '' ]; then
-    wpa_gui & disown
+    sudo -u pi wpa_gui & disown
 else
     echo "wpa_gui needs a display" >&2
     exit 1
