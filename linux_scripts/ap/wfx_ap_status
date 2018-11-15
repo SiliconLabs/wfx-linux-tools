@@ -2,11 +2,8 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See COPYING for license.
 
-if [ -n "$1" ];
-then
-	HOSTAPD_STATUS=$( hostapd_cli status | grep ${1} )
+if [ $# -gt 0 ]; then
+    hostapd_cli status | grep "$1"
 else
-	HOSTAPD_STATUS=$( hostapd_cli status )
+    hostapd_cli status
 fi
-
-echo "$HOSTAPD_STATUS"
