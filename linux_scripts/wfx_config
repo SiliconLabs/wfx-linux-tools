@@ -8,16 +8,28 @@ else
 	i=0
 fi
 
-# Check which overlays are enabled
+# Check which relevant params are enabled
+conf_i2c[$i]=$( cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep dtparam | grep "i2c_vc")
+
+# Check which relevant overlays are enabled
+conf_bt[$i]=$(  cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "pi3-disable-bt")
 conf_sdio[$i]=$(cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "sdio")
 conf_spi[$i]=$( cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "spi" )
 
-if [ -n "${conf_sdio[$i]}" ]; then
-	echo ${conf_sdio[$i]}
+if [ -n "${conf_i2c[$i]}" ]; then 
+	echo " ${conf_i2c[$i]}"
+fi
+
+if [ -n "${conf_bt[$i]}" ]; then 
+	echo " ${conf_bt[$i]}"
+fi
+
+if [ -n "${conf_sdio[$i]}" ]; then 
+	echo " ${conf_sdio[$i]}"
 fi
 
 if [ -n "${conf_spi[$i]}" ]; then
-	echo ${conf_spi[$i]}
+	echo " ${conf_spi[$i]}"
 fi
 
 # Check which drivers are blacklisted
@@ -28,19 +40,19 @@ blck_brcm[$i]=$( cat /etc/modprobe.d/raspi-blacklist.conf | grep -v ^# | grep -v
 
 
 if [ -n "${blck_sdio[$i]}" ]; then
-	echo ${blck_sdio[$i]}
+	echo " ${blck_sdio[$i]}"
 fi
 
 if [ -n "${blck_spi[$i]}" ]; then
-	echo ${blck_spi[$i]}
+	echo " ${blck_spi[$i]}"
 fi
 
 if [ -n "${blck_wfx[$i]}" ]; then
-	echo ${blck_wfx[$i]}
+	echo " ${blck_wfx[$i]}"
 fi
 
 if [ -n "${blck_brcm[$i]}" ]; then
-	echo ${blck_brcm[$i]}
+	echo " ${blck_brcm[$i]}"
 fi
 
 # Check which overlays are enabled
