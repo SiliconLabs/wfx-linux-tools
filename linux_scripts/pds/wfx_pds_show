@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PDS=/lib/firmware/wf200.pds
+
+if ! [ -e $PDS ]; then
+    echo "$PDS was not found" >&2
+    exit 1
+fi
+realpath $PDS
