@@ -3,8 +3,8 @@
 . wfx_set_env
 check_no_root
 
-if [ ! -d "$GITHUB_DRIVER_PATH" ]; then
-    echo "Cannot find directory $GITHUB_DRIVER_PATH" >&2
+if [ ! -d "$GITHUB_DRIVER_PATH/wfx" ]; then
+    echo "Cannot find directory $GITHUB_DRIVER_PATH/wfx" >&2
     exit 1
 fi
 
@@ -22,6 +22,6 @@ KERNEL_VER=$(uname -r)
 
 printf "Installing driver %s for kernel %s\n" "$DRIVER_VER" "$KERNEL_VER"
 set -ex
-make -C $GITHUB_DRIVER_PATH
-sudo make -C $GITHUB_DRIVER_PATH install
+make -C $GITHUB_DRIVER_PATH/wfx
+sudo make -C $GITHUB_DRIVER_PATH/wfx install
 sudo depmod -w
