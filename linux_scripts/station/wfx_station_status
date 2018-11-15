@@ -1,6 +1,0 @@
-#!/bin/sh
-# Copyright (c) 2018, Silicon Laboratories
-# See license terms contained in COPYING file
-
-set -ex
-wpa_cli status
