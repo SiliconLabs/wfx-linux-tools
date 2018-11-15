@@ -1,0 +1,8 @@
+#!/bin/bash
+
+INSTALLED_FILE="$(modinfo -n wfx 2> /dev/null)"
+INSTALLED_VER="$(modinfo -F version wfx 2> /dev/null)"
+RUNNING_VER=$(dmesg | sed -ne 's/.*wfx: Silicon Labs //p' | tail -n 1)
+printf "%-20s%s\n" "Installed file: "    "${INSTALLED_FILE:-not found}"
+printf "%-20s%s\n" "Installed version: " "${INSTALLED_VER:-not found}"
+printf "%-20s%s\n" "Loaded version: "    "${RUNNING_VER:-not found}"
