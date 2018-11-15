@@ -1,5 +1,5 @@
 #!/bin/bash
 # Copyright (c) 2018, Silicon Laboratories
-# See COPYING for license.
+# See license terms contained in COPYING file
 
 dtc -I fs -O dts /sys/firmware/devicetree/base

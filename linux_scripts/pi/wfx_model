@@ -1,5 +1,5 @@
 #!/bin/bash
 # Copyright (c) 2018, Silicon Laboratories
-# See COPYING for license.
+# See license terms contained in COPYING file
 
 cat /sys/firmware/devicetree/base/model

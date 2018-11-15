@@ -1,5 +1,5 @@
 #!/bin/bash
 # Copyright (c) 2018, Silicon Laboratories
-# See COPYING for license.
+# See license terms contained in COPYING file
 
 /opt/vc/bin/vcgencmd measure_temp

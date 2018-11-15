@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2018, Silicon Laboratories
-# See COPYING for license.
+# See license terms contained in COPYING file
 
 # retrieves the AP’s SSID (if no argument), otherwise sets it to ‘ssid’
 # NB: only works for the default hostapd configuration file if not currently in AP mode!

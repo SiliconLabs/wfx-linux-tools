@@ -1,6 +1,6 @@
 #!/bin/bash
 # Copyright (c) 2018, Silicon Laboratories
-# See COPYING for license.
+# See license terms contained in COPYING file
 
 NO="\e[0m"
 INV="\e[7m"
