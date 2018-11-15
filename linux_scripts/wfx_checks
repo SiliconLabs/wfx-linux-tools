@@ -191,13 +191,26 @@ else
 					exit 1
 				fi
 			else
-				printf "Startup:  ${RED}Error: WFx part startup failed\n"
+				printf "Startup:  ${RED}Error: WFx part startup failed${NO}\n"
 				wfx_startup_sdio=$(echo $wfx_loading | grep wfx-sdio)
 				wfx_startup_spi=$(echo $wfx_loading | grep wfx-spi)
-				if [ -n "$wfx_startup_spi" ]; then
-					printf "Startup:  ${RED}Error: SPI startup failed.${NO}   ${INV}Is there an EVB attached to the Pi, with the bus selection switch set to 'SPI'?${NO}\n"
-					printf "          ${NO}(You may need to reboot the Pi if you changed the bus selection)${NO}\n"
+				wfx_startup_bus=$(wfx_bus)
+				if [ -n "$wfx_startup_sdio" ]; then
+					if [ "${wfx_startup_bus}" == "spi" ]; then
+						printf "Startup  ${RED}Error: Driver starting as SDIO while bus mode is SPI${NO} ${INV}You need to reboot the Pi if you changed the bus selection${NO}\n"
+					fi
 				fi
+				if [ -n "$wfx_startup_spi" ]; then
+					if [ "${wfx_startup_bus}" == "sdio" ]; then
+						printf "Startup   ${RED}Error: Driver starting as SPI while configured bus mode is SDIO${NO} ${INV}You need to reboot the Pi if you changed the bus selection${NO}\n"
+					fi
+					printf "Startup:  ${RED}Error: SPI startup failed.${NO}   ${INV}Is there an EVB attached to the Pi, with the bus selection switch set to 'SPI'?${NO}\n"
+				fi
+				wfx_startup_wrong_keyset=$(echo "$wfx_loading" | grep " keyset is incompatible")
+				if [ -n "$wfx_startup_wrong_keyset" ]; then
+						printf "Keyset    ${RED}Error: ($wfx_startup_wrong_keyset)${NO} ${INV}You need to 'sudo wfx_firmware install' the correct keyset for your part${NO}\n"
+				fi
+				printf "== wfx dmesg information:\n"
 				printf "${INV}$(dmesg | grep wfx)${NO}\n"
 				printf "               Look at the complete dmesg to get more details\n"
 				printf "               Contact Silicon Labs with a capture of the above information for assistance\n"
