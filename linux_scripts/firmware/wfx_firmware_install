@@ -21,7 +21,7 @@ fi
 
 FIRMWARE_VER=$(git -C $GITHUB_DRIVER_PATH describe --tags --dirty)
 
-printf "Installing driver %s\n" "$FIRMWARE_VER"
+printf "Installing firmware %s\n" "$FIRMWARE_VER"
 set -ex
 for i in $GITHUB_DRIVER_PATH/wfm_wf200_??.sec; do
     INFILE=$i
