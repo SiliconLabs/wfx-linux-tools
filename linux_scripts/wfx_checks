@@ -1,5 +1,8 @@
 #!/bin/bash
 
+. wfx_set_env
+. wfx_colors
+
 echo "Current configuration"
 . wfx_config
 echo ""
@@ -45,33 +48,8 @@ fi
 missing_files=0
 startup_errors=0
 
-# SDIO test: first of all, check if SDIO overlay is enabled in .boot/config.txt
-SDIO_overlay=$(cat /boot/config.txt | grep ^dtoverlay= | grep sdio)
-if [ -z "$SDIO_overlay" ]; then
-	WFX_SDIO_Overlay_enabled=0
-else
-	WFX_SDIO_Overlay_enabled=1
-	echo "User:     WFX SDIO overlay enabled         (in /boot/config.txt)"
-	# SDIO detection at boot will only occur if sdio overlay is enabled in boot/config.txt
-	if [ "$WFX_SDIO_Overlay_enabled" = 1 ]; then
-		# Check if SDIO overlay is present
-		if [ -f $wfx_sdio_overlay ]; then
-			echo "Setup:    $wfx_sdio_overlay file present"
-		else
-			echo "Setup:    Error: $wfx_sdio_overlay file missing"
-			missing_files=$(( $missing_files + 1 ))
-		fi
-		# Check if SDIO has been detected at boot, and proceed only if yes
-		mmc=$(dmesg | grep "new high speed SDIO card")
-		if [ -n "$mmc" ]; then
-			echo "Startup:  SDIO Part detected at boot       ($mmc)"
-		else
-			echo "Startup:  Error: No part detected at boot on SDIO bus!"
-			echo "                 Is there an EVB attached to the Pi, with the bus selection switch set to 'SDIO'?"
-			startup_errors=$(( $startup_errors + 1 ))
-		fi
-	fi
-fi
+SDIO_overlay=$(cat /boot/config.txt | grep ^dtoverlay= | grep wfx-sdio)
+SPI_overlay=$(cat /boot/config.txt | grep ^dtoverlay= | grep wfx-spi)
 
 # Check if WFX driver is blacklisted
 WFX_blacklisted=$(cat /etc/modprobe.d/raspi-blacklist.conf | grep ^blacklist | grep wfx)
@@ -82,47 +60,92 @@ else
 	echo "User:     WFX Driver blacklisted      (The driver must be loaded using 'sudo wfx_reload')"
 fi
 
-# SPI test: first of all, check if SPI overlay is enabled in .boot/config.txt
-SPI_overlay=$(cat /boot/config.txt | grep ^dtoverlay= | grep wfx-spi)
+# SDIO test: check if SDIO overlay is enabled in /boot/config.txt
+if [ -z "$SDIO_overlay" ]; then
+	WFX_SDIO_Overlay_enabled=0
+else
+	WFX_SDIO_Overlay_enabled=1
+	echo "User:     WFX SDIO overlay enabled         (in /boot/config.txt)"
+fi
+
+# SPI test: check if SPI overlay is enabled in .boot/config.txt
 if [ -z "$SPI_overlay" ]; then
 	WFX_SPI_Overlay_enabled=0
 else
 	WFX_SPI_Overlay_enabled=1
-	WFX_DRIVER=wfx_wlan_spi
-	echo "User:     WFX SPI overlay_enabled          (in /boot/config.txt)"
-	# SDIO detection at boot will only occur if sdio overlay is enabled in boot/config.txt
-	if [ "$WFX_SPI_Overlay_enabled" = 1 ]; then
-		# Check if SPI overlay is present
-		if [ -f $wfx_spi_overlay ]; then
-			echo "Setup:    $wfx_spi_overlay file present"
-		else
-			echo "Setup:    Error: $wfx_spi_overlay file missing"
-			missing_files=$(( $missing_files + 1 ))
-		fi
+	echo "User:     WFX SPI overlay enabled          (in /boot/config.txt)"
+fi
+
+if [ ${WFX_SDIO_Overlay_enabled} == 1 ] && [ ${WFX_SPI_Overlay_enabled} == 1 ]; then
+	printf "Setup:    ${RED}Error: both overlays are enabled.${NO}   ${INV}Use 'sudo wfx_<sdio/spi>_<auto/manual>' to select the bus and mode ${NO}\n"
+fi
+
+if [ ${WFX_SDIO_Overlay_enabled} == 0 ] && [ ${WFX_SPI_Overlay_enabled} == 0 ]; then
+	printf "Setup:    ${RED}Error: No SDIO/SPI overlay enabled.${NO}   ${INV}Use 'sudo wfx_<sdio/spi>_<auto/manual>' to select the bus and mode ${NO}\n"
+fi
+
+if [ ! -d /proc/device-tree/hat ]; then
+	if  grep -q '^dtparam=i2c_vc=on' /boot/config.txt; then
+		printf "Startup   ${RED}Error: Cannot identify board, /proc/device-tree/hat/ does not exist.${NO} ${INV}Empty eeprom?${NO}\n" >&2
+	else
+		printf "Setup:    ${RED}Error: Startup Cannot identify board, 'dtparam=i2c_vc=on' is not present in /boot/config.txt.${NO}\n" >&2
+	fi
+	exit 1
+fi
+
+mmc=$(dmesg | grep "new high speed SDIO card")
+if [ "$WFX_SDIO_Overlay_enabled" = 1 ]; then
+	# Check if SDIO overlay is present
+	if [ -f $wfx_sdio_overlay ]; then
+		echo "Setup:    $wfx_sdio_overlay file present"
+	else
+		printf "Setup:    ${RED}Error: $wfx_sdio_overlay file missing${NO}   ${INV}This file should be available under ${GITHUB_TOOLS_PATH}/linux_overlays${NO}\n"
+		missing_files=$(( $missing_files + 1 ))
+	fi
+	# Check if SDIO has been detected at boot
+	if [ -n "$mmc" ]; then
+		echo "Startup:  SDIO Part detected at boot       ($mmc)"
+	else
+		printf "Startup:  ${RED}Error: No part detected at boot on SDIO bus!${NO}   ${INV}Is there an EVB attached to the Pi, with the bus selection switch set to 'SDIO'?${NO}\n"
+		printf "          ${NO}(You may need to reboot the Pi if you changed the bus selection)${NO}\n"
+		startup_errors=$(( $startup_errors + 1 ))
+	fi
+fi
+
+if [ "$WFX_SPI_Overlay_enabled" = 1 ]; then
+	# Check if SPI overlay is present
+	if [ -f $wfx_spi_overlay ]; then
+		echo "Setup:    $wfx_spi_overlay file present"
+	else
+		printf "Setup:    ${RED}Error: $wfx_spi_overlay file missing${NO}   ${INV}This file should be available under ${GITHUB_TOOLS_PATH}/linux_overlays${NO}\n"
+		missing_files=$(( $missing_files + 1 ))
 	fi
 fi
 
 # Check WFx driver modules existence
 if [ -z "$wfx_drv_module" ]; then
 	missing_files=$(( $missing_files + 1 ))
-	echo "Setup:    Error: Missing WFX driver   ($wfx_drv_base_link)"
-	echo "                 You need to check you WFX driver installation! Make sure you have the $WFX_DRIVER file!"
+	printf "Setup:    ${RED}Error: Missing WFX driver   ($wfx_drv_base_link)${RED}   ${INV}You need to check you WFX driver installation! Make sure you have the $WFX_DRIVER file!${NO}\n"
 else
-	wfx_version=$(modinfo wfx  | grep -E "^version")
 	echo "Setup:    WFX driver        $wfx_drv_module ($wfx_drv_dir/wfx.ko)"
-	echo "Setup:    WFX driver        $wfx_version"
+	wfx_version=$(modinfo wfx  | grep -E "^version")
+	if [ "${wfx_version}" != "" ]; then
+		echo "Setup:    WFX driver        $wfx_version (from 'modinfo wfx')"
+	else
+		printf "Setup:    ${RED}Error: No result from 'modinfo wfx'${NO}   ${INV}The modules dependencies may not be up to date. Use 'sudo depmod -a' to solve this!${NO}\n"
+	fi
 fi
 
 if [ -z "$wfx_fw_file" ]; then
 	missing_files=$(( $missing_files + 1 ))
-	echo "Setup:    Error: Missing WFX FW file driver ($wfx_fw_file)"
-	echo "                 You need to check you WFX driver installation! Make sure you have the $wfx_fw_file file!"
+	printf "Setup:    ${RED}Error: Missing WFX FW file driver ($wfx_fw_file)${NO}\n"
+	printf "                 You need to check you WFX driver installation! Make sure you have the $wfx_fw_file file!\n"
 fi
 
 if [ -z "$wfx_pds_file" ]; then
 	missing_files=$(( $missing_files + 1 ))
-	echo "Setup:    Error: Missing WFX FW file driver ($wfx_pds_file)"
-	echo "                 You need to check you WFX driver installation! Make sure you have the $wfx_pds_file file!"
+	printf "Setup:    ${RED}Error: Missing WFX FW file driver ($wfx_pds_file)${NO}"
+	printf "                 You need to check you WFX driver installation! Make sure you have the $wfx_pds_file file!\n"
 fi
 
 if [ -n "$wfx_fw_file" ]; then
@@ -138,38 +161,48 @@ if [ -n "$wfx_power_mode_option" ]; then
 fi
 
 if [ $missing_files -gt 0 ]; then
-	echo "Setup:    ERROR: There are $missing_files missing file(s)!"
-	echo "           Check your installation based on the above recommendations, and try again."
-	echo "           It may be worth using 'sudo halt' (to make sure any change is saved),"
-	echo "           waiting for the activity led to stop blinking, then power-cycling the Pi."
+	printf "Setup:    ${RED}ERROR: There are $missing_files missing file(s)!${NO}\n"
+	printf "           Check your installation based on the above recommendations, and try again.\n"
+	printf "           It may be worth using 'sudo halt' (to make sure any change is saved),\n"
+	printf "           waiting for the activity led to stop blinking, then power-cycling the Pi.\n"
 	exit 1
 else
 	# Check if driver has already been loaded
-	wfx_loading=$(dmesg | grep wfx)
-	if [ -n "$wfx_loading" ]; then
-		wfx_startup=$(dmesg | grep wfx | grep "wfx init done")
-		if [ -n "$wfx_startup" ]; then
-			wfx_driver_success=$(ifconfig wlan0)
-			if [ -n "$wfx_driver_success" ]; then
-				echo "Startup:  all OK, WFx part ready to act as wlan0"
-				echo "Startup:  FW $(dmesg | grep WFM | grep Label)"
-				pow=$(dmesg | grep "Power mode")
-				echo "Startup:  $pow"
-				echo "Startup:  current wlan0 status from 'iwconfig wlan0':"
-				echo "$(iwconfig wlan0)"
+	wfx_driver_loaded=$(dmesg | grep "wfx: Silicon Labs")
+	if [ -n "$wfx_driver_loaded" ]; then
+		echo "Startup:  Driver loaded ($wfx_driver_loaded)"
+		wfx_loading=$(dmesg | grep wfx)
+		if [ -n "$wfx_loading" ]; then
+			wfx_startup=$(dmesg | grep wfx | grep "wfx init done")
+			if [ -n "$wfx_startup" ]; then
+				wfx_driver_success=$(ifconfig wlan0)
+				if [ -n "$wfx_driver_success" ]; then
+					echo "Startup:  all OK, WFx part ready to act as wlan0"
+					echo "Startup:  FW $(dmesg | grep WFM | grep Label)"
+					pow=$(dmesg | grep "Power mode")
+					echo "Startup:  $pow"
+					echo "Startup:  current wlan0 status from 'iwconfig wlan0':"
+					echo "$(iwconfig wlan0)"
+				else
+					printf "Startup:  ${RED}Error: WFx part not visible as wlan0${NO}\n"
+					printf "${INV}$(dmesg | grep wfx)${NO}\n"
+					echo "               Look at the complete dmesg to get more details"
+					echo "               Contact Silicon Labs with a capture of the above information for assistance"
+					exit 1
+				fi
 			else
-				echo "Startup:  Error: WFx part not visible as wlan0"
-				echo "               dmesg info:\n$(dmesg | grep wfx)"
-				echo "               Look at the complete dmesg to get more details"
-				echo "               Contact Silicon Labs with a capture of the above information for assistance"
+				printf "Startup:  ${RED}Error: WFx part startup failed\n"
+				wfx_startup_sdio=$(echo $wfx_loading | grep wfx-sdio)
+				wfx_startup_spi=$(echo $wfx_loading | grep wfx-spi)
+				if [ -n "$wfx_startup_spi" ]; then
+					printf "Startup:  ${RED}Error: SPI startup failed.${NO}   ${INV}Is there an EVB attached to the Pi, with the bus selection switch set to 'SPI'?${NO}\n"
+					printf "          ${NO}(You may need to reboot the Pi if you changed the bus selection)${NO}\n"
+				fi
+				printf "${INV}$(dmesg | grep wfx)${NO}\n"
+				printf "               Look at the complete dmesg to get more details\n"
+				printf "               Contact Silicon Labs with a capture of the above information for assistance\n"
 				exit 1
 			fi
-		else
-			echo "Startup:  Error: WFx part driver loading failed"
-			echo "               dmesg info:\n$(dmesg | grep wfx)"
-			echo "               Look at the complete dmesg to get more details"
-			echo "               Contact Silicon Labs with a capture of the above information for assistance"
-			exit 1
 		fi
 	else
 		echo "Startup:  Waiting for user to use 'sudo modprobe -v $WFX_DRIVER' to load the driver"
