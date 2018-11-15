@@ -17,10 +17,12 @@ if ! ip link show "$INTERFACE" &> /dev/null; then
 fi
 
 # Kill potentially started process
-kill_check wpa_supplicant hostapd dnsmasq
+kill_check wpa_supplicant hostapd dnsmasq wpa_gui
+
+# Wait for potential termination of hostapd
+sleep 1
 
 # Tell dhcpcd to release WLAN interface
-# This will also remove control from lxpanel
 dhcpcd --release "$INTERFACE"
 
 # Set static IP configuration
