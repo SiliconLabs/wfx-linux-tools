@@ -5,9 +5,10 @@ set -ex
 KERNEL_VERSION=$(uname -r)
 
 ## Create a new build directory and cd in this directory
-mkdir -p ${HOME}/build
-cd ${HOME}/build
-BUILD_DIR=$(pwd)
+BUILD_DIR=$HOME/build
+rm -r $BUILD_DIR
+mkdir -p $BUILD_DIR
+cd $BUILD_DIR
 
 ## Retrieve your original firmware git hash
 FIRMWARE_GIT_HASH=$(zgrep "* firmware as of"  /usr/share/doc/raspberrypi-bootloader/changelog.Debian.gz | head -1 | awk '{print $5}' )
