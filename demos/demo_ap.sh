@@ -7,19 +7,23 @@ check_root
 
 INTERFACE="wlan0"
 ADDRESS="192.168.51.1/24"
-DNSMASQ_CONF=$SILABS_ROOT/wfx_tools/demos/conf/dnsmasq.conf
-HOSTAPD_CONF=$SILABS_ROOT/wfx_tools/demos/conf/hostapd.conf
+DNSMASQ_CONF=$GITHUB_TOOLS_PATH/demos/conf/dnsmasq.conf
+HOSTAPD_CONF=$GITHUB_TOOLS_PATH/demos/conf/hostapd.conf
 
 # Check wlan0
 if ! ip link show "$INTERFACE" &> /dev/null; then
-    >&2 echo "Interface $INTERFACE not detected, exiting"
+    echo "Interface $INTERFACE not detected, exiting" >&2
     exit 1
 fi
 
-# Kill potentially started process
-kill_check wpa_supplicant hostapd dnsmasq wpa_gui
+# Try to stop a potentially running wpa_supplicant
+wpa_cli -i "$INTERFACE" terminate 2>/dev/null || true
 
-# Wait for potential termination of hostapd
+# Kill potentially started process
+kill_check wpa_supplicant hostapd wpa_gui
+kill $(cat /var/run/dnsmasq-wlan0.pid) || true
+
+# TODO: find a better way
 sleep 1
 
 # Tell dhcpcd to release WLAN interface
@@ -38,3 +42,7 @@ dnsmasq -C "$DNSMASQ_CONF"
 hostapd -B "$HOSTAPD_CONF"
 
 # TODO: start HTTP server with a static page
+
+# To allow traffic forwarding to a gateway, uncomment the following lines
+#echo 1 > /proc/sys/net/ipv4/ip_forward
+#iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
