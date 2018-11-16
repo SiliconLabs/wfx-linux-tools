@@ -1,11 +1,14 @@
-#!/bin/bash -ex
+#!/bin/bash
 
 # Stop a previously running demo
 
+set -e
 . wfx_set_env
 check_root
 
 INTERFACE="wlan0"
+
+set -x
 
 # Try to stop a potentially running wpa_supplicant
 wpa_cli -i "$INTERFACE" terminate 2>/dev/null || true

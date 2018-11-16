@@ -1,7 +1,8 @@
-#!/bin/bash -ex
+#!/bin/bash
 
 # Start a demo in access point mode with a local web server
 
+set -e
 . wfx_set_env
 check_root
 
@@ -15,6 +16,8 @@ check_interface "$INTERFACE"
 
 # Ensure that all processes from a previous run are stopped
 wfx_demo_stop
+
+set -x
 
 # Tell dhcpcd to release WLAN interface
 dhcpcd --release "$INTERFACE"

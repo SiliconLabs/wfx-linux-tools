@@ -1,7 +1,8 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 # Start a demo in station mode for browsing
 
+set -e
 . wfx_set_env
 check_root
 
@@ -13,6 +14,8 @@ check_interface "$INTERFACE"
 
 # Ensure that all processes from a previous run are stopped
 wfx_demo_stop
+
+set -x
 
 # Tell dhcpcd to control WLAN interface (in case of previous demo_AP)
 ip addr flush dev "$INTERFACE"
