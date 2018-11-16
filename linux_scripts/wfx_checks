@@ -219,7 +219,7 @@ else
 			fi
 		fi
 	else
-		echo "Startup:  Waiting for user to use 'sudo modprobe -v $WFX_DRIVER' to load the driver"
+		echo "Startup:  Waiting for user to use 'sudo wfx_driver_reload' to load the driver"
 		exit 1
 	fi
 fi
