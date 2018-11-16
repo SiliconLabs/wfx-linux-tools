@@ -40,7 +40,7 @@
 			status = "okay";
 
 			wfx: spidev@0 {
-				spi-max-frequency = <50000000>; // necessary for dtparam
+				spi-max-frequency = <42000000>; // necessary for dtparam
 				reg = <0>;
 				// "silabs,wfx-spi" is mandatory.
 				// Use "siliconlabs,wfx-wlan-spi" for compatibility with driver < 1.3
