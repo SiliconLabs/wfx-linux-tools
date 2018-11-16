@@ -8,14 +8,14 @@ check_root
 
 INTERFACE="wlan0"
 
-set -x
-
 # Try to stop a potentially running wpa_supplicant
 wpa_cli -i "$INTERFACE" terminate 2>/dev/null || true
 
 # Kill potentially started process
 kill_check wpa_supplicant hostapd wpa_gui lighttpd
-kill $(cat /var/run/dnsmasq-wlan0.pid) || true
+if [ -e /var/run/dnsmasq-wlan0.pid ]; then
+    kill $(cat /var/run/dnsmasq-wlan0.pid) 2> /dev/null || true
+fi
 
 # Wait for process cleanup
 sleep 1
