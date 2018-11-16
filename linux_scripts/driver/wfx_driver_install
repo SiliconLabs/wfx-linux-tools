@@ -6,13 +6,13 @@
 check_no_root
 
 if [ ! -d "$GITHUB_DRIVER_PATH" ]; then
-    echo "error: cannot find directory $GITHUB_DRIVER_PATH" >&2
+    echo "ERROR: cannot find directory $GITHUB_DRIVER_PATH" >&2
     exit 1
 fi
 
 if [ $# -gt 0 ]; then
     if ! git -C $GITHUB_DRIVER_PATH checkout $1; then
-        echo "error: cannot get tag $1" >&2
+        echo "ERROR: cannot get tag $1" >&2
         echo "Possible tags:"
         git -C $GITHUB_DRIVER_PATH tag | sed 's/^/  /'
         exit 1

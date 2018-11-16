@@ -8,7 +8,7 @@ check_rpi
 OVERLAY=$(cat /boot/config.txt | grep "^dtoverlay=wfx-")
 case "$OVERLAY" in
     *spi*sdio*|*sdio*spi*)
-        echo "error: SPI and SDIO overlays and both enabled in /boot/config.txt" >&2
+        echo "ERROR: SPI and SDIO overlays and both enabled in /boot/config.txt" >&2
         exit 1
         ;;
     *spi*)
@@ -18,7 +18,7 @@ case "$OVERLAY" in
         echo sdio
         ;;
     *)
-        echo "error: cannot find dtoverlay entry in /boot/config.txt" >&2
+        echo "ERROR: cannot find dtoverlay entry in /boot/config.txt" >&2
         exit 1
         ;;
 esac
