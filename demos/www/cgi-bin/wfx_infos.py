@@ -27,7 +27,7 @@ print ("""
 	  <head>
 		<meta charset="utf-8">
 		<title>Silicon Labs WFX</title>
-		<link rel="stylesheet" href="../html/silabs.css" type="text/css">
+		<link rel="stylesheet" href="/silabs.css" type="text/css">
 	  </head>
 """)
 
@@ -44,7 +44,7 @@ print ("""
 							<td>
 								<div class="logo">
 									<a href="//www.silabs.com/" class="logo-link" id="sitelogo">
-										<img src="../html/logo.png" alt="Silicon Labs" width="200"/>
+										<img src="/logo.png" alt="Silicon Labs" width="200"/>
 									</a>
 								</div>
 							</td>
@@ -59,7 +59,7 @@ print ("""
 				<tr>
 					<td>
 						<div class="logo">
-							<img src="../html/BRD8022.png" alt="BRD" width="500"/>
+							<img src="/BRD8022.png" alt="BRD" width="500"/>
 						</div>
 					</td>
 				</tr>
