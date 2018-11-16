@@ -1,0 +1,36 @@
+#!/bin/bash
+# Copyright (c) 2018, Silicon Laboratories
+# See license terms contained in COPYING file
+
+case "${1}" in
+    ap)
+		if [ ! -z ${2} ]; then
+			echo $(cat /home/pi/siliconlabs/wfx_tools/demos/conf/hostapd.conf | grep ${2})
+		fi
+        ;;
+    sta)
+		if [ ! -z ${2} ]; then
+			echo $(cat /home/pi/siliconlabs/wfx_tools/demos/conf/wpa_supplicant.conf | grep ${2})
+		fi
+        ;;
+    dnsmasq)
+		if [ ! -z ${2} ]; then
+			echo $(cat /home/pi/siliconlabs/wfx_tools/demos/conf/dnsmasq.conf | grep ${2})
+		fi
+        ;;
+    ip)
+		case "${2}" in
+			eth)
+				echo $(ip addr show | grep "global eth" | grep 'inet '| cut -d '/' -f 1 | cut -d ' ' -f 6)
+				;;
+			wlan)
+				echo $(ip addr show | grep "global wlan" | grep 'inet '| cut -d '/' -f 1 | cut -d ' ' -f 6)
+				;;
+			*)
+			;;
+		esac
+        ;;
+    *)
+	exit 1
+	;;
+esac
