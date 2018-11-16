@@ -49,6 +49,6 @@ check_file /etc/rc.local
 check_file /etc/network/interfaces
 
 check_file /etc/dhcpcd.conf
-check_file $GITHUB_TOOLS_PATH/demos/conf/wpa_supplicant.conf
-check_file $GITHUB_TOOLS_PATH/demos/conf/hostapd.conf
-check_file $GITHUB_TOOLS_PATH/demos/conf/dnsmasq.conf
+check_file $GITHUB_CONF_PATH/wpa_supplicant.conf
+check_file $GITHUB_CONF_PATH/hostapd.conf
+check_file $GITHUB_CONF_PATH/dnsmasq.conf

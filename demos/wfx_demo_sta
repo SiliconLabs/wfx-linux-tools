@@ -6,7 +6,7 @@
 check_root
 
 INTERFACE="wlan0"
-WPA_SUPPLICANT_CONF=$GITHUB_TOOLS_PATH/demos/conf/wpa_supplicant.conf
+WPA_SUPPLICANT_CONF=$GITHUB_CONF_PATH/wpa_supplicant.conf
 
 check_interface "$INTERFACE"
 

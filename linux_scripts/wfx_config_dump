@@ -30,6 +30,6 @@ tiny_cat /etc/rc.local
 tiny_cat /etc/network/interfaces
 
 tiny_cat /etc/dhcpcd.conf
-tiny_cat $GITHUB_TOOLS_PATH/demos/conf/wpa_supplicant.conf
-tiny_cat $GITHUB_TOOLS_PATH/demos/conf/hostapd.conf
-tiny_cat $GITHUB_TOOLS_PATH/demos/conf/dnsmasq.conf
+tiny_cat $GITHUB_CONF_PATH/wpa_supplicant.conf
+tiny_cat $GITHUB_CONF_PATH/hostapd.conf
+tiny_cat $GITHUB_CONF_PATH/dnsmasq.conf

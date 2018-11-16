@@ -7,8 +7,8 @@ check_root
 
 INTERFACE="wlan0"
 ADDRESS="192.168.51.1/24"
-DNSMASQ_CONF=$GITHUB_TOOLS_PATH/demos/conf/dnsmasq.conf
-HOSTAPD_CONF=$GITHUB_TOOLS_PATH/demos/conf/hostapd.conf
+DNSMASQ_CONF=$GITHUB_CONF_PATH/dnsmasq.conf
+HOSTAPD_CONF=$GITHUB_CONF_PATH/hostapd.conf
 
 check_interface "$INTERFACE"
 
