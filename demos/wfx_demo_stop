@@ -1,0 +1,18 @@
+#!/bin/bash -ex
+
+# Stop a previously running demo
+
+. wfx_set_env
+check_root
+
+INTERFACE="wlan0"
+
+# Try to stop a potentially running wpa_supplicant
+wpa_cli -i "$INTERFACE" terminate 2>/dev/null || true
+
+# Kill potentially started process
+kill_check wpa_supplicant hostapd wpa_gui
+kill $(cat /var/run/dnsmasq-wlan0.pid) || true
+
+# Wait for process cleanup
+sleep 1
