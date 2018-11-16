@@ -2,6 +2,7 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
+set -e
 . wfx_set_env
 check_root
 
@@ -29,12 +30,11 @@ for i in $GITHUB_FIRMWARE_PATH/wfm_wf200_??.sec; do
     INFILE_BASE=$(basename $INFILE)
     OUTFILE_BASE=${INFILE_BASE%.sec}-$FIRMWARE_VER.sec
     OUTFILE=/lib/firmware/$OUTFILE_BASE
-    set -ex
+    set -x
     cp $INFILE $OUTFILE
     ln -sfn $OUTFILE_BASE /lib/firmware/$INFILE_BASE
-    set +ex
+    { set +x; } 2>/dev/null # Disable traces without disturbing user
 done
 
-set -ex
+set -x
 ln -sfn wfm_wf200_$DEFAULT_CHIP_KEY.sec /lib/firmware/wfm_wf200.sec
-set +ex
