@@ -1,22 +1,22 @@
 #!/usr/bin/python
 
-# Import modules for CGI handling 
-import cgi, cgitb 
+# Import modules for CGI handling
+import cgi, cgitb
 import subprocess
 
 
 def bash_res (cmd):
-	res = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True)
-	return res.stdout.read()
-	
+    res = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True)
+    return res.stdout.read()
+
 date     = bash_res("date")
 kernel   = bash_res("wfx_kernel")
 board    = bash_res("wfx_board")
 model    = bash_res("wfx_model")
 bus      = bash_res("wfx_bus")
 mode     = bash_res("wfx_mode")
-firmware = bash_res("wfx_firmware_show | grep version")
-driver   = bash_res("modinfo wfx | grep ^version")
+firmware = bash_res("wfx_firmware_show | sed -ne 's/Loaded version: *//p'")
+driver   = bash_res("wfx_driver_show | sed -ne 's/Loaded version: *//p'")
 checks   = "wfx_checks"
 
 print ("Content-type:text/html\r\n\r\n")
