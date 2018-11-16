@@ -27,7 +27,6 @@ ip link set "$INTERFACE" up
 dnsmasq -C "$DNSMASQ_CONF"
 
 # Start hostapd
-# TODO: check why hostapd sometimes fails to restart (wlan0 busy)
 hostapd -B "$HOSTAPD_CONF"
 
 # TODO: start HTTP server with a static page
