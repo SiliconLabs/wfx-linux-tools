@@ -29,3 +29,4 @@ modprobe -v wfx -r
 [ "$IS_SDIO" ] && echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/bind
 modprobe -v wfx
 check_interface wlan0
+echo "Success"
