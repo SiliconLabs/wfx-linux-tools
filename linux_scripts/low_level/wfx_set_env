@@ -65,7 +65,7 @@ kill_check()
 check_interface()
 {
     if ! ip link show "$1" &> /dev/null; then
-        echo "error: interface $1 not detected" >&2
+        echo "error: interface $1 not detected (did your run wfx_driver_reload?)" >&2
         exit 1
     fi
 }
