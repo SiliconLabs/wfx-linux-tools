@@ -2,35 +2,49 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
+. wfx_set_env
+
 case "${1}" in
     ap)
 		if [ ! -z ${2} ]; then
-			echo $(cat /home/pi/siliconlabs/wfx_tools/demos/conf/hostapd.conf | grep ${2})
+			printf "$(cat ${GITHUB_CONF_PATH}/hostapd.conf | grep ${2})"
+			printf "$(hostapd_cli status | grep ${2})"
 		fi
         ;;
-    sta)
+    sta|station)
 		if [ ! -z ${2} ]; then
-			echo $(cat /home/pi/siliconlabs/wfx_tools/demos/conf/wpa_supplicant.conf | grep ${2})
+			case "${2}" in
+				scan)
+					wpa_cli scan > /dev/null
+					scan_res="$(wpa_cli scan_results)"
+					echo  "${scan_res}" | grep ":"
+				;;
+				*)
+					printf "$(cat ${GITHUB_CONF_PATH}/wpa_supplicant.conf | grep ${2})"
+					printf "$(wpa_cli status | grep ${2})"
+				;;
+			esac
 		fi
         ;;
     dnsmasq)
 		if [ ! -z ${2} ]; then
-			echo $(cat /home/pi/siliconlabs/wfx_tools/demos/conf/dnsmasq.conf | grep ${2})
+			printf "$(cat ${GITHUB_CONF_PATH}/dnsmasq.conf | grep ${2})"
 		fi
         ;;
     ip)
 		case "${2}" in
 			eth)
-				echo $(ip addr show | grep "global eth" | grep 'inet '| cut -d '/' -f 1 | cut -d ' ' -f 6)
+				printf "$(ip addr show | grep "global eth" | grep 'inet '| cut -d '/' -f 1 | cut -d ' ' -f 6)"
 				;;
 			wlan)
-				echo $(ip addr show | grep "global wlan" | grep 'inet '| cut -d '/' -f 1 | cut -d ' ' -f 6)
+				printf "$(ip addr show | grep "global wlan" | grep 'inet '| cut -d '/' -f 1 | cut -d ' ' -f 6)"
 				;;
 			*)
 			;;
 		esac
         ;;
     *)
+    echo $($@)
 	exit 1
 	;;
 esac
