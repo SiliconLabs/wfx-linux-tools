@@ -92,7 +92,6 @@ if [ ! -d /proc/device-tree/hat ]; then
 	else
 		printf "Setup:    ${RED}Error: Startup Cannot identify board, 'dtparam=i2c_vc=on' is not present in /boot/config.txt.${NO}\n" >&2
 	fi
-	exit 1
 fi
 
 mmc=$(dmesg | grep "new high speed SDIO card")
