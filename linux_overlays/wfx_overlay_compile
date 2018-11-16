@@ -5,7 +5,7 @@ check_root
 check_rpi
 
 if [ $# -lt 1 ]; then
-    echo "Expecting at least one argument" >&2
+    echo "error: expecting at least one argument" >&2
     exit 1
 fi
 
@@ -16,7 +16,7 @@ for f in "$@"; do
     OUTFILE=/boot/overlays/$OUTFILE_BASE
 
     if [ "$INFILE_BASE" = "$OUTFILE_BASE" ]; then
-        echo "Input file is expected to end with '-overlay.dts'" >&2
+        echo "error: input file is expected to end with '-overlay.dts'" >&2
         exit 1
     fi
 

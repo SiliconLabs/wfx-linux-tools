@@ -24,6 +24,6 @@ wpa_supplicant -i "$INTERFACE" -c "$WPA_SUPPLICANT_CONF" -B -s
 if [ "$DISPLAY" != '' ]; then
     sudo -u pi wpa_gui & disown
 else
-    echo "wpa_gui needs a display" >&2
+    echo "error: wpa_gui needs a display" >&2
     exit 1
 fi

@@ -16,7 +16,7 @@ GITHUB_CONF_PATH="$GITHUB_TOOLS_PATH/conf"
 check_root()
 {
     if [ $(id -u) != 0 ]; then
-        echo "Please run this script as root (running 'sudo $0' should work)" >&2
+        echo "error: please run this script as root (running 'sudo $0' should work)" >&2
         exit 1
     fi
 }
@@ -24,7 +24,7 @@ check_root()
 check_no_root()
 {
     if [ $(id -u) == 0 ]; then
-        echo "Running this script as root is not recommended" >&2
+        echo "error: running this script as root is not recommended" >&2
         exit 1
     fi
 }
@@ -32,7 +32,7 @@ check_no_root()
 check_rpi()
 {
     if ! grep -q 'NAME="Raspbian GNU/Linux"' /etc/os-release; then
-        echo "You must run this script from a Raspberry" >&2
+        echo "error: you must run this script from a Raspberry" >&2
         exit 1
     fi
 }
@@ -41,9 +41,9 @@ check_hat()
 {
     if [ ! -d /proc/device-tree/hat ]; then
         if  grep -q '^dtparam=i2c_vc=on' /boot/config.txt; then
-            echo "Cannot identify board, /proc/device-tree/hat/ does not exist. Empty eeprom?" >&2
+            echo "error: cannot identify board, /proc/device-tree/hat/ does not exist. Empty eeprom?" >&2
         else
-            echo "Cannot identify board, 'dtparam=i2c_vc=on' is not present in /boot/config.txt." >&2
+            echo "error: cannot identify board, 'dtparam=i2c_vc=on' is not present in /boot/config.txt." >&2
         fi
         exit 1
     fi
@@ -56,7 +56,7 @@ kill_check()
         # At least one process was killed, checking for restart
         sleep 2
         if pidof "$@"; then
-            echo "At least one of the process ($@) is still running, exiting" >&2
+            echo "error: at least one of the process ($@) is still running" >&2
             exit 1
         fi
     fi
@@ -65,7 +65,7 @@ kill_check()
 check_interface()
 {
     if ! ip link show "$1" &> /dev/null; then
-	echo "Interface $1 not detected" >&2
-	exit 1
+        echo "error: interface $1 not detected" >&2
+        exit 1
     fi
 }

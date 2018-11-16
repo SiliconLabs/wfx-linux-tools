@@ -6,13 +6,13 @@
 check_root
 
 if [ "$#" != 1 ]; then
-    echo "Wrong number of arguments. One compressed or plain PDS is expected." >&2
+    echo "error: wrong number of arguments. One compressed or plain PDS is expected." >&2
     exit 1
 fi
 
 INFILE=$1
 if ! [ -f "$INFILE" ]; then
-    echo "$INFILE not found" >&2
+    echo "error: $INFILE not found" >&2
     exit 1
 fi
 
