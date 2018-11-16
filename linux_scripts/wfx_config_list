@@ -38,12 +38,17 @@ check_file --critical /lib/firmware/wfm_wf200.sec
 check_file --critical /lib/firmware/wf200.pds
 check_file --critical /lib/modules/$(uname -r)/extra/wfx.ko
 
-check_file /etc/modules
+check_file /etc/modprobe.d/raspi-blacklist.conf
 check_file /etc/modprobe.d/wfx.conf
+check_file /etc/modules
 
+check_file /etc/hostname
+check_file /etc/hosts
+
+check_file /etc/rc.local
 check_file /etc/network/interfaces
 
-check_file /etc/wpa_supplicant/wpa_supplicant.conf
-check_file /etc/hostapd/hostapd.conf
-check_file /etc/dnsmasq.conf
 check_file /etc/dhcpcd.conf
+check_file $GITHUB_TOOLS_PATH/demos/conf/wpa_supplicant.conf
+check_file $GITHUB_TOOLS_PATH/demos/conf/hostapd.conf
+check_file $GITHUB_TOOLS_PATH/demos/conf/dnsmasq.conf

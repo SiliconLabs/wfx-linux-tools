@@ -18,20 +18,18 @@ tiny_cat()
 
 tiny_cat /boot/cmdline.txt
 tiny_cat /boot/config.txt
+
 tiny_cat /etc/modprobe.d/raspi-blacklist.conf
+tiny_cat /etc/modprobe.d/wfx.conf
+tiny_cat /etc/modules
 
 tiny_cat /etc/hostname
 tiny_cat /etc/hosts
+
 tiny_cat /etc/rc.local
-
-tiny_cat /etc/dnsmasq.conf
-tiny_cat /etc/dhcpcd.conf
-
-tiny_cat /etc/modules
-tiny_cat /etc/modprobe.d/wfx.conf
-
 tiny_cat /etc/network/interfaces
 
-tiny_cat /etc/wpa_supplicant/wpa_supplicant.conf
-
-tiny_cat /etc/hostapd/hostapd.conf
+tiny_cat /etc/dhcpcd.conf
+tiny_cat $GITHUB_TOOLS_PATH/demos/conf/wpa_supplicant.conf
+tiny_cat $GITHUB_TOOLS_PATH/demos/conf/hostapd.conf
+tiny_cat $GITHUB_TOOLS_PATH/demos/conf/dnsmasq.conf
