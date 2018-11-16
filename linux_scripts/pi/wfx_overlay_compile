@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 . wfx_set_env
 check_root
 check_rpi
@@ -20,7 +21,7 @@ for f in "$@"; do
         exit 1
     fi
 
-    set -ex
+    set -x
     dtc -@ -W no-unit_address_vs_reg $INFILE -o $OUTFILE
-    set +ex
+    { set +x; } 2>/dev/null # Disable traces without disturbing user
 done
