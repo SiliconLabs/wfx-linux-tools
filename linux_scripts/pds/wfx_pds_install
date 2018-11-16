@@ -44,3 +44,4 @@ printf "Installing PDS %s\n" "$INFILE"
 set -ex
 pds_compress $INFILE $OUTFILE
 ln -sfn $OUTFILE_BASE /lib/firmware/wf200.pds
+echo "Success"

@@ -27,3 +27,4 @@ set -ex
 make -C $GITHUB_DRIVER_PATH -j 5
 sudo make -C $GITHUB_DRIVER_PATH install
 sudo depmod -w
+echo "Success"

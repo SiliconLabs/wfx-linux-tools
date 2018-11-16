@@ -39,3 +39,4 @@ lighttpd -f "$LIGHTTPD_CONF"
 # To allow traffic forwarding to a gateway, uncomment the following lines
 #echo 1 > /proc/sys/net/ipv4/ip_forward
 #iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+echo "Success"

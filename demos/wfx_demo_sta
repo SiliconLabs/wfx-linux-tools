@@ -34,3 +34,4 @@ else
     echo "error: wpa_gui needs a display" >&2
     exit 1
 fi
+echo "Success"

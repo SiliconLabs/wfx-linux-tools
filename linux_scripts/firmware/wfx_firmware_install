@@ -38,3 +38,4 @@ done
 
 set -x
 ln -sfn wfm_wf200_$DEFAULT_CHIP_KEY.sec /lib/firmware/wfm_wf200.sec
+echo "Success"
