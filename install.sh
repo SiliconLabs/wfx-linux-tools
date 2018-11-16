@@ -10,8 +10,11 @@ rm -f /usr/local/bin/pds_compress
 # Create a link under /usr/local/bin for all files matching wfx_ and not containing '.'
 for f in $(find -type f -name "wfx_*") pds_compress; do
     b=$(basename $f)
+    rp=$(realpath $f)
     if [[ $b != *.* && $b != *~ ]]; then
-        ln -s $(realpath ${f}) /usr/local/bin/$b
+        set -x
+        ln -s $rp /usr/local/bin/$b
+        { set +x; } 2>/dev/null # Disable traces without disturbing user
     fi
 done
 
