@@ -24,8 +24,8 @@ esac
 set -ex
 modprobe -v wfx -r
 # With SDIO bus, chip have to be reset by SDIO host (while SPI slave can reset itself)
-[ "$IS_SDIO"] && echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind
+[ "$IS_SDIO" ] && echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind
 [ "$CLEAR_DMESG" ] && dmesg -C
-[ "$IS_SDIO"] && echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/bind
+[ "$IS_SDIO" ] && echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/bind
 modprobe -v wfx
 check_interface wlan0
