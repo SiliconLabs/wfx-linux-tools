@@ -16,3 +16,5 @@ case "$(wfx_bus)" in
         exit 1
         ;;
 esac
+
+check_interface wlan0
