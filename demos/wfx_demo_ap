@@ -9,6 +9,7 @@ INTERFACE="wlan0"
 ADDRESS="192.168.51.1/24"
 DNSMASQ_CONF=$GITHUB_CONF_PATH/dnsmasq.conf
 HOSTAPD_CONF=$GITHUB_CONF_PATH/hostapd.conf
+LIGHTTPD_CONF=$GITHUB_CONF_PATH/lighttpd.conf
 
 check_interface "$INTERFACE"
 
@@ -29,7 +30,8 @@ dnsmasq -C "$DNSMASQ_CONF"
 # Start hostapd
 hostapd -B "$HOSTAPD_CONF"
 
-# TODO: start HTTP server with a static page
+# Start web server
+lighttpd -f "$LIGHTTPD_CONF"
 
 # To allow traffic forwarding to a gateway, uncomment the following lines
 #echo 1 > /proc/sys/net/ipv4/ip_forward

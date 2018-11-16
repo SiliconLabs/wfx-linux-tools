@@ -7,6 +7,7 @@ check_root
 
 INTERFACE="wlan0"
 WPA_SUPPLICANT_CONF=$GITHUB_CONF_PATH/wpa_supplicant.conf
+LIGHTTPD_CONF=$GITHUB_CONF_PATH/lighttpd.conf
 
 check_interface "$INTERFACE"
 
@@ -19,6 +20,9 @@ dhcpcd --rebind "$INTERFACE"
 
 # Start wpa_supplicant
 wpa_supplicant -i "$INTERFACE" -c "$WPA_SUPPLICANT_CONF" -B -s
+
+# Start web server
+lighttpd -f "$LIGHTTPD_CONF"
 
 # Start wpa_gui
 if [ "$DISPLAY" != '' ]; then

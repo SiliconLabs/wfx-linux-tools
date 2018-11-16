@@ -11,7 +11,7 @@ INTERFACE="wlan0"
 wpa_cli -i "$INTERFACE" terminate 2>/dev/null || true
 
 # Kill potentially started process
-kill_check wpa_supplicant hostapd wpa_gui
+kill_check wpa_supplicant hostapd wpa_gui lighttpd
 kill $(cat /var/run/dnsmasq-wlan0.pid) || true
 
 # Wait for process cleanup
