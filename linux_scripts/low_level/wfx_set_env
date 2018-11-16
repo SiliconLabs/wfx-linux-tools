@@ -61,3 +61,11 @@ kill_check()
         fi
     fi
 }
+
+check_interface()
+{
+    if ! ip link show "$1" &> /dev/null; then
+	echo "Interface $1 not detected" >&2
+	exit 1
+    fi
+}

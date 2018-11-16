@@ -8,11 +8,7 @@ check_root
 INTERFACE="wlan0"
 WPA_SUPPLICANT_CONF=$GITHUB_TOOLS_PATH/demos/conf/wpa_supplicant.conf
 
-# Check wlan0
-if ! ip link show "$INTERFACE" &> /dev/null; then
-    echo "Interface $INTERFACE not detected, exiting" >&2
-    exit 1
-fi
+check_interface "$INTERFACE"
 
 # Ensure that all processes from a previous run are stopped
 wfx_demo_stop
