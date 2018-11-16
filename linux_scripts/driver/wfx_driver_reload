@@ -4,6 +4,7 @@
 
 . wfx_set_env
 check_root
+check_rpi
 
 if [ "${1}" == "-C" ] || [ "${1}" == "--clear" ]; then
     CLEAR_DMESG=1
@@ -13,7 +14,6 @@ case "$(wfx_bus)" in
     spi)
         ;;
     sdio)
-        check_rpi
         IS_SDIO=1
         ;;
     *)
