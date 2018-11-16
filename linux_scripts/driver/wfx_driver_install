@@ -24,6 +24,6 @@ KERNEL_VER=$(uname -r)
 
 printf "Installing driver %s for kernel %s\n" "$DRIVER_VER" "$KERNEL_VER"
 set -ex
-make -C $GITHUB_DRIVER_PATH
+make -C $GITHUB_DRIVER_PATH -j 5
 sudo make -C $GITHUB_DRIVER_PATH install
 sudo depmod -w
