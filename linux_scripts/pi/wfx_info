@@ -7,8 +7,12 @@
 case "${1}" in
     ap)
 		if [ ! -z ${2} ]; then
-			printf "$(cat ${GITHUB_CONF_PATH}/hostapd.conf | grep ${2})"
-			printf "$(hostapd_cli status | grep ${2})"
+			conf_res=$(cat ${GITHUB_CONF_PATH}/hostapd.conf | grep ${2})
+			if [ "${conf_res}" != "" ]; then
+				printf "${conf_res}"
+			else
+				printf "$(hostapd_cli status | grep ${2})"
+			fi
 		fi
         ;;
     sta|station)
@@ -20,8 +24,12 @@ case "${1}" in
 					echo  "${scan_res}" | grep ":"
 				;;
 				*)
-					printf "$(cat ${GITHUB_CONF_PATH}/wpa_supplicant.conf | grep ${2})"
-					printf "$(wpa_cli status | grep ${2})"
+					conf_res=$(cat ${GITHUB_CONF_PATH}/wpa_supplicant.conf | grep ${2})
+					if [ "${conf_res}" != "" ]; then
+						printf "${conf_res}"
+					else
+						printf "$(wpa_cli status | grep ${2})"
+					fi
 				;;
 			esac
 		fi
