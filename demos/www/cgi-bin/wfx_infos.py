@@ -89,7 +89,7 @@ if 1:
 	print ("<li>%s</li>"  % (model))
 	print ("<li>Kernel %s</li>"  % (kernel))
 	print ("<li>Hostname: %s</li>"  % (hostname))
-	print ("<li>%s</li>"  % (board))
+	print ("<li>EXP board:%s</li>"  % (board))
 	print ("<li>Bus: %s</li>"  % (bus))
 	print ("<li>Driver:   %s</li>"  % (driver))
 	print ("<li>Firmware: %s</li>"  % (firmware))
