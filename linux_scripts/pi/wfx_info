@@ -11,7 +11,10 @@ case "${1}" in
 			if [ "${conf_res}" != "" ]; then
 				printf "${conf_res}"
 			else
-				printf "$(hostapd_cli status | grep ${2})"
+				conf_res=$(hostapd_cli status | grep ${2})
+				if [ "${conf_res}" != "" ]; then
+					printf "${conf_res}"
+				fi
 			fi
 		fi
         ;;
@@ -28,7 +31,10 @@ case "${1}" in
 					if [ "${conf_res}" != "" ]; then
 						printf "${conf_res}"
 					else
-						printf "$(wpa_cli status | grep ${2})"
+						conf_res="$(wpa_cli status | grep ${2})"
+						if [ "${conf_res}" != "" ]; then
+							printf "${conf_res}"
+						fi
 					fi
 				;;
 			esac
