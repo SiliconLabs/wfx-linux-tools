@@ -43,6 +43,18 @@ case "${1}" in
 			;;
 		esac
         ;;
+    mac)
+		case "${2}" in
+			eth)
+				printf "$(ip addr show eth0  | grep 'link/ether' | cut -d ' ' -f 6)"
+				;;
+			wlan)
+				printf "$(ip addr show wlan0 | grep 'link/ether' | cut -d ' ' -f 6)"
+				;;
+			*)
+			;;
+		esac
+        ;;
     *)
     echo $($@)
 	exit 1
