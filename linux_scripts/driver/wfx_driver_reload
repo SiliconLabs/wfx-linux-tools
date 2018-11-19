@@ -21,7 +21,7 @@ case "$(wfx_bus)" in
         ;;
 esac
 
-set -ex
+set -e
 modprobe -v wfx -r
 # With SDIO bus, chip have to be reset by SDIO host (while SPI slave can reset itself)
 [ "$IS_SDIO" ] && echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind
