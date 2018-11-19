@@ -112,6 +112,21 @@ if 1:
 	print ("</tr>")
 	print ("</table>")
 
+if 1:
+	print ("""<table border="1">""")
+	print ("<tr>")
+	print ("<td><h1>%s</h1></td>"  % "MAC addresses")
+	print ("<td>")
+	print ("<ul>")
+	print ("<h3>")
+	print ("<li>LAN  %s</li>"  % (bash_res("wfx_info mac eth")))
+	print ("<li>WLAN %s</li>"  % (bash_res("wfx_info mac wlan")))
+	print ("</h3>")
+	print ("</ul>")
+	print ("</td>")
+	print ("</tr>")
+	print ("</table>")
+
 if "ap" in mode:
 	print ("""<table border="1">""")
 	print ("<tr>")
