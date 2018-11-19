@@ -170,20 +170,20 @@ if "station" in mode:
 	print ("</tr>")
 	print ("</table>")
 
-
-print ("""<table border="1">""")
-print ("<tr>")
-print ("<td><h1>%s</h1></td>"  % "WFX Checks")
-print ("<td>")
-print ("<ul>")
-print ("<h3>")
-for line in checks.splitlines():
-	print ("<li>%s\n</li>"       % (line))
-print ("</h3>")
-print ("</ul>")
-print ("</td>")
-print ("</tr>")
-print ("</table>")
+if 1:
+	print ("""<table border="1">""")
+	print ("<tr>")
+	print ("<td><h1>%s</h1></td>"  % "WFX Checks")
+	print ("<td>")
+	print ("<ul>")
+	print ("<h3>")
+	for line in checks.splitlines():
+		print ("<li>%s\n</li>"       % (line))
+	print ("</h3>")
+	print ("</ul>")
+	print ("</td>")
+	print ("</tr>")
+	print ("</table>")
 
 print ("""</div>""")
 
