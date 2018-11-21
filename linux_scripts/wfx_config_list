@@ -38,7 +38,6 @@ check_file --critical /lib/firmware/wfm_wf200.sec
 check_file --critical /lib/firmware/wf200.pds
 check_file --critical /lib/modules/$(uname -r)/extra/wfx.ko
 
-check_file /etc/modprobe.d/raspi-blacklist.conf
 check_file /etc/modprobe.d/wfx.conf
 check_file /etc/modules
 
