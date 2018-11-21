@@ -2,6 +2,7 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
+. wfx_set_env
 . wfx_colors
 
 check_file()
