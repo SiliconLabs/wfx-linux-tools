@@ -136,6 +136,15 @@ if [ -n "$loaded_dtbos" ]; then
 	done
 fi
 
+IFS=$'\n' loaded_overlays=($( vcdbg log msg 2>&1  | grep 'Loaded overlay' ))
+if [ -n "$loaded_overlays" ]; then
+	echo "Startup:  loaded overlays:"
+	for overlay in "${loaded_overlays[@]}"
+	do
+		echo "            $overlay"
+	done
+fi
+
 # Check WFx driver modules existence
 if [ -z "$wfx_drv_module" ]; then
 	missing_files=$(( $missing_files + 1 ))
