@@ -5,9 +5,17 @@
 . wfx_colors
 . wfx_set_env
 
-echo "Current configuration"
-. wfx_config
-echo ""
+# Tracing all active lines in /boot/config.txt
+config=$( cat /boot/config.txt  | grep -v ^# | grep -v ^$)
+if [ -n "${config}" ]; then 
+	echo "Current configuration"
+	for line in ${config[$@]}
+		do
+			echo " $line"
+		done
+	echo ""
+fi
+
 
 if [ $(id -u) != 0 ]; then
 	echo "  (please run this script as root to get more detailed info)" >&2
