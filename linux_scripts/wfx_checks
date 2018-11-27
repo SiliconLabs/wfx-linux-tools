@@ -16,7 +16,6 @@ if [ -n "${config}" ]; then
 	echo ""
 fi
 
-
 if [ $(id -u) != 0 ]; then
 	echo "  (please run this script as root to get more detailed info)" >&2
 fi
@@ -121,6 +120,14 @@ if [ "$WFX_SDIO_Overlay_enabled" = 1 ]; then
 	else
 		printf "Startup:  ${RED}Error: No part detected at boot on SDIO bus!${NO}   ${INV}Is there an EVB attached to the Pi, with the bus selection switch set to 'SDIO'?${NO}\n"
 		printf "          ${NO}(You may need to reboot the Pi if you changed the bus selection)${NO}\n"
+		IFS=$'\n' mmc1=($( dmesg | grep mmc1 ))
+		if [ -n "$mmc1" ]; then
+			echo "Startup:  mmc1 activity:"
+			for line in "${mmc1[@]}"
+			do
+				echo "            $line"
+			done
+		fi
 		startup_errors=$(( $startup_errors + 1 ))
 	fi
 fi
@@ -135,9 +142,18 @@ if [ "$WFX_SPI_Overlay_enabled" = 1 ]; then
 	fi
 fi
 
+IFS=$'\n' loading=($( vcdbg log msg 2>&1  | grep 'Loading' ))
+if [ -n "$loading" ]; then
+	echo "Startup:  loaded system files:"
+	for line in "${loading[@]}"
+	do
+		echo "            $line"
+	done
+fi
+
 IFS=$'\n' loaded_dtbos=($( vcdbg log msg 2>&1  | grep '.dtbo' ))
 if [ -n "$loaded_dtbos" ]; then
-	echo "Startup:  loaded device tree files:"
+	echo "Startup:  device tree overlay files:"
 	for dtbo in "${loaded_dtbos[@]}"
 	do
 		echo "            $dtbo"
