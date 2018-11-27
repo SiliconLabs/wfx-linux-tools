@@ -13,10 +13,24 @@ fi
 # Check which relevant params are enabled
 conf_i2c[$i]=$( cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep dtparam | grep "i2c_vc")
 
+conf_dtparams=$( cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep dtparam | grep -v "i2c_vc")
+conf_dtdebug=$(  cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep dtdebug)
+
 # Check which relevant overlays are enabled
 conf_bt[$i]=$(  cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "pi3-disable-bt")
 conf_sdio[$i]=$(cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "sdio")
 conf_spi[$i]=$( cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "spi" )
+
+if [ -n "${conf_dtdebug}" ]; then 
+	echo " ${conf_dtdebug}"
+fi
+
+if [ -n "${conf_dtparams}" ]; then 
+	for param in ${conf_dtparams[$@]}
+		do
+			echo " $param"
+		done
+fi
 
 if [ -n "${conf_i2c[$i]}" ]; then 
 	echo " ${conf_i2c[$i]}"
