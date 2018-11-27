@@ -9,9 +9,13 @@ echo "Current configuration"
 . wfx_config
 echo ""
 
+if [ $(id -u) != 0 ]; then
+	echo "  (please run this script as root to get more detailed info)" >&2
+fi
+
 kernel=$(uname -r)
 
-echo "System:   $(cat /sys/firmware/devicetree/base/model)"
+echo "System:   $(cat /sys/firmware/devicetree/base/model | tr -d '\0' )"
 echo "System:   Linux kernel $kernel"
 
 wfx_drv_dir=/lib/modules/$kernel/extra
@@ -123,14 +127,13 @@ if [ "$WFX_SPI_Overlay_enabled" = 1 ]; then
 	fi
 fi
 
-IFS=$'\n' loaded_dtbos=($(cat vcdbg_log_msg | grep 'File read: /' | grep .dtb ))
+IFS=$'\n' loaded_dtbos=($( vcdbg log msg 2>&1  | grep 'File read: .*dtb' ))
 if [ -n "$loaded_dtbos" ]; then
 	echo "Startup:  loaded device tree files:"
 	for dtbo in "${loaded_dtbos[@]}"
 	do
 		echo "            $dtbo"
 	done
-
 fi
 
 # Check WFx driver modules existence
