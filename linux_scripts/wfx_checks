@@ -145,6 +145,15 @@ if [ -n "$loaded_overlays" ]; then
 	done
 fi
 
+IFS=$'\n' dtparams=($( vcdbg log msg 2>&1  | grep 'dtparam:' ))
+if [ -n "$dtparams" ]; then
+	echo "Startup:  dtparams:"
+	for param in "${dtparams[@]}"
+	do
+		echo "            $param"
+	done
+fi
+
 # Check WFx driver modules existence
 if [ -z "$wfx_drv_module" ]; then
 	missing_files=$(( $missing_files + 1 ))
