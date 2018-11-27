@@ -127,7 +127,7 @@ if [ "$WFX_SPI_Overlay_enabled" = 1 ]; then
 	fi
 fi
 
-IFS=$'\n' loaded_dtbos=($( vcdbg log msg 2>&1  | grep 'File read: .*dtb' ))
+IFS=$'\n' loaded_dtbos=($( vcdbg log msg 2>&1  | grep '.dtbo' ))
 if [ -n "$loaded_dtbos" ]; then
 	echo "Startup:  loaded device tree files:"
 	for dtbo in "${loaded_dtbos[@]}"
