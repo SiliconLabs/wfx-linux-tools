@@ -7,5 +7,5 @@ check_rpi
 check_hat
 
 for f in /proc/device-tree/hat/*; do
-    printf "%-20s %s\n" "$(basename $f)" "$(cat $f)"
+    printf "%-20s %s\n" "$(basename $f)" "$(cat $f | tr -d '\0')"
 done
