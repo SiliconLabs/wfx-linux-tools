@@ -123,6 +123,16 @@ if [ "$WFX_SPI_Overlay_enabled" = 1 ]; then
 	fi
 fi
 
+IFS=$'\n' loaded_dtbos=($(cat vcdbg_log_msg | grep 'File read: /' | grep .dtb ))
+if [ -n "$loaded_dtbos" ]; then
+	echo "Startup:  loaded device tree files:"
+	for dtbo in "${loaded_dtbos[@]}"
+	do
+		echo "            $dtbo"
+	done
+
+fi
+
 # Check WFx driver modules existence
 if [ -z "$wfx_drv_module" ]; then
 	missing_files=$(( $missing_files + 1 ))
