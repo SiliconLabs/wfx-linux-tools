@@ -24,7 +24,15 @@ KERNEL_VER=$(uname -r)
 
 printf "Installing driver %s for kernel %s\n" "$DRIVER_VER" "$KERNEL_VER"
 set -ex
-make -C $GITHUB_DRIVER_PATH -j 5
-sudo make -C $GITHUB_DRIVER_PATH install
-sudo depmod -w
+make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} -j 5
+sudo make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} modules_install
+
+# depmod needs to work within a chroot too
+if [ -z "$KDIR" ]; then
+    DEPMOD_VER=''
+else
+    DEPMOD_VER="$(cat $KDIR/include/config/kernel.release)"
+fi
+sudo depmod -w $DEPMOD_VER
+
 echo "Success"
