@@ -7,9 +7,9 @@
 : ${SILABS_ROOT:=/home/pi/siliconlabs}
 
 # github clone directories
-GITHUB_TOOLS_PATH="$SILABS_ROOT/wfx_tools"
-GITHUB_DRIVER_PATH="$SILABS_ROOT/wfx_linux_driver"
-GITHUB_FIRMWARE_PATH="$SILABS_ROOT/wfx_firmware"
+GITHUB_TOOLS_PATH="$SILABS_ROOT/wfx-linux-tools"
+GITHUB_DRIVER_PATH="$SILABS_ROOT/wfx-linux-driver"
+GITHUB_FIRMWARE_PATH="$SILABS_ROOT/wfx-firmware"
 GITHUB_PDS_PATH="$GITHUB_FIRMWARE_PATH"
 GITHUB_CONF_PATH="$GITHUB_TOOLS_PATH/conf"
 
