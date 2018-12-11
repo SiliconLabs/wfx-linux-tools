@@ -33,6 +33,6 @@ if [ -z "$KDIR" ]; then
 else
     DEPMOD_VER="$(cat $KDIR/include/config/kernel.release)"
 fi
-sudo depmod -w $DEPMOD_VER
+sudo depmod $DEPMOD_VER
 
 echo "Success"
