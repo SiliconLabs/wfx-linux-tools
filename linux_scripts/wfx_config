@@ -1,6 +1,11 @@
 #!/bin/bash
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
+# wfx_config is used to display configuration items related with WFX use
+#  it also saves the parameters in arrays based on the first argument, for comparison purposes
+#  If 2 arguments are passed, it compares items between both, counts changes which will be applied 
+#   on the next reboot and those which require a power-cycle.
+#  This is in order to provide guidance to the user on what he should do to apply his changes
 
 . wfx_set_env
 
@@ -18,6 +23,7 @@ conf_dtdebug=$(  cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep dtdebug)
 
 # Check which relevant overlays are enabled
 conf_bt[$i]=$(  cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "pi3-disable-bt")
+conf_wifi[$i]=$(  cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "pi3-disable-wifi")
 conf_sdio[$i]=$(cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "sdio")
 conf_spi[$i]=$( cat /boot/config.txt  | grep -v ^# | grep -v ^$ | grep overlay | grep "spi" )
 
@@ -26,7 +32,7 @@ if [ -n "${conf_dtdebug}" ]; then
 fi
 
 if [ -n "${conf_dtparams}" ]; then 
-	for param in ${conf_dtparams[$@]}
+	for param in ${conf_dtparams[@]}
 		do
 			echo " $param"
 		done
@@ -38,6 +44,10 @@ fi
 
 if [ -n "${conf_bt[$i]}" ]; then 
 	echo " ${conf_bt[$i]}"
+fi
+
+if [ -n "${conf_wifi[$i]}" ]; then 
+	echo " ${conf_wifi[$i]}"
 fi
 
 if [ -n "${conf_sdio[$i]}" ]; then 
