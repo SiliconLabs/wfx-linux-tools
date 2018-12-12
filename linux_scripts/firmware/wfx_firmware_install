@@ -13,6 +13,8 @@ if [ ! -d "$GITHUB_FIRMWARE_PATH" ]; then
     exit 1
 fi
 
+git -C $GITHUB_FIRMWARE_PATH fetch --all --tags || true
+
 if [ $# -gt 0 ]; then
     if ! git -C $GITHUB_FIRMWARE_PATH checkout $1; then
         echo "ERROR: cannot get tag $1" >&2
