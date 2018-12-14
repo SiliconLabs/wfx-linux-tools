@@ -16,7 +16,7 @@ fi
 git -C $GITHUB_FIRMWARE_PATH fetch --all --tags || true
 
 if [ $# -gt 0 ]; then
-    if ! git -C $GITHUB_FIRMWARE_PATH checkout $1; then
+    if ! git -C $GITHUB_FIRMWARE_PATH checkout $1 --quiet; then
         echo "ERROR: cannot get tag $1" >&2
         echo "Possible tags:"
         git -C $GITHUB_FIRMWARE_PATH tag | sed 's/^/  /'
