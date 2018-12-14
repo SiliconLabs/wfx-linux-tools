@@ -24,6 +24,7 @@ KERNEL_VER=$(uname -r)
 
 printf "Installing driver %s for kernel %s\n" "$DRIVER_VER" "$KERNEL_VER"
 set -ex
+git -C $GITHUB_DRIVER_PATH submodule update --init
 make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} -j 5
 sudo make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} modules_install
 
