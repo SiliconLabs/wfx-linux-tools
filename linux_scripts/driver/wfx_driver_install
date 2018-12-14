@@ -5,13 +5,17 @@
 . wfx_set_env
 check_no_root
 
+set -e
+
 if [ ! -d "$GITHUB_DRIVER_PATH" ]; then
     echo "ERROR: cannot find directory $GITHUB_DRIVER_PATH" >&2
     exit 1
 fi
 
 if [ $# -gt 0 ]; then
-    if ! git -C $GITHUB_DRIVER_PATH checkout $1; then
+    check_working_clean $GITHUB_DRIVER_PATH
+
+    if ! git -C $GITHUB_DRIVER_PATH checkout --quiet $1; then
         echo "ERROR: cannot get tag $1" >&2
         echo "Possible tags:"
         git -C $GITHUB_DRIVER_PATH tag | sed 's/^/  /'
@@ -23,7 +27,7 @@ DRIVER_VER=$(git -C $GITHUB_DRIVER_PATH describe --tags --dirty)
 KERNEL_VER=$(uname -r)
 
 printf "Installing driver %s for kernel %s\n" "$DRIVER_VER" "$KERNEL_VER"
-set -ex
+set -x
 git -C $GITHUB_DRIVER_PATH submodule update --init
 make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} -j 5
 sudo make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} modules_install

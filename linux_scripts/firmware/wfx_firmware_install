@@ -13,10 +13,10 @@ if [ ! -d "$GITHUB_FIRMWARE_PATH" ]; then
     exit 1
 fi
 
-git -C $GITHUB_FIRMWARE_PATH fetch --all --tags || true
-
 if [ $# -gt 0 ]; then
-    if ! git -C $GITHUB_FIRMWARE_PATH checkout $1 --quiet; then
+    check_working_clean $GITHUB_FIRMWARE_PATH
+
+    if ! git -C $GITHUB_FIRMWARE_PATH checkout --quiet $1; then
         echo "ERROR: cannot get tag $1" >&2
         echo "Possible tags:"
         git -C $GITHUB_FIRMWARE_PATH tag | sed 's/^/  /'
