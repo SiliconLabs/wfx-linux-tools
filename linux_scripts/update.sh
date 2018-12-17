@@ -1,7 +1,8 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
-# This script is to be executed with curl
+# This script is to be executed with curl:
+# bash <(curl -s https://raw.githubusercontent.com/...)
 
 set -e
 

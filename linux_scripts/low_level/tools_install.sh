@@ -30,4 +30,6 @@ if [ $# -gt 0 ]; then
     fi
 fi
 
+# TODO: add internal tools
+
 ( cd "$GITHUB_TOOLS_PATH"; sudo ./install.sh )
