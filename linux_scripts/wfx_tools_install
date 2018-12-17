@@ -4,5 +4,7 @@
 
 VERSION=$1
 
+SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+
 # Launch install for a specific version
-git show $VERSION:linux_scripts/low_level/tools_install.sh | bash -s $VERSION
+git -C $SCRIPT_PATH show $VERSION:linux_scripts/low_level/tools_install.sh | bash -s $VERSION
