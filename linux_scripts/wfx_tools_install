@@ -2,24 +2,7 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
-set -e
-. wfx_set_env
-check_root
+VERSION=$1
 
-if [ ! -d "$GITHUB_TOOLS_PATH" ]; then
-    echo "ERROR: cannot find directory $GITHUB_TOOLS_PATH" >&2
-    exit 1
-fi
-
-if [ $# -gt 0 ]; then
-    check_working_clean $GITHUB_TOOLS_PATH
-
-    if ! git -C $GITHUB_TOOLS_PATH checkout --quiet $1; then
-        echo "ERROR: cannot get tag $1" >&2
-        echo "Possible tags:"
-        git -C $GITHUB_TOOLS_PATH tag | sed 's/^/  /'
-        exit 1
-    fi
-fi
-
-# TODO: Try to update internal tools
+# Launch install for a specific version
+git show $VERSION:linux_scripts/low_level/tools_install.sh | bash -s $VERSION
