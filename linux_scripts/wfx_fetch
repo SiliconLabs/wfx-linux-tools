@@ -10,3 +10,4 @@ OPTIONS="--all --tags --prune"
 git -C $GITHUB_DRIVER_PATH fetch $OPTIONS --recurse-submodules
 git -C $GITHUB_FIRMWARE_PATH fetch $OPTIONS
 git -C $GITHUB_TOOLS_PATH fetch $OPTIONS
+git -C $GITHUB_TOOLS_INTERNAL_PATH fetch $OPTIONS || true

@@ -2,9 +2,8 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
+set -x
 VERSION=$1
 
-SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-
 # Launch install for a specific version
-git -C $SCRIPT_PATH show $VERSION:linux_scripts/low_level/tools_install.sh | bash -s $VERSION
+git -C /home/pi/siliconlabs/wfx-linux-tools show $VERSION:linux_scripts/low_level/tools_install.sh | bash -s $VERSION

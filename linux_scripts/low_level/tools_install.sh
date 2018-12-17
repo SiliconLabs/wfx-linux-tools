@@ -5,6 +5,8 @@
 set -e
 
 GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
+GITHUB_TOOLS_INTERNAL_PATH="$GITHUB_TOOLS_PATH/internal"
+
 VERSION=$1
 
 if [ -z "$VERSION" ]; then
@@ -30,6 +32,7 @@ if [ $# -gt 0 ]; then
     fi
 fi
 
-# TODO: add internal tools
+# Update internal tools
+$GITHUB_TOOLS_INTERNAL_PATH/install_internal.sh || true
 
 ( cd "$GITHUB_TOOLS_PATH"; sudo ./install.sh )
