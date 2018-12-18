@@ -2,8 +2,12 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
+# DO NOT EDIT this script
+# this is just a wrapper to launch a specific version of tools_install.sh
+
 set -x
-VERSION=$1
+
+export TOOLS_VERSION=$1
 
 # Launch install for a specific version
-git -C /home/pi/siliconlabs/wfx-linux-tools show $VERSION:update/tools_install.sh | bash -s $VERSION
+git -C $GITHUB_TOOLS_PATH show $TOOLS_VERSION:update/tools_install.sh | bash -s
