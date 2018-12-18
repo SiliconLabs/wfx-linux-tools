@@ -40,10 +40,8 @@ if [ $# -gt 0 ]; then
 fi
 
 # Update internal tools (ignore if file does not exist)
-STATUS=0
-$GITHUB_TOOLS_INTERNAL_PATH/install_internal.sh || STATUS=$?
-if [ $STATUS != 0 ] && [ $STATUS != 127 ]; then
-    exit 1
+if [ -e $GITHUB_TOOLS_INTERNAL_PATH/install_internal.sh ]; then
+    $GITHUB_TOOLS_INTERNAL_PATH/install_internal.sh
 fi
 
 ( cd "$GITHUB_TOOLS_PATH"; sudo ./install.sh )
