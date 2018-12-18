@@ -6,4 +6,4 @@ set -x
 VERSION=$1
 
 # Launch install for a specific version
-git -C /home/pi/siliconlabs/wfx-linux-tools show $VERSION:linux_scripts/low_level/tools_install.sh | bash -s $VERSION
+git -C /home/pi/siliconlabs/wfx-linux-tools show $VERSION:update/tools_install.sh | bash -s $VERSION
