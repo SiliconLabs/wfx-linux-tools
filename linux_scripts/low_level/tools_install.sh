@@ -2,7 +2,7 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
-set -e
+set -ex
 
 GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
 GITHUB_TOOLS_INTERNAL_PATH="$GITHUB_TOOLS_PATH/internal"
