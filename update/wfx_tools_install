@@ -8,6 +8,7 @@
 set -x
 
 export TOOLS_VERSION=$1
+export GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
 
 # Launch install for a specific version
 git -C $GITHUB_TOOLS_PATH show $TOOLS_VERSION:update/tools_install.sh | bash -s

@@ -11,11 +11,9 @@ if [ $(id -u) == 0 ]; then
     exit 1
 fi
 
-export GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
-
 set -x
 
-"$GITHUB_TOOLS_PATH/update/wfx_tools_install" 0.4
+"/home/pi/siliconlabs/wfx-linux-tools/update/wfx_tools_install" 0.5
 
 wfx_fetch
 wfx_driver_install 1.6-public

@@ -7,7 +7,6 @@
 
 set -ex
 
-GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
 GITHUB_TOOLS_INTERNAL_PATH="$GITHUB_TOOLS_PATH/internal"
 
 GIT="git -C $GITHUB_TOOLS_PATH"
