@@ -21,3 +21,5 @@ for f in $(find -type f -name "wfx_*") pds_compress; do
 done
 
 wfx_overlay_compile linux_overlays/wfx-spi-overlay.dts linux_overlays/wfx-sdio-overlay.dts
+
+echo "Succes"
