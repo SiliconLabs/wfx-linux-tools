@@ -10,5 +10,10 @@ set -x
 export TOOLS_VERSION=$1
 export GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
 
+# Fetch if version is unknown
+if ! $GIT rev-parse --verify $TOOLS_VERSION &>/dev/null; then
+    $GIT fetch --all --tags --prune
+fi
+
 # Launch install for a specific version
 git -C $GITHUB_TOOLS_PATH show $TOOLS_VERSION:update/tools_install.sh | bash -s

@@ -26,11 +26,6 @@ if [ $# -gt 0 ]; then
 	exit 1
     fi
 
-    # Fetch if version is unknown
-    if ! $GIT rev-parse --verify $TOOLS_VERSION &>/dev/null; then
-	$GIT fetch --all --tags --prune
-    fi
-
     if ! $GIT checkout $TOOLS_VERSION; then
         echo "ERROR: cannot get version $TOOLS_VERSION" >&2
         echo "Possible tags:"
