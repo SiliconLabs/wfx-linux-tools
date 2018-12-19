@@ -42,6 +42,6 @@ fi
 # Update internal tools (ignore if file does not exist)
 if [ -e $GITHUB_TOOLS_INTERNAL_PATH/install_internal.sh ]; then
     $GITHUB_TOOLS_INTERNAL_PATH/install_internal.sh
+else
+    ( cd "$GITHUB_TOOLS_PATH"; sudo ./install.sh )
 fi
-
-( cd "$GITHUB_TOOLS_PATH"; sudo ./install.sh )
