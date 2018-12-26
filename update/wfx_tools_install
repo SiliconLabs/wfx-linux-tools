@@ -5,10 +5,12 @@
 # DO NOT EDIT this script
 # this is just a wrapper to launch a specific version of tools_install.sh
 
-set -x
+set -exo pipefail
 
 export TOOLS_VERSION=$1
 export GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
+
+GIT="git -C $GITHUB_TOOLS_PATH"
 
 # Fetch if version is unknown
 if ! $GIT rev-parse --verify $TOOLS_VERSION &>/dev/null; then
