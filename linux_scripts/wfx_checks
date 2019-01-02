@@ -206,6 +206,7 @@ fi
 
 if [ -n "$wfx_fw_file" ]; then
 	echo "Setup:    WFX Firmware      $wfx_fw_link ($wfx_fw_base)"
+	echo "Setup:    WFX FW Keyset     $(hexdump /lib/firmware/wfm_wf200.sec -n 8 -e '"%8.8s"')"
 fi
 
 if [ -n "$wfx_pds_file" ]; then
