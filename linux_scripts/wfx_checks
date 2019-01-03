@@ -25,6 +25,13 @@ kernel=$(uname -r)
 echo "System:   $(cat /sys/firmware/devicetree/base/model | tr -d '\0' )"
 echo "System:   Linux kernel $kernel"
 
+board=$(wfx_board 2> /dev/null)
+if [ -n "$board" ]; then
+	printf "System:   Board $(wfx_board)\n"
+else
+	printf "System:   ${RED}Error: Can't read board information${NO}\n"
+fi
+
 wfx_drv_dir=/lib/modules/$kernel/extra
 wfx_drv_file=/lib/modules/$kernel/extra/wfx.ko
 wfx_fw_base=/lib/firmware/wfm_wf200.sec
