@@ -12,7 +12,7 @@ def bash_res (cmd):
 date     = bash_res("date")
 kernel   = bash_res("uname -r")
 board    = bash_res("wfx_board")
-model    = bash_res("wfx_model")
+model    = bash_res("cat /sys/firmware/devicetree/base/model")
 bus      = bash_res("wfx_bus_show")
 mode     = bash_res("wfx_mode")
 firmware = bash_res("wfx_firmware_show | sed -ne 's/.*loaded version: *//p'")
