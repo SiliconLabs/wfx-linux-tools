@@ -2,4 +2,4 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
-git log --graph --date=relative --pretty=format:'%C(auto)%h %C(blue bold)%>|(24,trunc)%ad %C(auto)%C(green)%<(17,trunc)%an %C(auto)%s%C(cyan bold)%d%C(auto)' "$@"
+git log --graph --date=relative --pretty=format:'%C(auto)%h %C(blue bold)%>|(24,trunc)%ad %C(green)%<(17,trunc)%an %C(auto)%s%d' "$@"
