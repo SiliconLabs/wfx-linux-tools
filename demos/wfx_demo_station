@@ -8,6 +8,29 @@ set -e
 . wfx_set_env
 check_root
 
+# Print command passed as argument, execute it and die if command fail
+# If first argument is '-n', print command, but do not execute it. Use it if
+# your command contains variable that you don't want to show full content to
+# user. For example:
+#     run -n export PATH=\"$DIR:\$PATH\"
+#     export PATH="$DIR:$PATH"
+# If first argument is '-i', ignore return value for command
+run() {
+    local IGNORE_RUN IGNORE_ERR
+    [ "$1" = -n ] && IGNORE_RUN=1 && shift
+    [ "$1" = -i ] && IGNORE_ERR=1 && shift
+    if [ -z "$INHIBIT_ANSI_COLORS" ]; then
+        echo "[1m\$ $*[0m" >&2
+    else
+        echo "\$ $*" >&2
+    fi
+    [ -n "$IGNORE_RUN" ] && return 0
+    "$@"
+    RET=$?
+    [ -n "$IGNORE_ERR" ] && return $RET
+    [ $RET -eq 0 ] || die "$1 returned $RET"
+}
+
 INTERFACE="wlan0"
 WPA_SUPPLICANT_CONF=$GITHUB_CONF_PATH/wpa_supplicant.conf
 LIGHTTPD_CONF=$GITHUB_CONF_PATH/lighttpd.conf
@@ -17,33 +40,31 @@ check_interface "$INTERFACE"
 # Ensure that all processes from a previous run are stopped
 wfx_demo_stop
 
-set -x
-
 # Tell dhcpcd to control WLAN interface (in case of previous demo_AP)
-ip addr flush dev "$INTERFACE"
-dhcpcd --rebind "$INTERFACE"
+run ip addr flush dev "$INTERFACE"
+run dhcpcd --rebind "$INTERFACE"
 
 # Start wpa_supplicant
-wpa_supplicant -i "$INTERFACE" -c "$WPA_SUPPLICANT_CONF" -B -s
+run wpa_supplicant -i "$INTERFACE" -c "$WPA_SUPPLICANT_CONF" -B -s
 
 # Start web server
-lighttpd -f "$LIGHTTPD_CONF"
+run lighttpd -f "$LIGHTTPD_CONF"
 
 if [[ $# -gt 0 ]]; then
-    (
-        # Configure wpa_supplicant manually
-        wpa_cli flush
-        wpa_cli add_network
-        wpa_cli set_network 0 ssid \"$1\"
-        if [[ $# -gt 1 ]]; then
-            wpa_cli set_network 0 psk \"$2\"
-            wpa_cli set_network 0 key_mgmt WPA-PSK
-        else
-            wpa_cli set_network 0 key_mgmt NONE
-        fi
-        wpa_cli enable_network 0
-        wpa_cli select_network 0
-    ) | grep FAIL && exit 1 || true
+    # Configure wpa_supplicant manually
+    run wpa_cli flush
+    run wpa_cli add_network
+    run -n wpa_cli set_network 0 ssid \\\"$1\\\"
+    wpa_cli set_network 0 ssid \"$1\"
+    if [[ $# -gt 1 ]]; then
+        run -n wpa_cli set_network 0 psk \\\"$2\\\"
+        wpa_cli set_network 0 psk \"$2\"
+        run wpa_cli set_network 0 key_mgmt WPA-PSK
+    else
+        run wpa_cli set_network 0 key_mgmt NONE
+    fi
+    run wpa_cli enable_network 0
+    run wpa_cli select_network 0
 else
     # Configure wpa_supplicant using wpa_gui
     if [[ -n "$DISPLAY" ]]; then
