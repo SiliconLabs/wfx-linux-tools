@@ -10,7 +10,7 @@ def bash_res (cmd):
     return res.stdout.read()
 
 date     = bash_res("date")
-kernel   = bash_res("wfx_kernel")
+kernel   = bash_res("uname -r")
 board    = bash_res("wfx_board")
 model    = bash_res("wfx_model")
 bus      = bash_res("wfx_bus")
