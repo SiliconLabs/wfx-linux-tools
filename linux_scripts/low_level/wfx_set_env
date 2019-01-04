@@ -84,23 +84,3 @@ check_working_clean()
 	exit 1
     fi
 }
-
-disable_spi_overlay()
-{
-    sed -i~ -re 's/^(dtoverlay=wfx-spi)/#\1/m' /boot/config.txt
-}
-
-enable_spi_overlay()
-{
-    sed -i~ -re 's/^#(dtoverlay=wfx-spi)/\1/m' /boot/config.txt
-}
-
-disable_sdio_overlay()
-{
-    sed -i~ -re 's/^(dtoverlay=wfx-sdio)/#\1/m' /boot/config.txt
-}
-
-enable_sdio_overlay()
-{
-    sed -i~ -re 's/^#(dtoverlay=wfx-sdio)/\1/m' /boot/config.txt
-}
