@@ -3,7 +3,7 @@
 # See license terms contained in COPYING file
 
 . wfx_set_env
-check_no_root
+check_not_root
 
 OPTIONS="--all --tags --prune"
 
