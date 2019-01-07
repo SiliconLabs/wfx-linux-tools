@@ -234,11 +234,12 @@ else
 	# Check if driver has already been loaded
 	wfx_driver_loaded=$(dmesg | grep "wfx: Silicon Labs")
 	if [ -n "$wfx_driver_loaded" ]; then
-		echo "Startup:  Driver loaded ($wfx_driver_loaded)"
+		echo "Startup:  Driver loaded     ($wfx_driver_loaded)"
 		wfx_driver_success=$(ip addr show wlan0)
 		echo "Startup:  all OK, WFx part ready to act as wlan0"
 		if [ -n "$wfx_driver_success" ]; then
-			echo "Startup:  Firmware loaded $(dmesg | grep wfx- | grep Firmware)"
+			echo "Startup:  Firmware loaded   $(dmesg | grep wfx- | grep Firmware)"
+			echo "Startup:  Power Mode $(cat /sys/module/wfx/parameters/power_mode)      (/sys/module/wfx/parameters/power_mode)"
 			if [ $(id -u) == 0 ]; then
 				echo "Startup:  Firmware $(grep 'FW label' /sys/kernel/debug/ieee80211/phy0/wfx/status | cut -d\' -f 2)"
 			fi
