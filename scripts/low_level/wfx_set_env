@@ -14,6 +14,22 @@ GITHUB_FIRMWARE_PATH="$SILABS_ROOT/wfx-firmware"
 GITHUB_PDS_PATH="$GITHUB_FIRMWARE_PATH"
 GITHUB_CONF_PATH="$GITHUB_TOOLS_PATH/conf"
 
+# Colors used for debug messages
+NO="\e[0m"
+INV="\e[7m"
+DIM="\e[2m"
+DEF="\e[39m"
+WHITE="\e[97m"
+GREY="\e[90m"
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+LBLUE="\e[94m"
+LRED="\e[91m"
+LGREEN="\e[92m"
+LYELLOW="\e[93m"
+LBLUE="\e[94m"
+
 check_root()
 {
     if [ $(id -u) != 0 ]; then
@@ -83,22 +99,4 @@ check_working_clean()
 	echo "To SAVE modifications, run \"git stash\" in this directory"
 	exit 1
     fi
-}
-
-set_colors()
-{
-    NO="\e[0m"
-    INV="\e[7m"
-    DIM="\e[2m"
-    DEF="\e[39m"
-    WHITE="\e[97m"
-    GREY="\e[90m"
-    RED="\e[31m"
-    GREEN="\e[32m"
-    YELLOW="\e[33m"
-    LBLUE="\e[94m"
-    LRED="\e[91m"
-    LGREEN="\e[92m"
-    LYELLOW="\e[93m"
-    LBLUE="\e[94m"
 }
