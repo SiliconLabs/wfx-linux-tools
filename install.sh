@@ -20,6 +20,6 @@ for f in $(find -type f -name "wfx_*") pds_compress; do
     fi
 done
 
-wfx_overlay_compile linux_overlays/wfx-spi-overlay.dts linux_overlays/wfx-sdio-overlay.dts
+wfx_overlay_compile overlays/wfx-spi-overlay.dts overlays/wfx-sdio-overlay.dts
 
 echo "Succes"

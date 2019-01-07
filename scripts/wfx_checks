@@ -118,7 +118,7 @@ if [ "$WFX_SDIO_Overlay_enabled" = 1 ]; then
 	if [ -f $wfx_sdio_overlay ]; then
 		echo "Setup:    $wfx_sdio_overlay file present"
 	else
-		printf "Setup:    ${RED}Error: $wfx_sdio_overlay file missing${NO}   ${INV}This file should be available under ${GITHUB_TOOLS_PATH}/linux_overlays${NO}\n"
+		printf "Setup:    ${RED}Error: $wfx_sdio_overlay file missing${NO}   ${INV}This file should be available under ${GITHUB_TOOLS_PATH}/overlays${NO}\n"
 		missing_files=$(( $missing_files + 1 ))
 	fi
 	# Check if SDIO has been detected at boot
@@ -144,7 +144,7 @@ if [ "$WFX_SPI_Overlay_enabled" = 1 ]; then
 	if [ -f $wfx_spi_overlay ]; then
 		echo "Setup:    $wfx_spi_overlay file present"
 	else
-		printf "Setup:    ${RED}Error: $wfx_spi_overlay file missing${NO}   ${INV}This file should be available under ${GITHUB_TOOLS_PATH}/linux_overlays${NO}\n"
+		printf "Setup:    ${RED}Error: $wfx_spi_overlay file missing${NO}   ${INV}This file should be available under ${GITHUB_TOOLS_PATH}/overlays${NO}\n"
 		missing_files=$(( $missing_files + 1 ))
 	fi
 fi
