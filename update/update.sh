@@ -13,7 +13,7 @@ fi
 
 set -x
 
-"/home/pi/siliconlabs/wfx-linux-tools/update/wfx_tools_install" 0.15
+"/home/pi/siliconlabs/wfx-linux-tools/update/wfx_tools_install" 0.16
 
 wfx_fetch
 wfx_driver_install 1.6-public
