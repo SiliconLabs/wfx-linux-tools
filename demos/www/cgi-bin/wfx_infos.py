@@ -17,7 +17,7 @@ bus      = bash_res("wfx_bus_show")
 mode     = bash_res("pidof hostapd > /dev/null && echo ap || pidof wpa_supplicant > /dev/null && echo sta || echo none")
 firmware = bash_res("wfx_firmware_show | sed -ne 's/.*loaded version: *//p'")
 driver   = bash_res("wfx_driver_show   | sed -ne 's/.*loaded version: *//p'")
-checks   = bash_res('wfx_checks')
+checks   = bash_res('wfx_troubleshooter --checks')
 hostname = bash_res('hostname')
 
 print ("Content-type:text/html\r\n\r\n")
