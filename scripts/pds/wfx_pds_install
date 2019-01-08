@@ -16,12 +16,12 @@ if [ $# -gt 0 ]; then
         INFILE=$GITHUB_PDS_PATH/$1
     fi
 else
-    BOARD=$(wfx_board)
+    BOARD=$(wfx_info --board)
     if [ -z "$BOARD" ]; then
         echo "ERROR: cannot identify your board" >&2
         exit 1
     fi
-    INFILE=$GITHUB_PDS_PATH/$(wfx_board).pds.in
+    INFILE=$GITHUB_PDS_PATH/$BOARD.pds.in
 fi
 
 if [ ! -e "$INFILE" ]; then

@@ -1,0 +1,98 @@
+#!/bin/bash
+# Copyright (c) 2018, Silicon Laboratories
+# See license terms contained in COPYING file
+
+USAGE="Usage: $(basename $0) <command>
+
+Display information
+
+commands:
+  --help         display this message
+  --board        display board version
+  --eeprom       display EEPROM content
+  --temperature  display Raspberry Pi's temperature
+  --hat          display hat information
+  --devicetree   display device tree
+"
+
+. wfx_set_env
+
+get_letter()
+{
+    local hex=$(printf "%x" $(( $1+0x41 )) )
+    printf "\x$hex"
+}
+
+board()
+{
+    vendor=$(cat /proc/device-tree/hat/vendor | tr -d '\0')
+    product=$(cat /proc/device-tree/hat/product | tr -d '\0')
+    product_id=$(cat /proc/device-tree/hat/product_id | tr -d '\0')
+    product_ver=$(cat /proc/device-tree/hat/product_ver | tr -d '\0')
+    uuid=$(cat /proc/device-tree/hat/uuid | tr -d '\0')
+
+    variant_val=$((($product_ver >> 12) & 0x0F))
+    major_val=$((($product_ver >>  8) & 0x0F))
+    minor_val=$((($product_ver >>  0) & 0xFF))
+
+    board_id=$(($product_id))
+    variant=$(get_letter $variant_val)
+    major=$(get_letter $major_val)
+    minor=$(printf "%02d" $minor_val)
+
+    if [[ "$1" == "-v" ]]; then
+	printf "%20s %20s " $vendor $product
+    fi
+    echo "BRD${board_id}${variant}_Rev_${major}${minor}"
+}
+
+eeprom()
+{
+    i2cdump -y 0 0x50 i
+}
+
+temperature()
+{
+    /opt/vc/bin/vcgencmd measure_temp
+}
+
+hat()
+{
+    for f in /proc/device-tree/hat/*; do
+	printf "%-20s %s\n" "$(basename $f)" "$(cat $f | tr -d '\0')"
+    done
+}
+
+devicetree()
+{
+    dtc -I fs -O dts /sys/firmware/devicetree/base
+}
+
+COMMAND=$1
+
+case "$COMMAND" in
+    --help)
+	echo "$USAGE"
+	exit 0
+	;;
+    --board)
+	board
+	;;
+    --eeprom)
+	eeprom
+	;;
+    --temperature)
+	temperature
+	;;
+    --hat)
+	hat
+	;;
+    --devicetree)
+	devicetree
+	;;
+    *)
+	echo "ERROR: unknown command $COMMAND" >&2
+	echo "$USAGE" >&2
+	exit 1
+	;;
+esac

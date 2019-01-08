@@ -118,9 +118,9 @@ checks()
     echo "System:   $(cat /sys/firmware/devicetree/base/model | tr -d '\0' )"
     echo "System:   Linux kernel $kernel"
 
-    board=$(wfx_board 2> /dev/null)
+    board=$(wfx_info --board 2> /dev/null)
     if [ -n "$board" ]; then
-	printf "System:   Board $(wfx_board)\n"
+	printf "System:   Board $board\n"
     else
 	printf "System:   ${RED}Error: Can't read board information${NO}\n"
     fi

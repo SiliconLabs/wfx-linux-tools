@@ -11,7 +11,7 @@ def bash_res (cmd):
 
 date     = bash_res("date")
 kernel   = bash_res("uname -r")
-board    = bash_res("wfx_board")
+board    = bash_res("wfx_info --board")
 model    = bash_res("cat /sys/firmware/devicetree/base/model")
 bus      = bash_res("wfx_bus_show")
 mode     = bash_res("pidof hostapd > /dev/null && echo ap || pidof wpa_supplicant > /dev/null && echo sta || echo none")
