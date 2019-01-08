@@ -14,6 +14,36 @@ commands:
   --hat          display hat information
   --devicetree   display device tree
 "
+main()
+{
+    COMMAND=$1
+    case "$COMMAND" in
+	--help)
+	    echo "$USAGE"
+	    exit 0
+	    ;;
+	--board)
+	    board
+	    ;;
+	--eeprom)
+	    eeprom
+	    ;;
+	--temperature)
+	    temperature
+	    ;;
+	--hat)
+	    hat
+	    ;;
+	--devicetree)
+	    devicetree
+	    ;;
+	*)
+	    echo "ERROR: unknown command $COMMAND" >&2
+	    echo "$USAGE" >&2
+	    exit 1
+	    ;;
+    esac
+}
 
 . wfx_set_env
 
@@ -68,31 +98,4 @@ devicetree()
     dtc -I fs -O dts /sys/firmware/devicetree/base
 }
 
-COMMAND=$1
-
-case "$COMMAND" in
-    --help)
-	echo "$USAGE"
-	exit 0
-	;;
-    --board)
-	board
-	;;
-    --eeprom)
-	eeprom
-	;;
-    --temperature)
-	temperature
-	;;
-    --hat)
-	hat
-	;;
-    --devicetree)
-	devicetree
-	;;
-    *)
-	echo "ERROR: unknown command $COMMAND" >&2
-	echo "$USAGE" >&2
-	exit 1
-	;;
-esac
+main $1
