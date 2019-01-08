@@ -12,15 +12,15 @@ MODE=$1
 
 case "$MODE" in
     spi)
-	sed -i~ -re 's/^(dtoverlay=wfx-sdio)/#\1/m' /boot/config.txt
-	sed -i -re 's/^#(dtoverlay=wfx-spi)/\1/m' /boot/config.txt
-	;;
+        sed -i~ -re 's/^(dtoverlay=wfx-sdio)/#\1/m' /boot/config.txt
+        sed -i -re 's/^#(dtoverlay=wfx-spi)/\1/m' /boot/config.txt
+        ;;
     sdio)
-	sed -i~ -re 's/^(dtoverlay=wfx-spi)/#\1/m' /boot/config.txt
-	sed -i -re 's/^#(dtoverlay=wfx-sdio)/\1/m' /boot/config.txt
-	;;
+        sed -i~ -re 's/^(dtoverlay=wfx-spi)/#\1/m' /boot/config.txt
+        sed -i -re 's/^#(dtoverlay=wfx-sdio)/\1/m' /boot/config.txt
+        ;;
     *)
-	echo "ERROR: unsupported bus mode: $MODE" >&2
-	exit 1
-	;;
+        echo "ERROR: unsupported bus mode: $MODE" >&2
+        exit 1
+        ;;
 esac

@@ -19,11 +19,11 @@ fi
 if [ $# -gt 0 ]; then
     STATUS=$($GIT status --porcelain --untracked-files=no)
     if ! [ -z "$STATUS" ]; then
-	echo "ERROR: the following files where modified in the directory $REPO_PATH"
-	echo "$STATUS"
-	echo "To DISCARD modifications, run \"git reset --hard\" in this directory"
-	echo "To SAVE modifications, run \"git stash\" in this directory"
-	exit 1
+        echo "ERROR: the following files where modified in the directory $REPO_PATH"
+        echo "$STATUS"
+        echo "To DISCARD modifications, run \"git reset --hard\" in this directory"
+        echo "To SAVE modifications, run \"git stash\" in this directory"
+        exit 1
     fi
 
     if ! $GIT checkout $TOOLS_VERSION; then

@@ -18,30 +18,30 @@ main()
 {
     COMMAND=$1
     case "$COMMAND" in
-	--help)
-	    echo "$USAGE"
-	    exit 0
-	    ;;
-	--board)
-	    board
-	    ;;
-	--eeprom)
-	    eeprom
-	    ;;
-	--temperature)
-	    temperature
-	    ;;
-	--hat)
-	    hat
-	    ;;
-	--devicetree)
-	    devicetree
-	    ;;
-	*)
-	    echo "ERROR: unknown command $COMMAND" >&2
-	    echo "$USAGE" >&2
-	    exit 1
-	    ;;
+        --help)
+            echo "$USAGE"
+            exit 0
+            ;;
+        --board)
+            board
+            ;;
+        --eeprom)
+            eeprom
+            ;;
+        --temperature)
+            temperature
+            ;;
+        --hat)
+            hat
+            ;;
+        --devicetree)
+            devicetree
+            ;;
+        *)
+            echo "ERROR: unknown command $COMMAND" >&2
+            echo "$USAGE" >&2
+            exit 1
+            ;;
     esac
 }
 
@@ -70,7 +70,7 @@ board()
     minor=$(printf "%02d" $minor_val)
 
     if [[ "$1" == "-v" ]]; then
-	printf "%20s %20s " $vendor $product
+        printf "%20s %20s " $vendor $product
     fi
     echo "BRD${board_id}${variant}_Rev_${major}${minor}"
 }
@@ -88,7 +88,7 @@ temperature()
 hat()
 {
     for f in /proc/device-tree/hat/*; do
-	printf "%-20s %s\n" "$(basename $f)" "$(cat $f | tr -d '\0')"
+        printf "%-20s %s\n" "$(basename $f)" "$(cat $f | tr -d '\0')"
     done
 }
 
