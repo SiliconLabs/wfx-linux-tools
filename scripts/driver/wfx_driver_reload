@@ -10,7 +10,7 @@ if [ "${1}" == "-C" ] || [ "${1}" == "--clear" ]; then
     CLEAR_DMESG=1
 fi
 
-case "$(wfx_bus)" in
+case "$(wfx_bus_show)" in
     spi)
         ;;
     sdio)
