@@ -1,8 +1,0 @@
-#!/bin/bash
-# Copyright (c) 2018, Silicon Laboratories
-# See license terms contained in COPYING file
-
-INSTALLED_FILE="$(realpath /lib/firmware/wfm_wf200.sec)"
-LOADED_VER=$(dmesg | sed -nre 's/.*Firmware "(.*)".*/\1/p' -e 's/.*Label. \[(.*)\].*/\1/p' | tail -n 1)
-printf "%-30s%s\n" "Firmware installed file: "    "${INSTALLED_FILE:-not found}"
-printf "%-30s%s\n" "Firmware loaded version: "    "${LOADED_VER:-not found}"

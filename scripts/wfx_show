@@ -8,3 +8,18 @@ RUNNING_VER=$(dmesg | sed -ne 's/.*wfx: Silicon Labs //p' | tail -n 1)
 printf "%-30s%s\n" "Driver installed file: "    "${INSTALLED_FILE:-not found}"
 printf "%-30s%s\n" "Driver installed version: " "${INSTALLED_VER:-not found}"
 printf "%-30s%s\n" "Driver loaded version: "    "${RUNNING_VER:-not found}"
+
+
+INSTALLED_FILE="$(realpath /lib/firmware/wfm_wf200.sec)"
+LOADED_VER=$(dmesg | sed -nre 's/.*Firmware "(.*)".*/\1/p' -e 's/.*Label. \[(.*)\].*/\1/p' | tail -n 1)
+printf "%-30s%s\n" "Firmware installed file: "    "${INSTALLED_FILE:-not found}"
+printf "%-30s%s\n" "Firmware loaded version: "    "${LOADED_VER:-not found}"
+
+
+PDS=/lib/firmware/wf200.pds
+
+if ! [ -e $PDS ]; then
+    echo "$PDS was not found" >&2
+    exit 1
+fi
+realpath $PDS
