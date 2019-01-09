@@ -13,9 +13,9 @@ fi
 
 set -x
 
-"/home/pi/siliconlabs/wfx-linux-tools/update/wfx_tools_install" 0.19
+"/home/pi/siliconlabs/wfx-linux-tools/update/wfx_tools_install" 0.20
 
 wfx_fetch
 wfx_driver_install --tag 2.0-public
-sudo wfx_firmware_install FW2.0.0
+sudo wfx_firmware_install --tag FW2.0.0
 sudo wfx_pds_install BRD8022A_Rev_A06.pds.in
