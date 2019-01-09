@@ -6,25 +6,45 @@ set -e
 . wfx_set_env
 check_root
 
+set -e
 DEFAULT_CHIP_KEY=C0
 
-if [ ! -d "$GITHUB_FIRMWARE_PATH" ]; then
-    echo "ERROR: cannot find directory $GITHUB_FIRMWARE_PATH" >&2
-    exit 1
-fi
+USAGE="Usage: $(basename $0) OPTION
 
-if [ $# -gt 0 ]; then
-    check_working_clean $GITHUB_FIRMWARE_PATH
+Install firmware
 
-    if ! git -C $GITHUB_FIRMWARE_PATH checkout --quiet $1; then
-        echo "ERROR: cannot get tag $1" >&2
-        echo "Possible tags:"
-        git -C $GITHUB_FIRMWARE_PATH tag | sed 's/^/  /'
+Otpions:
+  --help         display this message
+  --tag <tag>    install the firmware specified by tag
+"
+
+GIT="git -C $GITHUB_FIRMWARE_PATH"
+
+case "$1" in
+    --help)
+        echo "$USAGE"
+        exit 0
+        ;;
+    --current)
+        ;;
+    --tag)
+        TAG=$2
+        check_working_clean $GITHUB_FIRMWARE_PATH
+        if ! $GIT checkout --quiet $TAG; then
+            echo "ERROR: cannot get tag $TAG" >&2
+            echo "Possible tags:" >&2
+            $GIT tag | sed 's/^/  /' >&2
+            exit 1
+        fi
+        ;;
+    *)
+        echo "ERROR: unknown command $1" >&2
+        echo "$USAGE" >&2
         exit 1
-    fi
-fi
+        ;;
+esac
 
-FIRMWARE_VER=$(git -C $GITHUB_FIRMWARE_PATH describe --tags --dirty)
+FIRMWARE_VER=$($GIT describe --tags --dirty)
 
 printf "Installing firmware %s\n" "$FIRMWARE_VER"
 for i in $GITHUB_FIRMWARE_PATH/wfm_wf200_??.sec; do
