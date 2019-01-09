@@ -7,28 +7,47 @@ check_not_root
 
 set -e
 
-if [ ! -d "$GITHUB_DRIVER_PATH" ]; then
-    echo "ERROR: cannot find directory $GITHUB_DRIVER_PATH" >&2
-    exit 1
-fi
+USAGE="Usage: $(basename $0) OPTION
 
-if [ $# -gt 0 ]; then
-    check_working_clean $GITHUB_DRIVER_PATH
+Install driver
 
-    if ! git -C $GITHUB_DRIVER_PATH checkout --quiet $1; then
-        echo "ERROR: cannot get tag $1" >&2
-        echo "Possible tags:"
-        git -C $GITHUB_DRIVER_PATH tag | sed 's/^/  /'
+Otpions:
+  --help         display this message
+  --current      install the driver from current sources state
+  --tag <tag>    install the driver specified by tag
+"
+
+GIT="git -C $GITHUB_DRIVER_PATH"
+
+case "$1" in
+    --help)
+        echo "$USAGE"
+        exit 0
+        ;;
+    --current)
+        ;;
+    --tag)
+        TAG=$2
+        check_working_clean $GITHUB_DRIVER_PATH
+        if ! $GIT checkout --quiet $TAG; then
+            echo "ERROR: cannot get tag $TAG" >&2
+            echo "Possible tags:" >&2
+            $GIT tag | sed 's/^/  /' >&2
+            exit 1
+        fi
+        ;;
+    *)
+        echo "ERROR: unknown command $1" >&2
+        echo "$USAGE" >&2
         exit 1
-    fi
-fi
+        ;;
+esac
 
-DRIVER_VER=$(git -C $GITHUB_DRIVER_PATH describe --tags --dirty)
-KERNEL_VER=$(uname -r)
+printf "Installing driver %s for kernel %s\n" "$($GIT describe --tags --dirty)" "$(uname -r)"
 
-printf "Installing driver %s for kernel %s\n" "$DRIVER_VER" "$KERNEL_VER"
 set -x
-git -C $GITHUB_DRIVER_PATH submodule update --init
+
+$GIT submodule update --init
 make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} -j 5
 sudo make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} modules_install
 
