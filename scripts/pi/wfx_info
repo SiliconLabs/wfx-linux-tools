@@ -2,11 +2,13 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
-USAGE="Usage: $(basename $0) <command>
+. wfx_set_env
+
+USAGE="Usage: $(basename $0) OPTION
 
 Display information
 
-commands:
+Options:
   --help         display this message
   --board        display board version
   --eeprom       display EEPROM content
@@ -14,6 +16,7 @@ commands:
   --hat          display hat information
   --devicetree   display device tree
 "
+
 main()
 {
     COMMAND=$1
@@ -44,8 +47,6 @@ main()
             ;;
     esac
 }
-
-. wfx_set_env
 
 get_letter()
 {
