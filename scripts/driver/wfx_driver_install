@@ -9,7 +9,7 @@ set -e
 
 USAGE="Usage: $(basename $0) OPTION
 
-Install driver
+Build and install driver
 
 Otpions:
   --help         display this message
