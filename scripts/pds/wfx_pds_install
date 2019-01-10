@@ -5,43 +5,65 @@
 . wfx_set_env
 check_root
 
-if [ ! -d "$GITHUB_PDS_PATH" ] && ! [ -e "$1" ]; then
-    echo "ERROR: cannot find directory $GITHUB_PDS_PATH" >&2
-    exit 1
-fi
+set -e
 
-if [ $# -gt 0 ]; then
-    INFILE=$1
-    if [ ! -e "$INFILE" ] && [ -e $GITHUB_PDS_PATH/$1 ]; then
-        INFILE=$GITHUB_PDS_PATH/$1
-    fi
-else
-    BOARD=$(wfx_info --board)
-    if [ -z "$BOARD" ]; then
-        echo "ERROR: cannot identify your board" >&2
+USAGE="Usage: $(basename $0) OPTION
+
+Install PDS
+
+Run wfx_firmware_install before running this command to make sure
+PDS version is aligned with firmware version.
+
+Otpions:
+  --help          display this message
+  --list          list supported EXP board models
+  --auto          auto-detect EXP board model
+  --model MODEL   select EXP board MODEL
+  --custom FILE   select custom .pds.in FILE
+"
+
+GIT="git -C $GITHUB_FIRMWARE_PATH"
+
+case "$1" in
+    --help)
+        echo "$USAGE"
+        exit 0
+        ;;
+    --list)
+	(cd $GITHUB_PDS_PATH; ls -1 *.pds.in | sed 's/\.pds\.in//')
+	exit 0
+	;;
+    --auto)
+	if ! BOARD="$(wfx_info --board)"; then
+            echo "ERROR: cannot identify your board" >&2
+            exit 1
+	fi
+	INFILE="$GITHUB_PDS_PATH/$BOARD.pds.in"
+        ;;
+    --model)
+	INFILE="$GITHUB_PDS_PATH/$2.pds.in"
+        ;;
+    --custom)
+	INFILE="$2"
+	;;
+    *)
+        echo "ERROR: unknown command $1" >&2
+        echo "$USAGE" >&2
         exit 1
-    fi
-    INFILE=$GITHUB_PDS_PATH/$BOARD.pds.in
-fi
+        ;;
+esac
 
 if [ ! -e "$INFILE" ]; then
     echo "ERROR: cannot find PDS $INFILE" >&2
-    echo "Possible PDS:"
-    (cd $GITHUB_PDS_PATH; ls -1 *.pds.in | sed 's/^/  /')
     exit 1
 fi
 
 INFILE_BASE=$(basename $INFILE)
-OUTFILE_BASE=${INFILE_BASE%.pds.in}.pds
+OUTFILE_BASE=${INFILE_BASE%.in}
 OUTFILE=/lib/firmware/$OUTFILE_BASE
 
-if [ "$INFILE_BASE" = "$OUTFILE_BASE" ]; then
-    echo "ERROR: input file is expected to end with '.pds.in'" >&2
-    exit 1
-fi
-
 printf "Installing PDS %s\n" "$INFILE"
-set -ex
+set -x
 pds_compress $INFILE $OUTFILE
 ln -sfn $OUTFILE_BASE /lib/firmware/wf200.pds
 echo "Success"
