@@ -20,6 +20,7 @@ for f in $(find -type f -name "wfx_*") pds_compress; do
     fi
 done
 
-wfx_overlay_compile overlays/wfx-spi-overlay.dts overlays/wfx-sdio-overlay.dts
+dtc -@ -W no-unit_address_vs_reg overlays/wfx-spi-overlay.dts -o /boot/overlays/wfx-spi.dtbo
+dtc -@ -W no-unit_address_vs_reg overlays/wfx-sdio-overlay.dts -o /boot/overlays/wfx-sdio.dtbo
 
 echo "Succes"
