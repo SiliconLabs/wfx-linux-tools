@@ -16,22 +16,20 @@ if [ -z "$TOOLS_VERSION" ]; then
     exit 1
 fi
 
-if [ $# -gt 0 ]; then
-    STATUS=$($GIT status --porcelain --untracked-files=no)
-    if ! [ -z "$STATUS" ]; then
-        echo "ERROR: the following files where modified in the directory $REPO_PATH"
-        echo "$STATUS"
-        echo "To DISCARD modifications, run \"git reset --hard\" in this directory"
-        echo "To SAVE modifications, run \"git stash\" in this directory"
-        exit 1
-    fi
+STATUS=$($GIT status --porcelain --untracked-files=no)
+if ! [ -z "$STATUS" ]; then
+    echo "ERROR: the following files where modified in the directory $REPO_PATH"
+    echo "$STATUS"
+    echo "To DISCARD modifications, run \"git reset --hard\" in this directory"
+    echo "To SAVE modifications, run \"git stash\" in this directory"
+    exit 1
+fi
 
-    if ! $GIT checkout $TOOLS_VERSION; then
-        echo "ERROR: cannot get version $TOOLS_VERSION" >&2
-        echo "Possible tags:"
-        $GIT tag | sed 's/^/  /'
-        exit 1
-    fi
+if ! $GIT checkout $TOOLS_VERSION; then
+    echo "ERROR: cannot get version $TOOLS_VERSION" >&2
+    echo "Possible tags:"
+    $GIT tag | sed 's/^/  /'
+    exit 1
 fi
 
 # Update internal tools (ignore if file does not exist)
