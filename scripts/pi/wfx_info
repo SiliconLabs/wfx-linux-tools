@@ -57,8 +57,6 @@ get_letter()
 
 board()
 {
-    vendor=$(cat /proc/device-tree/hat/vendor | tr -d '\0')
-    product=$(cat /proc/device-tree/hat/product | tr -d '\0')
     product_id=$(cat /proc/device-tree/hat/product_id | tr -d '\0')
     product_ver=$(cat /proc/device-tree/hat/product_ver | tr -d '\0')
 
@@ -71,9 +69,6 @@ board()
     major=$(get_letter $major_val)
     minor=$(printf "%02d" $minor_val)
 
-    if [[ "$1" == "-v" ]]; then
-        printf "%20s %20s " $vendor $product
-    fi
     echo "BRD${board_id}${variant}_Rev_${major}${minor}"
 }
 
