@@ -34,10 +34,7 @@ case "$1" in
 	exit 0
 	;;
     --auto)
-	if ! BOARD="$(wfx_info --board)"; then
-            echo "ERROR: cannot identify your board" >&2
-            exit 1
-	fi
+	BOARD="$(wfx_info --board)"
 	INFILE="$GITHUB_PDS_PATH/$BOARD.pds.in"
         ;;
     --model)

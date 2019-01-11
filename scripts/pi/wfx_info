@@ -57,8 +57,11 @@ get_letter()
 
 board()
 {
-    product_id=$(cat /proc/device-tree/hat/product_id | tr -d '\0')
-    product_ver=$(cat /proc/device-tree/hat/product_ver | tr -d '\0')
+    if ! product_id=$(cat /proc/device-tree/hat/product_id | tr -d '\0') \
+	    || ! product_ver=$(cat /proc/device-tree/hat/product_ver | tr -d '\0'); then
+	echo "ERROR: cannot identify the board" >&2
+	exit 1
+    fi
 
     variant_val=$((($product_ver >> 12) & 0x0F))
     major_val=$((($product_ver >>  8) & 0x0F))
