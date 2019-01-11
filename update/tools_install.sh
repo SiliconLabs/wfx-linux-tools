@@ -27,8 +27,6 @@ fi
 
 if ! $GIT checkout $TOOLS_VERSION; then
     echo "ERROR: cannot get version $TOOLS_VERSION" >&2
-    echo "Possible tags:"
-    $GIT tag | sed 's/^/  /'
     exit 1
 fi
 

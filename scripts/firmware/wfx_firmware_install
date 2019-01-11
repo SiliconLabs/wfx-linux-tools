@@ -32,8 +32,6 @@ case "$1" in
         check_working_clean $GITHUB_FIRMWARE_PATH
         if ! $GIT checkout --quiet $TAG; then
             echo "ERROR: cannot get tag $TAG" >&2
-            echo "Possible tags:" >&2
-            $GIT tag | sed 's/^/  /' >&2
             exit 1
         fi
         ;;
