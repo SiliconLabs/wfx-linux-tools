@@ -1,6 +1,9 @@
 #!/bin/bash
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
+#
+# Reload WFX driver
+#
 
 . wfx_set_env
 check_root
@@ -10,7 +13,7 @@ if [ "${1}" == "-C" ] || [ "${1}" == "--clear" ]; then
     CLEAR_DMESG=1
 fi
 
-case "$(wfx_bus_show)" in
+case "$(wfx_bus --show)" in
     spi)
         ;;
     sdio)
