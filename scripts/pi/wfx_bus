@@ -76,6 +76,7 @@ bus_set()
             exit 1
             ;;
     esac
+    echo "WARNING: reboot the board for the bus change to take effect (sudo reboot)"
 }
 
 main $@
