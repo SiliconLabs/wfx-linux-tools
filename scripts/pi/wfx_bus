@@ -11,7 +11,7 @@ USAGE="Usage: $(basename $0) OPTION
 
 Show or set bus mode (SPI or SDIO)
 
-Otpions:
+Options:
   --help         display this message
   --show         show bus mode
   --set sdio|spi set bus mode
