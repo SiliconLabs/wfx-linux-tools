@@ -5,7 +5,6 @@
 set -e
 . wfx_set_env
 check_rpi
-check_root
 
 USAGE="Usage: $(basename $0) OPTION
 
@@ -62,6 +61,7 @@ bus_show()
 bus_set()
 {
     MODE=$1
+    check_root
     case "$MODE" in
         spi)
             sed -i~ -re 's/^(dtoverlay=wfx-sdio)/#\1/m' /boot/config.txt

@@ -3,7 +3,6 @@
 # See license terms contained in COPYING file
 
 . wfx_set_env
-check_root
 
 set -o pipefail
 
