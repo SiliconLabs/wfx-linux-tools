@@ -29,28 +29,11 @@ wpa_supplicant -i "$INTERFACE" -c "$WPA_SUPPLICANT_CONF" -B -s
 # Start web server
 lighttpd -f "$LIGHTTPD_CONF"
 
-if [[ $# -gt 0 ]]; then
-    (
-        # Configure wpa_supplicant manually
-        wpa_cli flush
-        wpa_cli add_network
-        wpa_cli set_network 0 ssid \"$1\"
-        if [[ $# -gt 1 ]]; then
-            wpa_cli set_network 0 psk \"$2\"
-            wpa_cli set_network 0 key_mgmt WPA-PSK
-        else
-            wpa_cli set_network 0 key_mgmt NONE
-        fi
-        wpa_cli enable_network 0
-        wpa_cli select_network 0
-    ) | grep FAIL && exit 1 || true
+# Start wpa_gui
+if [ "$DISPLAY" != '' ]; then
+    sudo -u pi wpa_gui & disown
 else
-    # Configure wpa_supplicant using wpa_gui
-    if [[ -n "$DISPLAY" ]]; then
-        sudo -u pi wpa_gui & disown
-    else
-        echo "ERROR: no config provided and wpa_gui needs a display" >&2
-        exit 1
-    fi
+    echo "ERROR: wpa_gui needs a display" >&2
+    exit 1
 fi
 echo "Success"
