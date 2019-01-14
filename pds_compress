@@ -132,7 +132,9 @@ def handle_include(dbg_info, line, inc_paths):
                 exit(g_ret_value)
             with open(file) as f_inc:
                 dbg_info_inc = DebugInfo(m.group(1))
-                parse(dbg_info_inc, f_inc, inc_paths[:])
+                new_inc_paths = inc_paths[:-1]
+                new_inc_paths.append(os.path.dirname(file))
+                parse(dbg_info_inc, f_inc, new_inc_paths)
         return ""
     return line
 
