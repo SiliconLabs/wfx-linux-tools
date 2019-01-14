@@ -25,7 +25,7 @@ if ! [ -z "$STATUS" ]; then
     exit 1
 fi
 
-if ! $GIT checkout $TOOLS_VERSION; then
+if ! $GIT checkout -q $TOOLS_VERSION; then
     echo "ERROR: cannot get version $TOOLS_VERSION" >&2
     exit 1
 fi
