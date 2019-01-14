@@ -1,0 +1,15 @@
+/* This file is an example PDS that should be copied outside of
+ * Silicon Labs repositories (e.g. /home/pi/custom_pds)
+ *
+ * It is possible to overwrite every parameter of the PDS
+ *
+ * To install this PDS, run wfx_pds_install --custom path/to/this/file.pds.in
+ */
+
+// Reference to the official PDS
+#include "/home/pi/siliconlabs/wfx-firmware/PDS/BRD8022A_Rev_A06.pds.in"
+
+// Uncomment the following part to use antenna 2 instead of antenna 1
+RF_ANTENNA_SEL_DIV_CONF: {
+    RF_PORTS: TX2_RX2
+}
