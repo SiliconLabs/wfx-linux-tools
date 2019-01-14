@@ -15,7 +15,6 @@ board    = bash_res("wfx_info --board")
 model    = bash_res("cat /sys/firmware/devicetree/base/model")
 bus      = bash_res("wfx_bus --show")
 mode     = bash_res("pidof hostapd > /dev/null && echo ap || pidof wpa_supplicant > /dev/null && echo sta || echo none")
-driver   = bash_res("wfx_show | sed -nre 's/Driver loaded version: *(.*)/\\1/p'")
 checks   = bash_res('wfx_troubleshooter --checks')
 hostname = bash_res('hostname')
 
@@ -90,7 +89,6 @@ if 1:
 	print ("<li>Hostname: %s</li>"  % (hostname))
 	print ("<li>EXP board:%s</li>"  % (board))
 	print ("<li>Bus: %s</li>"  % (bus))
-	print ("<li>Driver:   %s</li>"  % (driver))
 
 	print ("</h3>")
 	print ("</ul>")
