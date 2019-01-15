@@ -1,8 +1,8 @@
 # wfx-linux-tools
 
 ## demos
-This directory mainly hosts two scripts (wfx_demo_sta and wfx_demo_ap) that can be used to test the Wi-Fi.
-These scripts contains the usual commands for setting up basic station and access point so it is possible to use them as reference for custom application (it is better to copy those scripts before edit or it will make updates more complicated).
+This directory mainly hosts two scripts (wfx_demo_station and wfx_demo_ap) that can be used to test the Wi-Fi.
+These scripts contain the usual commands for setting up basic station and access point so it is possible to use them as reference for custom application, in this case, first copy the script outside of the repository (e.g. /home/pi/custom_scripts) to avoid issue when updating the repository.
 
 ## examples
 This directory contains an example for a custom PDS file.
