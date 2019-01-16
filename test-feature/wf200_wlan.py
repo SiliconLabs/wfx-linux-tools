@@ -203,7 +203,7 @@ def tx_stop():
     apply_pds() 
 
 
-def tx_framing(packet_length_bytes=1000, delay_between_us=100):
+def tx_framing(packet_length_bytes=None, delay_between_us=100):
     if packet_length_bytes is None:
         return "FRAME_SIZE_BYTE " + set_pds_param("FRAME_SIZE_BYTE") + \
              "  " + "IFS_US " + set_pds_param("IFS_US")
