@@ -30,13 +30,12 @@ def init_board(wlan_name="wf200"):
     wf200_fw = fw_version()
     print("wf200_fw " + wf200_fw)
 
-    PDS_path = pds_env['PDS_ROOT']
-
-    definitions_files = pi(wlan_name + " " + "ls " + PDS_path + " | grep 'definitions-.*.in'").split("\n")
+    definitions_files = pi(wlan_name + " " + "ls " + pds_env['PDS_DEFINITION_ROOT'] + \
+         " | grep 'definitions-.*.in'").split("\n")
     definitions_versions = []
     for i in definitions_files:
         definitions_versions.append(i.replace("definitions-","").replace(".in",""))
-    template_files = pi(wlan_name + " " + "ls " + PDS_path + " | grep 'template-.*.in'").split("\n")
+    template_files = pi(wlan_name + " " + "ls " + pds_env['PDS_TEMPLATE_ROOT'] + " | grep 'template-.*.in'").split("\n")
     template_versions = []
     for i in template_files:
         template_versions.append(i.replace("template-","").replace(".pds.in",""))
@@ -50,8 +49,8 @@ def init_board(wlan_name="wf200"):
             if template not in definitions_versions:
                 print("WARNING: PDS template " + template + " has no matching definitions file!")
             else:
-                pds_definitions_file_path = PDS_path + "definitions-" + template + ".in"
-                pds_template_file_path = PDS_path + "template-" + template + ".pds.in"
+                pds_definitions_file_path = pds_env['PDS_DEFINITION_ROOT'] + "definitions-" + template + ".in"
+                pds_template_file_path = pds_env['PDS_TEMPLATE_ROOT'] + "template-" + template + ".pds.in"
                 last_valid_template = template
         else:
             break

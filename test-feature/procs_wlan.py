@@ -7,7 +7,8 @@ import re
 
 pds_env = dict()
 pds_env['TEST_FEATURE_ROOT'] = "/home/pi/siliconlabs/wfx-linux-tools/test-feature/"
-pds_env['PDS_ROOT'] = pds_env['TEST_FEATURE_ROOT'] + "PDS/"
+pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx-firmware/PDS/"
+pds_env['PDS_TEMPLATE_ROOT'] = pds_env['TEST_FEATURE_ROOT'] + "PDS/"
 pds_env['PDS_CURRENT_FILE'] = "/tmp/current_pds_data.in"
 pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/phy0/wfx/send_pds"
 
