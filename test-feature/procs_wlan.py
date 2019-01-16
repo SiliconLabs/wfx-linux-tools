@@ -22,21 +22,25 @@ def set_pds_param(param, value=""):
     pds_current_file.close()
     group1 = '(\n\s*[^/]\s*)'
     group2 = '(' + param + '\s*:\s*)'
-    group3 = '(\[.*\]|\w*)'
-    group4 = '(,)?'
-    current_value = re.search(group1 + group2 + group3 + group4, pds_current_data)
+    group3 = '(\+|-)?'
+    group4 = '(\[.*\]|\w*)'
+    group5 = '(,)?'
+    current_value = re.search(group1 + group2 + group3 + group4 + group5, pds_current_data)
     if current_value:
         if str(value) is "":
-            return str(current_value.group(3))
+            if current_value.group(3) is None:
+                return str(current_value.group(4))
+            else:
+                return str(current_value.group(3)) + str(current_value.group(4))
         else:
             # Replace current value for PARAM by new value
-            (new_pds_data, nb) = re.subn(group1 + group2 + group3 + group4, '\g<1>' + '\g<2>' + str(value) + '\g<4>', pds_current_data)
+            (new_pds_data, nb) = re.subn(group1 + group2 + group3 + group4 + group5, '\g<1>' + '\g<2>' + str(value) + '\g<5>', pds_current_data)
             if nb > 0:
                 pds_current_file = open(pds_env['PDS_CURRENT_FILE'], 'w')
                 pds_current_file.write(new_pds_data)
                 pds_current_file.close()
-                new_value = re.search(group1 + group2 + group3 + group4, pds_current_data)
-                result_string = str(param) + " " + str(new_value.group(3))
+                new_value = re.search(group1 + group2 + group3 + group4 + group5, pds_current_data)
+                result_string = str(param) + " " + str(new_value.group(4))
                 if pds_traces:
                     print(result_string)
                 return result_string
