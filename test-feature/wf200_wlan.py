@@ -125,8 +125,8 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
         backoff_dbm = str(int(int(backoff_max)/4))
     if StrictVersion(wf200_fw) >= StrictVersion("2.0.0"):
         if mode_802_11 is None:
-            return "BACKOFF_VAL " + backoff_max + "  " + \
-            backoff_dbm + " dBm"
+            return "BACKOFF_VAL " + backoff_max + "  tx_backoff " + \
+            backoff_dbm + " dB"
         else:
             if "DSSS" in mode_802_11:
                 index = 0
@@ -157,8 +157,8 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
         if mode_802_11 is None:
             return "HT_PARAM    " + set_pds_param("HT_PARAM") + "  " + \
                    "MOD         " + set_pds_param("MOD") + "  " + \
-                   "BACKOFF_VAL " + backoff_max + "  " + \
-                   backoff_dbm + " dBm"
+                   "BACKOFF_VAL " + backoff_max + "  tx_backoff " + \
+                   backoff_dbm + " dB"
         else:
             res = re.findall("([^_]*)_(.*)", mode_802_11)
             prefix = res[0][0]
@@ -220,8 +220,6 @@ def tx_mode(mode_802_11=None):
         res = re.findall("([^_]*)_(.*)", mode_802_11)
         prefix = res[0][0]
         suffix = res[0][1]
-        print("mode:" + mode_802_11 + " - prefix:" + prefix + \
-              " - suffix:" + suffix)
         ht_param = "MM"
         if "GF_" in mode_802_11:
             rate = "N_" + suffix
@@ -236,7 +234,6 @@ def tx_mode(mode_802_11=None):
             rate = "B_" + suffix + "Mbps"
         else:
             return "Unknown 802.11 mode"
-        print("HT_PARAM:" + ht_param + " - RATE:" + rate)
         set_pds_param("HT_PARAM", ht_param)
         set_pds_param("RATE", rate)
 
