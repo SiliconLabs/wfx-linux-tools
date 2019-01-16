@@ -28,6 +28,7 @@ case "$1" in
         ;;
     --tag)
         TAG=$2
+        [ -z "$TAG" ] && echo "$USAGE" >&2 && exit 1
         check_working_clean $GITHUB_DRIVER_PATH
         if ! $GIT checkout --quiet $TAG; then
             echo "ERROR: cannot get tag $TAG" >&2

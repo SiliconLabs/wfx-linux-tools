@@ -30,19 +30,19 @@ case "$1" in
         exit 0
         ;;
     --list)
-	(cd $GITHUB_PDS_PATH; ls -1 *.pds.in | sed 's/\.pds\.in//')
-	exit 0
-	;;
+        (cd $GITHUB_PDS_PATH; ls -1 *.pds.in | sed 's/\.pds\.in//')
+        exit 0
+        ;;
     --auto)
-	BOARD="$(wfx_info --board)"
-	INFILE="$GITHUB_PDS_PATH/$BOARD.pds.in"
+        BOARD="$(wfx_info --board)"
+        INFILE="$GITHUB_PDS_PATH/$BOARD.pds.in"
         ;;
     --model)
-	INFILE="$GITHUB_PDS_PATH/$2.pds.in"
+        INFILE="$GITHUB_PDS_PATH/$2.pds.in"
         ;;
     --custom)
-	INFILE="$2"
-	;;
+        INFILE="$2"
+        ;;
     *)
         echo "ERROR: unknown command $1" >&2
         echo "$USAGE" >&2

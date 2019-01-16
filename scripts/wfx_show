@@ -28,3 +28,4 @@ print_command "Firmware loaded label" "sed -nre \"s/FW label:.*'(.*)'/\1/p\" /sy
 printf "\n"
 
 print_command "PDS file" "realpath -e /lib/firmware/wf200.pds"
+print_command "PDS version" "pds_compress /lib/firmware/wf200.pds | sed -ne 's/^{a:{a:\(.\),b:\(.\).*/\1.\2/p'"
