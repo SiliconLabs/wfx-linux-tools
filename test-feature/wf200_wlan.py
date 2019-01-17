@@ -2,6 +2,7 @@
 
 from procs_wlan import *
 from distutils.version import StrictVersion
+from time import sleep
 
 wf200_fw = ""
 
@@ -27,6 +28,7 @@ def init_board(wlan_name="wf200"):
     pi("wlan pds_traces on")
 
     pi(wlan_name + " " + "sudo wfx_driver_reload -C")
+    sleep(0.5)
     wf200_fw = fw_version()
     print("wf200_fw " + wf200_fw)
 
