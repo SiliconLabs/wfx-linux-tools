@@ -16,6 +16,14 @@ pi_traces = 1
 pds_traces = 1
 wf_warning = ""
 
+def check_wf_warning(msg):
+    global wf_warning
+    if wf_warning == "":
+        return msg
+    else:
+        return wf_warning
+
+
 def set_pds_param(param, value=""):
     global pi_traces
     global pds_traces
@@ -55,12 +63,11 @@ def set_pds_param(param, value=""):
 def apply_pds():
     global pds_traces
     global wf_warning
-    wf_warning = ""
     result_string = pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " 2>&1")
     if ":error:" in result_string:
         wf_warning = "WARNING: No pds data sent! " + result_string
-        print(wf_warning)
     else:
+        wf_warning = ""
         if pds_traces:
             print("      " + pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE']))
         pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " " + pds_env['SEND_PDS_FILE'])

@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
-from procs_wlan import *
 from distutils.version import StrictVersion
 from time import sleep
 
-wf200_fw = ""
+import procs_wlan
+from procs_wlan import *
 
+wf200_fw = ""
 
 def fw_version():
     res = pi("wf200 sudo wfx_show | grep 'Firmware loaded version:'")
@@ -49,7 +50,8 @@ def init_board(wlan_name="wf200"):
     for template in template_versions:
         if StrictVersion(template) <= StrictVersion(wf200_fw):
             if template not in definitions_versions:
-                print("WARNING: PDS template " + template + " has no matching definitions file!")
+                print("WARNING: PDS template " + template + " has no " +
+                " matching definitions file for '" + wf200_fw + "' !")
             else:
                 pds_definitions_file_path = pds_env['PDS_DEFINITION_ROOT'] + "definitions-" + template + ".in"
                 pds_template_file_path = pds_env['PDS_TEMPLATE_ROOT'] + "template-" + template + ".pds.in"
