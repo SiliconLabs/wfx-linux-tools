@@ -16,7 +16,8 @@ Options:
   --pasword <pass> specify password
   --conf <file>    use specific wpa_supplicant.conf
 
-Note: if only --conf is used, the supplied file is supposed to contain the AP(s) to connect to
+If only --conf is used, the supplied file is supposed to contain the AP(s) to connect to.
+If --ssid is used, $(basename $0) wait for the connection to be established.
 "
 
 [ $# -eq 0 ] && echo "$USAGE" && exit 0
@@ -61,7 +62,15 @@ while true; do
 done
 
 INTERFACE="wlan0"
-CLI="wpa_cli -i $INTERFACE"
+
+wpa_cli_run()
+{
+    COMMAND='wpa_cli -i $INTERFACE $@'
+    if eval $COMMAND | grep FAIL; then
+        echo "ERROR: $COMMAND failed"
+        exit 1
+    fi
+}
 
 check_interface "$INTERFACE"
 
@@ -76,20 +85,20 @@ wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS
 
 # Connect
 if [ ! -z "$SSID" ]; then
-    $CLI flush
-    $CLI add_network
-    $CLI set_network 0 ssid \"$SSID\"
+    wpa_cli_run flush
+    wpa_cli_run add_network
+    wpa_cli_run set_network 0 ssid \"$SSID\"
     if [ -z "$PASSWD" ]; then
-        $CLI set_network 0 key_mgmt NONE
+        wpa_cli_run set_network 0 key_mgmt NONE
     else
-        $CLI set_network 0 psk \"$PASSWD\"
+        wpa_cli_run set_network 0 psk \"$PASSWD\"
     fi
-    $CLI select_network 0
+    wpa_cli_run select_network 0
 
     # Wait 10s for connection
     for n in {1..10}; do
         sleep 1
-        if $CLI status | grep wpa_state | grep COMPLETED; then
+        if wpa_cli -i $INTERFACE status | grep wpa_state | grep -q COMPLETED; then
             echo "Associated"
             exit 0
         fi
