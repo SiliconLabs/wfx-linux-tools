@@ -164,7 +164,7 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
             res = re.findall("([^_]*)_(.*)", mode_802_11)
             prefix = res[0][0]
             suffix = res[0][1]
-            print("mode:" + mode_802_11 + " - prefix:" + prefix + 
+            print("mode:" + mode_802_11 + " - prefix:" + prefix +
                     " - suffix:" + suffix)
             ht_param = "MM"
             if "GF_" in mode_802_11:
@@ -180,14 +180,14 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
                 rate = "B_" + suffix + "Mbps"
             else:
                 return "Unknown 802.11 mode"
-            print("HT_PARAM:" + ht_param + " - MOD:" + rate + 
+            print("HT_PARAM:" + ht_param + " - MOD:" + rate +
                     " - BACKOFF_VAL:" + backoff_level)
             set_pds_param("HT_PARAM", ht_param)
             set_pds_param("MOD", rate)
             set_pds_param("BACKOFF_VAL", int(4 * backoff_level))
     else:
         return "PDS format unknown for " + wf200_fw + "Firmware version"
-    apply_pds() 
+    apply_pds()
 
 
 def tx_rx_select(tx_ant=None, rx_ant=None):
@@ -196,12 +196,12 @@ def tx_rx_select(tx_ant=None, rx_ant=None):
     else:
         set_pds_param("RF_PORTS", "TX" + str(tx_ant) + \
                                  "_RX" + str(rx_ant))
-    apply_pds() 
+    apply_pds()
 
 
 def tx_stop():
     set_pds_param("NB_FRAME", 100)
-    apply_pds() 
+    apply_pds()
 
 
 def tx_framing(packet_length_bytes=None, delay_between_us=100):
@@ -245,15 +245,24 @@ def tx_start(nb_frames=None):
                "NB_FRAME "  + set_pds_param("NB_FRAME")
     else:
         set_pds_param("TEST_MODE", "tx_packet")
-        if str(nb_frames) is "continuous":
+        if str(nb_frames) == "continuous":
             set_pds_param("NB_FRAME", "0")
         else:
             set_pds_param("NB_FRAME", nb_frames)
     apply_pds()
 
 
-def tone(cmd, freq=0):
+def tone(cmd=None, freq=0):
     # CW Mode: generate CW @ (freq+1)*312.5Khz
+    if cmd is None:
+        test_mode = set_pds_param("TEST_MODE")
+        if test_mode is "tx_packet":
+            return "TEST_MODE " + test_mode + " " + \
+            "NB_FRAME " + set_pds_param("NB_FRAME")
+        else:
+            return "TEST_MODE " + test_mode + " " + \
+            "CW_MODE " + set_pds_param("CW_MODE") + " " + \
+            "FREQ1 " + set_pds_param("FREQ1")
     if cmd == "start":
         set_pds_param("CW_MODE", "single")
         set_pds_param("TEST_MODE", "tx_cw")
@@ -271,4 +280,4 @@ def tone_power(dbm=None):
                 "  tone_power " + str(int(power/4)) + " dBm"
     else:
         set_pds_param("MAX_OUTPUT_POWER", int(4*dbm))
-    apply_pds() 
+    apply_pds()

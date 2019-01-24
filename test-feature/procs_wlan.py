@@ -14,6 +14,7 @@ pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/phy0/wfx/send_pds"
 
 pi_traces = 1
 pds_traces = 1
+wf_warning = ""
 
 def set_pds_param(param, value=""):
     global pi_traces
@@ -53,13 +54,34 @@ def set_pds_param(param, value=""):
 
 def apply_pds():
     global pds_traces
+    global wf_warning
+    wf_warning = ""
     result_string = pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " 2>&1")
     if ":error:" in result_string:
-        print("WARNING: No pds data sent! " + result_string)
+        wf_warning = "WARNING: No pds data sent! " + result_string
+        print(wf_warning)
     else:
         if pds_traces:
             print("      " + pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE']))
         pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " " + pds_env['SEND_PDS_FILE'])
+
+
+def execute_shell_cmd(in_cmd):
+    cmd = ' '.join(str(e) for e in in_cmd)
+    global pi_traces
+    if pi_traces:
+        print("procs_wlan.execute_shell_cmd: Execute:  " + cmd)
+    op = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    if op:
+        output = str(op.stdout.read(), "utf-8").strip()
+        if pi_traces:
+            for line in output.split("\n"):
+                print("procs_wlan.execute_shell_cmd:  > > > :  " + line)
+        return output
+    else:
+        error = str(op.stderr.read(), "utf-8").strip()
+        print("procs_wlan.execute_shell_cmd: Error:", error)
+        return error
 
 
 def pi(args):
@@ -100,19 +122,7 @@ def pi(args):
         elif cmd[0] in ["kernel"]:
             return pi(target + " " + "uname -a")
         else:
-            if pi_traces:
-                print("procs_wlan.pi: Execute:  " + ' '.join(cmd))
-            op = subprocess.Popen(' '.join(cmd), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            if op:
-                output = str(op.stdout.read(), "utf-8").strip()
-                if pi_traces:
-                    for line in output.split("\n"):
-                        print("procs_wlan.pi:  > > > :  " + line)
-                return output
-            else:
-                error = str(op.stderr.read(), "utf-8").strip()
-                print("procs_wlan.pi: Error:", error)
-                return error
+            return execute_shell_cmd(cmd)
     else:
         return "procs_wlan.pi: Target '" + target + "' not supported\n"
 
