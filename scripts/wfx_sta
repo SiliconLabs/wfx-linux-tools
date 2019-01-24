@@ -1,0 +1,99 @@
+#!/bin/bash
+# Copyright (c) 2018, Silicon Laboratories
+# See license terms contained in COPYING file
+
+set -euo pipefail
+. wfx_set_env
+check_root
+
+USAGE="Usage: $(basename $0) OPTION
+
+Start in station mode
+
+Options:
+  --help           display this message
+  --ssid <ssid>    connect to <ssid>
+  --pasword <pass> specify password
+  --conf <file>    use specific wpa_supplicant.conf
+
+Note: if only --conf is used, the supplied file is supposed to contain the AP(s) to connect to
+"
+
+[ $# -eq 0 ] && echo "$USAGE" && exit 0
+
+SSID=""
+PASSWD=""
+CONF=""
+
+LONGOPTS="help,ssid:,password:,conf:"
+! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
+[[ ${PIPESTATUS[0]} -ne 0 ]] && echo "$USAGE" >&2 && exit 2
+eval set -- "$PARSED"
+while true; do
+    case "$1" in
+        --help)
+            echo "$USAGE"
+            exit 0
+            ;;
+        --ssid)
+            SSID="$2"
+            shift
+            ;;
+        --password)
+            PASSWD="$2"
+            shift
+            ;;
+        --conf)
+            CONF="$2"
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "ERROR" >&2
+            echo "$USAGE" >&2
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+INTERFACE="wlan0"
+CLI="wpa_cli -i $INTERFACE"
+
+check_interface "$INTERFACE"
+
+# Start wpa_supplicant
+killall --quiet --wait wpa_supplicant || true
+if [ -z "$CONF" ]; then
+    WPA_ARGS="-C /var/run/wpa_supplicant"
+else
+    WPA_ARGS="-c $CONF"
+fi
+wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS
+
+# Connect
+if [ ! -z "$SSID" ]; then
+    $CLI flush
+    $CLI add_network
+    $CLI set_network 0 ssid \"$SSID\"
+    if [ -z "$PASSWD" ]; then
+        $CLI set_network 0 key_mgmt NONE
+    else
+        $CLI set_network 0 psk \"$PASSWD\"
+    fi
+    $CLI select_network 0
+
+    # Wait 10s for connection
+    for n in {1..10}; do
+        sleep 1
+        if $CLI status | grep wpa_state | grep COMPLETED; then
+            echo "Associated"
+            exit 0
+        fi
+    done
+    echo "ERROR: Association timeout" >&2
+    exit 1
+fi
