@@ -6,7 +6,6 @@ set -e
 . wfx_set_env
 check_root
 
-set -e
 DEFAULT_CHIP_KEY=C0
 
 USAGE="Usage: $(basename $0) OPTION
