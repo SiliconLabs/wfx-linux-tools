@@ -16,6 +16,7 @@ Options:
   --pasword <pass> specify password
   --conf <file>    use specific wpa_supplicant.conf
   --interface <if> use interface instead of default wlan0
+  --no-dhcp        do not enable DHCP client
 
 If only --conf is used, the supplied file is supposed to contain the AP(s) to connect to.
 If --ssid is used, $(basename $0) wait for the connection to be established.
@@ -29,9 +30,10 @@ SSID=""
 PASSWD=""
 CONF=""
 INTERFACE="wlan0"
+DHCP="true"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,ssid:,password:,conf:,interface:"
+LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
@@ -41,6 +43,7 @@ while true; do
         --password)  PASSWD="$2";    shift ;;
         --conf)      CONF="$2";      shift ;;
         --interface) INTERFACE="$2"; shift ;;
+        --no-dhcp)   DHCP="false"          ;;
         --help)      echo "$USAGE";  exit 0 ;;
         --)          shift; break ;;
         *)           error ;;
@@ -60,8 +63,15 @@ wpa_cli_run()
 
 check_interface "$INTERFACE"
 
+# Enable DHCP client on this interface
+if [ "$DHCP" = "true" ]; then
+    dhcpcd --rebind "$INTERFACE"
+else
+    dhcpcd --release "$INTERFACE"
+fi
+
 # Start wpa_supplicant
-killall --quiet --wait wpa_supplicant || true
+killall --quiet --wait hostapd wpa_supplicant || true
 if [ -z "$CONF" ]; then
     WPA_ARGS="-C /var/run/wpa_supplicant"
 else
