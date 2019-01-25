@@ -15,6 +15,7 @@ Options:
   --ssid <ssid>    connect to <ssid>
   --pasword <pass> specify password
   --conf <file>    use specific wpa_supplicant.conf
+  --interface <if> use specified interface instead of default wlan0
 
 If only --conf is used, the supplied file is supposed to contain the AP(s) to connect to.
 If --ssid is used, $(basename $0) wait for the connection to be established.
@@ -25,8 +26,9 @@ If --ssid is used, $(basename $0) wait for the connection to be established.
 SSID=""
 PASSWD=""
 CONF=""
+INTERFACE="wlan0"
 
-LONGOPTS="help,ssid:,password:,conf:"
+LONGOPTS="help,ssid:,password:,conf:,interface:"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && echo "$USAGE" >&2 && exit 2
 eval set -- "$PARSED"
@@ -48,6 +50,10 @@ while true; do
             CONF="$2"
             shift
             ;;
+        --interface)
+            INTERFACE="$2"
+            shift
+            ;;
         --)
             shift
             break
@@ -60,8 +66,6 @@ while true; do
     esac
     shift
 done
-
-INTERFACE="wlan0"
 
 wpa_cli_run()
 {
