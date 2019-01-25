@@ -15,57 +15,39 @@ Options:
   --ssid <ssid>    connect to <ssid>
   --pasword <pass> specify password
   --conf <file>    use specific wpa_supplicant.conf
-  --interface <if> use specified interface instead of default wlan0
+  --interface <if> use interface instead of default wlan0
 
 If only --conf is used, the supplied file is supposed to contain the AP(s) to connect to.
 If --ssid is used, $(basename $0) wait for the connection to be established.
 "
 
-[ $# -eq 0 ] && echo "$USAGE" && exit 0
+error(){
+    echo -e "ERROR\n$USAGE" >&2 && exit 1
+}
 
 SSID=""
 PASSWD=""
 CONF=""
 INTERFACE="wlan0"
 
+[ $# -eq 0 ] && error
 LONGOPTS="help,ssid:,password:,conf:,interface:"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
-[[ ${PIPESTATUS[0]} -ne 0 ]] && echo "$USAGE" >&2 && exit 2
+[[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
 while true; do
     case "$1" in
-        --help)
-            echo "$USAGE"
-            exit 0
-            ;;
-        --ssid)
-            SSID="$2"
-            shift
-            ;;
-        --password)
-            PASSWD="$2"
-            shift
-            ;;
-        --conf)
-            CONF="$2"
-            shift
-            ;;
-        --interface)
-            INTERFACE="$2"
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            echo "ERROR" >&2
-            echo "$USAGE" >&2
-            exit 1
-            ;;
+        --ssid)      SSID="$2";      shift ;;
+        --password)  PASSWD="$2";    shift ;;
+        --conf)      CONF="$2";      shift ;;
+        --interface) INTERFACE="$2"; shift ;;
+        --help)      echo "$USAGE";  exit 0 ;;
+        --)          shift; break ;;
+        *)           error ;;
     esac
     shift
 done
+[ $# -ne 0 ] && error
 
 wpa_cli_run()
 {
