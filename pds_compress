@@ -375,8 +375,7 @@ def formattiny(f_out, pds):
             f_out.write("\n" + "    " * stack);
     f_out.write("\n");
 
-def main(args):
-    global g_ret_value
+def parse_cmdline(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(usage="%(prog)s [options] INPUT [OUTPUT]",
             description="Generate a compressed version of PDS from a full PDS")
     parser.add_argument("input", metavar='INPUT',
@@ -399,7 +398,10 @@ def main(args):
                   help="shortcut for --out=pds")
     parser.add_argument("-t", action="store_const", const="tinypds", dest="out_format",
                   help="shortcut for --out=tinypds")
-    options = parser.parse_args()
+    return parser.parse_args(args)
+
+def main(options):
+    global g_ret_value
     if options.input:
         f_in = open(options.input, "r")
         inc_paths = [ os.path.dirname(options.input) ]
@@ -452,4 +454,5 @@ def main(args):
 if __name__ == '__main__':
     if sys.version_info < (3, 0):
         sys.stderr.write("This tools was developed for Python 3 and wasn't tested with Python 2.x\n")
-    exit(main(sys.argv))
+    options = parse_cmdline()
+    sys.exit(main(options))
