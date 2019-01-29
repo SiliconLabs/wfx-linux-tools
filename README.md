@@ -1,9 +1,9 @@
 Silicon Labs WFX Raspberry Pi Documentation
 ===========================================
 
-This guide is meant to be read after the WF200 Quick Start Guide (qsg166-wf200-wifi-devkit.pdf from (https://www.silabs.com/)).
+This guide is meant to be read after the WF200 Quick Start Guide (qsg166-wf200-wifi-devkit.pdf from https://www.silabs.com/).
 It covers steps needed to develop on a Raspberry Pi with a WFX EXP after trying basic Wi-Fi demos.
-All this documentation assumes that the Raspberry Pi is running the latest image from (./RELEASES.md)
+All this documentation assumes that the Raspberry Pi is running the latest image from the [releases page](RELEASES.md)
 
 **WARNING: CHANGE THE HOSTNAME BEFORE CONNECTING THE RASPBERRY PI TO A NETWORK**
 
