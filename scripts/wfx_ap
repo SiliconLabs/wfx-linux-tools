@@ -50,8 +50,6 @@ while true; do
 done
 [ $# -ne 0 ] && error
 
-set -x
-
 # Try to get interface from hostapd.conf
 if [ ! -z "$CONF" ]; then
     INTERFACE=$(sed -ne 's/^interface=\(.*\)/\1/p' "$CONF")
@@ -96,7 +94,7 @@ fi
 if [ ! -z "$CONF" ]; then
     echo "Starting hostapd"
     killall --quiet --wait hostapd wpa_supplicant || true
-    hostapd -B "$CONF"
+    hostapd -B "$CONF" >/dev/null
 fi
 
 echo "Success"
