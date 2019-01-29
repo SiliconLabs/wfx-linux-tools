@@ -16,6 +16,7 @@ Options:
   --ip <address>   set the IP (with /24 mask)
   --dhcp           start a DHCP server
   --forward <if>   enable traffic forwarding to interface
+  --no-forward     disable all traffic forwarding
 "
 
 error(){
@@ -26,22 +27,24 @@ CONF=""
 SET_IP=""
 DHCP=""
 FWD_IF=""
+NO_FWD="false"
 INTERFACE="wlan0"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,conf:,ip:,dhcp,forward:"
+LONGOPTS="help,conf:,ip:,dhcp,forward:,no-forward"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
 while true; do
     case "$1" in
-        --conf)      CONF="$2";      shift ;;
-        --ip)        SET_IP="$2";    shift ;;
-        --dhcp)      DHCP="true"           ;;
-        --forward)   FWD_IF="$2";    shift ;;
-        --help)      echo "$USAGE";  exit 0 ;;
-        --)          shift; break ;;
-        *)           error ;;
+        --conf)       CONF="$2";      shift ;;
+        --ip)         SET_IP="$2";    shift ;;
+        --dhcp)       DHCP="true"           ;;
+        --forward)    FWD_IF="$2";    shift ;;
+        --no-forward) NO_FWD="true"         ;;
+        --help)       echo "$USAGE"; exit 0 ;;
+        --)           shift; break ;;
+        *)            error ;;
     esac
     shift
 done
@@ -69,7 +72,7 @@ if [ "$DHCP" = "true" ]; then
 
     IP=$(ip address show "$INTERFACE" | sed -ne 's/.*inet \([^\/]*\).*/\1/p')
     if [ $(echo -n "$IP" | grep -c '') != "1" ]; then
-        echo "ERROR: $INTERFACE has not exactly one IP address" >&2
+        echo "ERROR: $INTERFACE has not exactly one IP address (try --ip)" >&2
         exit 1
     fi
 
@@ -77,16 +80,23 @@ if [ "$DHCP" = "true" ]; then
     dnsmasq -C "" --interface "$INTERFACE" --dhcp-range "$RANGE"
 fi
 
+if [ ! -z "$FWD_IF" ]; then
+    echo "Enabling traffic forwarding"
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+    RULE="POSTROUTING -o $FWD_IF -j MASQUERADE"
+    iptables -t nat -C $RULE || iptables -t nat -A $RULE
+fi
+
+if [ "$NO_FWD" = "true" ]; then
+    echo "Disabling traffic forwarding"
+    echo 0 > /proc/sys/net/ipv4/ip_forward
+    iptables -t nat -F POSTROUTING
+fi
+
 if [ ! -z "$CONF" ]; then
     echo "Starting hostapd"
     killall --quiet --wait hostapd wpa_supplicant || true
     hostapd -B "$CONF"
-fi
-
-if [ ! -z "$FWD_IF" ]; then
-    echo "Enabling traffic forwarding"
-    echo 1 > /proc/sys/net/ipv4/ip_forward
-    iptables -t nat -A POSTROUTING -o "$FWD_IF" -j MASQUERADE
 fi
 
 echo "Success"
