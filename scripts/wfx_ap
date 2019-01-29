@@ -56,15 +56,15 @@ fi
 
 check_interface "$INTERFACE"
 
-# Disable DHCP client and set static IP on this interface
 if [ ! -z "$SET_IP" ]; then
-    dhcpcd --release "$INTERFACE"
+    echo "Configuring IP"
+    dhcpcd --release "$INTERFACE" 2>/dev/null
     ip addr flush dev "$INTERFACE"
     ip addr add "$SET_IP/24" dev "$INTERFACE"
 fi
 
-# Start DHCP server dnsmasq
 if [ "$DHCP" = "true" ]; then
+    echo "Starting DHCP server dnsmasq"
     killall --quiet --wait dnsmasq || true
 
     IP=$(ip address show "$INTERFACE" | sed -ne 's/.*inet \([^\/]*\).*/\1/p')
@@ -77,14 +77,14 @@ if [ "$DHCP" = "true" ]; then
     dnsmasq -C "" --interface "$INTERFACE" --dhcp-range "$RANGE"
 fi
 
-# Start hostapd
 if [ ! -z "$CONF" ]; then
+    echo "Starting hostapd"
     killall --quiet --wait hostapd wpa_supplicant || true
     hostapd -B "$CONF"
 fi
 
-# Allow traffic forwarding
 if [ ! -z "$FWD_IF" ]; then
+    echo "Enabling traffic forwarding"
     echo 1 > /proc/sys/net/ipv4/ip_forward
     iptables -t nat -A POSTROUTING -o "$FWD_IF" -j MASQUERADE
 fi
