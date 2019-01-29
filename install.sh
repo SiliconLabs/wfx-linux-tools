@@ -18,4 +18,4 @@ find -type f \( -name 'wfx_*' -o -name pds_compress \) ! -name '*~' ! -name '*.*
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-spi-overlay.dts -o /boot/overlays/wfx-spi.dtbo
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-sdio-overlay.dts -o /boot/overlays/wfx-sdio.dtbo
 
-echo "Succes"
+echo "Success"
