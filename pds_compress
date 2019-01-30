@@ -31,6 +31,7 @@
 # Avoid syntax error with python 2.x
 from __future__ import print_function
 
+import io
 import os
 import sys
 import re
@@ -446,6 +447,16 @@ def main(options):
     else:
         raise Exception('bad out_format value')
     return g_ret_value
+
+# This function is only an help for third-party tools that import pds_compress
+# as a python module (also note it is necessary to add .py extention to this in
+# order to import it).
+def compress_string(str_in, extra_options=""):
+    options = parse_cmdline([ "-" ] + extra_options.split())
+    options.input = io.StringIO(str_in)
+    options.output = io.StringIO()
+    main(options)
+    return options.output.getvalue()
 
 if __name__ == '__main__':
     if sys.version_info < (3, 0):
