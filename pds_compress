@@ -60,6 +60,18 @@ def pr_info(dbg_info, message):
     g_ret_value = 1
     print("%s:%d:%s" % (dbg_info.path, dbg_info.line, message), file=sys.stderr)
 
+def add_define(dbg_info, var, val):
+    if var in g_defs:
+        pr_info(dbg_info, 'warning: "%s" redefined' % var)
+    if val in g_defs:
+        val = g_defs[val]
+    val = re.sub(r'^"', '', val)
+    val = re.sub(r'"$', '', val)
+    if len(val) > 1 and not re.match(r'^-?(0[xb])?[a-fA-F0-9_]+$', val):
+        pr_info(dbg_info, 'warning: dictionary entry "%s" does not contains a valid token: %s' % (var, val))
+    g_defs[var] = val
+
+
 def handle_ifdef_stack(dbg_info, line, stack):
     if re.match(r'\s*#\s*ifn?def\s+', line, re.I):
         m = re.match(r'^\s*#\s*if(n?)def\s+([a-zA-Z_]\w*)\s*$', line, re.I)
@@ -102,19 +114,11 @@ def handle_define(dbg_info, line):
         if not m:
             pr_info(dbg_info, 'error: bad #define directive')
         else:
-            if m.group(1) in g_defs:
-                pr_info(dbg_info, 'warning: "%s" redefined' % m.group(1))
             if m.lastindex > 1:
                 val = m.group(3)
             else:
                 val = ""
-            if val in g_defs:
-                val = g_defs[val]
-            val = re.sub(r'^"', '', val)
-            val = re.sub(r'"$', '', val)
-            if len(val) > 1 and not re.match(r'^-?(0[xb])?[a-fA-F0-9_]+$', val):
-                pr_info(dbg_info, 'warning: dictionary entry "%s" does not contains a valid token: %s' % (m.group(1), val))
-            g_defs[m.group(1)] = val
+            add_define(dbg_info, m.group(1), val)
             return ""
     return line
 
@@ -408,11 +412,8 @@ def main(options):
         if "=" in d:
             (var, val) = d.split('=', 1)
         else:
-            var = d
-            val = ""
-        if var in g_defs:
-            pr_info(DebugInfo("command line"), 'warning: "%s" redefined' % var)
-        g_defs[var] = val
+            (var, val) = (d, "")
+        add_define(DebugInfo("<cmdline>"), var, val)
     if options.includes:
         inc_paths = options.includes + inc_paths
     if options.input == sys.stdin or not hasattr(options.input, 'name'):
