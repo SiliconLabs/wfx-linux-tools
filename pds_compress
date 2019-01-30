@@ -378,9 +378,9 @@ def formattiny(f_out, pds):
 def parse_cmdline(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(usage="%(prog)s [options] INPUT [OUTPUT]",
             description="Generate a compressed version of PDS from a full PDS")
-    parser.add_argument("input", metavar='INPUT',
+    parser.add_argument("input", metavar='INPUT', type=argparse.FileType('r'),
                   help="input file (except C format, all output formats can be used as input)")
-    parser.add_argument("output", metavar='OUTPUT', nargs="?",
+    parser.add_argument("output", metavar='OUTPUT', nargs="?", type=argparse.FileType('w'), default=sys.stdout,
                   help="output file (standard output if not specified)")
     parser.add_argument("-I", "--include", action='append', dest="includes", metavar="DIR",
                   help="search includes in this subdirectory")
@@ -402,14 +402,7 @@ def parse_cmdline(args=sys.argv[1:]):
 
 def main(options):
     global g_ret_value
-    if options.input:
-        f_in = open(options.input, "r")
-        inc_paths = [ os.path.dirname(options.input) ]
-        dbg_info = DebugInfo(options.input)
-    else:
-        f_in = sys.stdin
-        inc_paths = [ "." ]
-        dbg_info = DebugInfo("stdin")
+
     for d in options.defines or [ ]:
         if "=" in d:
             (var, val) = d.split('=', 1)
@@ -421,8 +414,12 @@ def main(options):
         g_defs[var] = val
     if options.includes:
         inc_paths = options.includes + inc_paths
-
-    parse(dbg_info, f_in, inc_paths)
+    if options.input != sys.stdin:
+        inc_paths = [ os.path.dirname(options.input.name) ]
+    else:
+        inc_paths = [ "." ]
+    dbg_info = DebugInfo(options.input.name)
+    parse(dbg_info, options.input, inc_paths)
     if g_ret_value and not options.force:
         return g_ret_value
     fix_outermost_braces(dbg_info)
@@ -433,20 +430,16 @@ def main(options):
     str_result = re.sub(r',\]', ']', str_result)
     str_result = re.sub(r',}', '}', str_result)
     check_sizes(str_result)
-    if options.output:
-        f_out = open(options.output, "w")
-    else:
-        f_out = sys.stdout
     if g_ret_value and not options.force:
         return g_ret_value
     if options.out_format == "json":
-        formattiny(f_out, re.sub(r'([-A-Za-z0-9]+)', r'"\1"', str_result))
+        formattiny(options.output, re.sub(r'([-A-Za-z0-9]+)', r'"\1"', str_result))
     elif options.out_format == "c":
-        formatc(f_out, str_result)
+        formatc(options.output, str_result)
     elif options.out_format == "tinypds":
-        formattiny(f_out, str_result)
+        formattiny(options.output, str_result)
     elif options.out_format == "pds":
-        f_out.write(str_result)
+        options.output.write(str_result)
     else:
         raise Exception('bad out_format value')
     return g_ret_value
