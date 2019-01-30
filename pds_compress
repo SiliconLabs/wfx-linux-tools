@@ -414,11 +414,14 @@ def main(options):
         g_defs[var] = val
     if options.includes:
         inc_paths = options.includes + inc_paths
-    if options.input != sys.stdin:
-        inc_paths = [ os.path.dirname(options.input.name) ]
-    else:
+    if options.input == sys.stdin or not hasattr(options.input, 'name'):
         inc_paths = [ "." ]
-    dbg_info = DebugInfo(options.input.name)
+    else:
+        inc_paths = [ os.path.dirname(options.input.name) ]
+    if not hasattr(options.input, 'name'):
+        dbg_info = DebugInfo("<inline>")
+    else:
+        dbg_info = DebugInfo(options.input.name)
     parse(dbg_info, options.input, inc_paths)
     if g_ret_value and not options.force:
         return g_ret_value
