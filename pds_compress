@@ -377,7 +377,7 @@ def formattiny(f_out, pds):
 
 def parse_cmdline(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(usage="%(prog)s [options] INPUT [OUTPUT]",
-            description="Generate a compressed version of PDS from a full PDS")
+                  description="Generate a compressed version of PDS from a full PDS")
     parser.add_argument("input", metavar='INPUT', type=argparse.FileType('r'),
                   help="input file (except C format, all output formats can be used as input)")
     parser.add_argument("output", metavar='OUTPUT', nargs="?", type=argparse.FileType('w'), default=sys.stdout,
