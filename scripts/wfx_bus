@@ -11,9 +11,12 @@ USAGE="Usage: $(basename $0) OPTION
 Show or set bus mode (SPI or SDIO)
 
 Options:
-  --help         display this message
-  --show         show bus mode
-  --set sdio|spi set bus mode
+  --help                 display this message
+  --show                 show bus mode
+  --set sdio|spi|spidev  set bus mode
+
+Note: spidev is to be used only by Silabs teams for tests, this mode
+requires specific firmware.
 "
 
 main()
@@ -39,23 +42,19 @@ main()
 
 bus_show()
 {
-    OVERLAY=$(cat /boot/config.txt | grep "^dtoverlay=wfx-")
-    case "$OVERLAY" in
-        *spi*sdio*|*sdio*spi*)
-            echo "ERROR: SPI and SDIO overlays and both enabled in /boot/config.txt" >&2
-            exit 1
-            ;;
-        *spi*)
-            echo spi
-            ;;
-        *sdio*)
-            echo sdio
-            ;;
-        *)
-            echo "ERROR: cannot find dtoverlay entry in /boot/config.txt" >&2
-            exit 1
-            ;;
-    esac
+    COUNT=0
+    for OVERLAY in $(grep "^dtoverlay=" /boot/config.txt); do
+        case "$OVERLAY" in
+            *wfx-sdio*) MODE=sdio;   ((++COUNT)) ;;
+            *wfx-spi*)  MODE=spi;    ((++COUNT)) ;;
+            *spidev*)   MODE=spidev; ((++COUNT)) ;;
+        esac
+    done
+    if [ "$COUNT" != "1" ]; then
+        echo "ERROR: there is not exactly one bus selected" >&2
+        exit 1
+    fi
+    echo "$MODE"
 }
 
 bus_set()
@@ -63,19 +62,16 @@ bus_set()
     MODE=$1
     check_root
     case "$MODE" in
-        spi)
-            sed -i~ -re 's/^(dtoverlay=wfx-sdio)/#\1/m' /boot/config.txt
-            sed -i -re 's/^#(dtoverlay=wfx-spi)/\1/m' /boot/config.txt
-            ;;
-        sdio)
-            sed -i~ -re 's/^(dtoverlay=wfx-spi)/#\1/m' /boot/config.txt
-            sed -i -re 's/^#(dtoverlay=wfx-sdio)/\1/m' /boot/config.txt
-            ;;
-        *)
-            echo "ERROR: unsupported bus mode: $MODE" >&2
-            exit 1
-            ;;
+        sdio)   DRIVER=wfx-sdio ;;
+        spi)    DRIVER=wfx-spi ;;
+        spidev) DRIVER=spidev ;;
+        *) echo "ERROR: unsupported bus mode: $MODE" >&2 && exit 1 ;;
     esac
+
+    disable_line /boot/config.txt 'dtoverlay=wfx-'
+    disable_line /boot/config.txt 'dtoverlay=spidev'
+    enable_line /boot/config.txt "dtoverlay=$DRIVER"
+
     echo "WARNING: reboot the board for the bus change to take effect (sudo reboot)"
 }
 

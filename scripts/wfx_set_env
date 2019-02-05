@@ -100,3 +100,24 @@ check_working_clean()
         exit 1
     fi
 }
+
+# Uncomment a given line or add it
+enable_line()
+{
+    FILE=$1
+    LINE=$2
+    if grep -q "^#*\ *$LINE" "$FILE"; then
+	comment="^#\ *"
+	sed -ire "/${comment}$LINE/ s/${comment}//" "$FILE"
+    else
+	echo "$LINE" >> "$FILE"
+    fi
+}
+
+# Comment out a given line (must match start of line)
+disable_line()
+{
+    FILE=$1
+    LINE=$2
+    sed -ire "/^$LINE/ s/^#*/#/" "$FILE"
+}
