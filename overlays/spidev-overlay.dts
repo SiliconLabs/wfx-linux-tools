@@ -1,0 +1,5 @@
+/include/ "wfx-spi-overlay.dts"
+
+&wfx {
+     compatible = "silabs,wfx-spi", "spidev";
+};
