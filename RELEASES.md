@@ -1,4 +1,4 @@
-This repository is designed to be used from a custom Raspberry Pi image that can be downloaded using the links below.
+This repository is designed to be used from a custom Raspberry Pi image that can be downloaded using the links below (click on the versions in the 'SD Card version' column of the table).
 
 
 Releases
