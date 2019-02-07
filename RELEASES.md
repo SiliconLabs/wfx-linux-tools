@@ -1,11 +1,19 @@
-This repository is designed to be used from a custom Raspberry Pi image that can be downloaded here.
+This repository is designed to be used from a custom Raspberry Pi image that can be downloaded using the links below.
+
 
 Releases
 ========
 
- - **2.1**: [image](https://webftp.silabs.com/download?domain=silabs.com&id=063a89e1b8b346be901fcce7b2978ded-7be97ccde747472583d37176e11cf136) password: D3fault_password
+NB: The download password for ALL releases is now: `D3fault_password`
 
- - **1.0** (DEPRECATED): [image](https://webftp.silabs.com/download?domain=silabs.com&id=ddf5759881c74bea9594f0eab53fc371-cd734355db2147538cd4f51f34b9cc34) password: h(iZt7X;
+
+| SD Card version | kernel     | Raspbian     | wfx-linux-driver | wfx-firmware | wfx-linux-tools | RPi 2B  | RPi 3B | RPi 3B+ |
+|-----------------|------------|--------------|------------------|--------------|-----------------|-------- |--------|---------|
+| [2.1](https://webftp.silabs.com/download?domain=silabs.com&id=063a89e1b8b346be901fcce7b2978ded-7be97ccde747472583d37176e11cf136)                           | 4.4.50-v7+ | 8.0 (jessie) | 2.0-public       | FW2.0.0      | 2.1             | yes     | yes    | no (*)  | 
+| [1.0](https://webftp.silabs.com/download?domain=silabs.com&id=92a1439336474a1783398737dd38d86d-27e4863b12ca42b4aa0268188a29e1ae) (deprecated)      | 4.4.50-v7+ | 8.0 (jessie) | 2.0-public       | FW2.0.0      | 2.1             | yes     | yes    | no (*)  | 
+ 
+(*) Rpi 3B+ support can be achieved by some magic (TBD)
+
 
 Copy image
 ==========
