@@ -116,6 +116,8 @@ checks()
     kernel=$(uname -r)
 
     echo "System:   $(cat /sys/firmware/devicetree/base/model | tr -d '\0' )"
+    echo "System:   $(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f 2 | tr -d '"')"
+    echo "System:   Debian version $(cat /etc/debian_version)"
     echo "System:   Linux kernel $kernel"
 
     board=$(wfx_info --board 2> /dev/null)
@@ -253,7 +255,7 @@ checks()
 
     IFS=$'\n' loaded_dtbos=($( vcdbg log msg 2>&1  | grep '.dtbo' ))
     if [ -n "$loaded_dtbos" ]; then
-        echo "Startup:  device tree overlay files:"
+        echo "Setup:    device tree overlay files:"
         for dtbo in "${loaded_dtbos[@]}"
         do
             echo "            $dtbo"
