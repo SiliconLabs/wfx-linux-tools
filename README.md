@@ -7,6 +7,13 @@ All this documentation assumes that the Raspberry Pi is running the latest image
 
 **WARNING: CHANGE THE HOSTNAME BEFORE CONNECTING THE RASPBERRY PI TO A NETWORK**
 
+Connecting to the Raspberry Pi
+------------------------------
+The default settings to access the Raspberry Pi are:
+ - hostname: silabs-pi-demo
+ - user: pi
+ - password: default_password
+
 Changing the hostname
 ---------------------
 If two machines have the same hostname on a network, it becomes hard to tell which one we connect to.
