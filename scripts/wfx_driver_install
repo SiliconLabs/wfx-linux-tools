@@ -58,4 +58,4 @@ else
 fi
 sudo depmod $DEPMOD_VER
 
-echo "Success"
+echo "Driver installed, please reload (sudo wfx_driver_reload)"
