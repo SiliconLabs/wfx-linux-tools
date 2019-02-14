@@ -4,6 +4,7 @@
 
 set -e
 . wfx_set_env
+run_as_root
 check_rpi
 
 USAGE="Usage: $(basename $0) OPTION
@@ -60,7 +61,6 @@ bus_show()
 bus_set()
 {
     MODE=$1
-    check_root
     case "$MODE" in
         sdio)   DRIVER=wfx-sdio ;;
         spi)    DRIVER=wfx-spi ;;

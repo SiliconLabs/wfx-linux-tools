@@ -46,6 +46,12 @@ check_not_root()
     fi
 }
 
+# Allow aliases use in scripts
+shopt -s expand_aliases
+
+# To be called at the start of tools needing to be run as root
+alias run_as_root='[ $(id -u) = 0 ] || exec sudo $0 "$@"'
+
 check_rpi()
 {
     if ! grep -q 'NAME="Raspbian GNU/Linux"' /etc/os-release; then

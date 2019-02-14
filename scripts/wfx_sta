@@ -4,7 +4,7 @@
 
 set -euo pipefail
 . wfx_set_env
-check_root
+run_as_root
 
 USAGE="Usage: $(basename $0) OPTION
 

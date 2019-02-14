@@ -3,8 +3,9 @@
 # See license terms contained in COPYING file
 
 set -e
+# Always run as root
+[ $(id -u) = 0 ] || exec sudo $0 "$@"
 
-[ $(id -u) != 0 ] && echo "Please run this script as root (running 'sudo $0' should work)" && exit 1 || true
 ! [ -e install.sh ] && echo "This script must be run from wfx-linux-tools" && exit 1 || true
 
 rm -f /usr/local/bin/wfx_*

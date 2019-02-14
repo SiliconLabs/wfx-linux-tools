@@ -6,7 +6,7 @@
 #
 
 . wfx_set_env
-check_root
+run_as_root
 check_rpi
 
 if [ "${1}" == "-C" ] || [ "${1}" == "--clear" ]; then

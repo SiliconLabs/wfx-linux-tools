@@ -6,7 +6,7 @@
 
 set -e
 . wfx_set_env
-check_root
+run_as_root
 
 INTERFACE="wlan0"
 
