@@ -14,7 +14,7 @@ Build and install driver
 Otpions:
   --help         display this message
   --current      install the driver from current sources state
-  --tag <tag>    install the driver specified by tag
+  --version VER  install the driver specified by VER
 "
 
 GIT="git -C $GITHUB_DRIVER_PATH"
@@ -26,7 +26,7 @@ case "$1" in
         ;;
     --current)
         ;;
-    --tag)
+    --version)
         wfx_git --path "$GITHUB_DRIVER_PATH" --version "$2"
         ;;
     *)
