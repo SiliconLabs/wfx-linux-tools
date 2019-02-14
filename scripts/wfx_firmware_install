@@ -4,7 +4,7 @@
 
 set -e
 . wfx_set_env
-run_as_root
+check_not_root
 
 DEFAULT_CHIP_KEY=C0
 
@@ -27,13 +27,7 @@ case "$1" in
     --current)
         ;;
     --tag)
-        TAG=$2
-        [ -z "$TAG" ] && echo "$USAGE" >&2 && exit 1
-        check_working_clean $GITHUB_FIRMWARE_PATH
-        if ! $GIT checkout --quiet $TAG; then
-            echo "ERROR: cannot get tag $TAG" >&2
-            exit 1
-        fi
+        wfx_git --path $GITHUB_FIRMWARE_PATH --version "$2"
         ;;
     *)
         echo "ERROR: unknown command $1" >&2
@@ -51,11 +45,11 @@ for i in $GITHUB_FIRMWARE_PATH/wfm_wf200_??.sec; do
     OUTFILE_BASE=${INFILE_BASE%.sec}-$FIRMWARE_VER.sec
     OUTFILE=/lib/firmware/$OUTFILE_BASE
     set -x
-    cp $INFILE $OUTFILE
-    ln -sfn $OUTFILE_BASE /lib/firmware/$INFILE_BASE
+    sudo cp $INFILE $OUTFILE
+    sudo ln -sfn $OUTFILE_BASE /lib/firmware/$INFILE_BASE
     { set +x; } 2>/dev/null # Disable traces without disturbing user
 done
 
 set -x
-ln -sfn wfm_wf200_$DEFAULT_CHIP_KEY.sec /lib/firmware/wfm_wf200.sec
+sudo ln -sfn wfm_wf200_$DEFAULT_CHIP_KEY.sec /lib/firmware/wfm_wf200.sec
 echo "Success"
