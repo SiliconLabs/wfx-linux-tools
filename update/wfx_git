@@ -60,7 +60,7 @@ case "$MODE" in
         SUCCESS=true
         for REMOTE in $($GIT remote); do
             echo "Tags on remote $REMOTE:"
-            if ! $GIT ls-remote --tags "$REMOTE" 2>/dev/null | sed -nre 's%.*refs/tags/(.*)%\1%p'; then
+            if ! $GIT ls-remote --tags "$REMOTE" 2>/dev/null | sed -nre 's%.*refs/tags/(.*)%\1%p' | sort -V; then
                 SUCCESS=false
                 break
             fi
@@ -86,5 +86,3 @@ case "$MODE" in
         error
         ;;
 esac
-
-    
