@@ -59,7 +59,8 @@ case "$MODE" in
     list)
         SUCCESS=true
         for REMOTE in $($GIT remote); do
-            echo "Tags on remote $REMOTE:"
+            echo "Tags on remote $REMOTE ($($GIT remote -v | grep fetch | grep $REMOTE | cut -f2 | sed -nr 's%.*((://)|@)([^/:]*).*%\3%p'
+)):"
             if ! $GIT ls-remote --tags "$REMOTE" 2>/dev/null | sed -nre 's%.*refs/tags/(.*)%\1%p' | sort -V; then
                 SUCCESS=false
                 break
