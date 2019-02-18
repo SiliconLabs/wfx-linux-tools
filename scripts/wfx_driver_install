@@ -15,6 +15,7 @@ Otpions:
   --help         display this message
   --current      install the driver from current sources state
   --version VER  install the driver specified by VER
+  --list-tags    list driver versions
 "
 
 GIT="git -C $GITHUB_DRIVER_PATH"

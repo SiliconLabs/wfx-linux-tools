@@ -15,7 +15,7 @@ Install firmware
 Otpions:
   --help         display this message
   --version VER  install the firmware specified by VER
-  --list-tags    list tags availables on remote
+  --list-tags    list firmware versions
 "
 
 GIT="git -C $GITHUB_FIRMWARE_PATH"
