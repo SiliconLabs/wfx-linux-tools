@@ -57,7 +57,19 @@ fi
 
 case "$MODE" in
     list)
-        $GIT ls-remote --tags
+        SUCCESS=true
+        for REMOTE in $($GIT remote); do
+            echo "Tags on remote $REMOTE:"
+            if ! $GIT ls-remote --tags "$REMOTE" 2>/dev/null | sed -nre 's%.*refs/tags/(.*)%\1%p'; then
+                SUCCESS=false
+                break
+            fi
+            echo ""
+        done
+        if [ "$SUCCESS" = "false" ]; then
+            echo "WARNING: cannot get tags from remote, listing local tags:"
+            $GIT tag -l
+        fi
         ;;
     version)
         [ -z "$VERSION" ] && echo "ERROR: version is mandatory" >&2 && exit 1
