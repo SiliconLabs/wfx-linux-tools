@@ -18,6 +18,7 @@ Otpions:
 "
 
 GIT="git -C $GITHUB_DRIVER_PATH"
+WFX_GIT="wfx_git --path $GITHUB_DRIVER_PATH"
 
 case "$1" in
     --help)
@@ -27,7 +28,11 @@ case "$1" in
     --current)
         ;;
     --version)
-        wfx_git --path "$GITHUB_DRIVER_PATH" --version "$2"
+        $WFX_GIT --version "$2"
+        ;;
+    --list-tags)
+        $WFX_GIT --list
+        exit 0
         ;;
     *)
         echo "ERROR: unknown command $1" >&2

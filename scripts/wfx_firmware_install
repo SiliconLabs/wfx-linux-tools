@@ -15,9 +15,11 @@ Install firmware
 Otpions:
   --help         display this message
   --version VER  install the firmware specified by VER
+  --list-tags    list tags availables on remote
 "
 
 GIT="git -C $GITHUB_FIRMWARE_PATH"
+WFX_GIT="wfx_git --path $GITHUB_FIRMWARE_PATH"
 
 case "$1" in
     --help)
@@ -27,7 +29,11 @@ case "$1" in
     --current)
         ;;
     --version)
-        wfx_git --path $GITHUB_FIRMWARE_PATH --version "$2"
+        $WFX_GIT --version "$2"
+        ;;
+    --list-tags)
+        $WFX_GIT --list
+        exit 0
         ;;
     *)
         echo "ERROR: unknown command $1" >&2
