@@ -17,7 +17,7 @@ case "${1}" in
                 fi
             fi
         else
-            echo "usage: sudo wfx_info ap [ssid|country_code|channel|auth_algs|ieee80211n|wpa|wpa_key_mgmt|rsn_pairwise|wpa_passphrase] "
+            echo "usage: info ap [ssid|country_code|channel|auth_algs|ieee80211n|wpa|wpa_key_mgmt|rsn_pairwise|wpa_passphrase] "
         fi
         ;;
     sta|station)
@@ -41,14 +41,14 @@ case "${1}" in
                     ;;
             esac
         else
-            echo "usage: sudo wfx_info station [scan|ctrl_interface|GROUP|update_config|country] "
+            echo "usage: info station [scan|ctrl_interface|GROUP|update_config|country] "
         fi
         ;;
     dnsmasq)
         if [ ! -z ${2} ]; then
             printf "$(cat ${GITHUB_CONF_PATH}/dnsmasq.conf | grep ${2})"
         else
-            echo "usage: sudo wfx_info dnsmasq [interface|dhcp-range|addn-hosts|domain] "
+            echo "usage: info dnsmasq [interface|dhcp-range|addn-hosts|domain] "
         fi
         ;;
     ip)
@@ -60,7 +60,7 @@ case "${1}" in
                 printf "$(ip addr show | grep "global wlan" | grep 'inet '| cut -d '/' -f 1 | cut -d ' ' -f 6)"
                 ;;
             *)
-                echo "usage: sudo wfx_info ip [eth|wlan]"
+                echo "usage: info ip [eth|wlan]"
                 ;;
         esac
         ;;
@@ -73,13 +73,13 @@ case "${1}" in
                 printf "$(ip addr show wlan0 | grep 'link/ether' | cut -d ' ' -f 6)"
                 ;;
             *)
-                echo "usage: sudo wfx_info mac [eth|wlan]"
+                echo "usage: info mac [eth|wlan]"
                 ;;
         esac
         ;;
     *)
         if [ -z ${1} ]; then
-            echo "usage: sudo wfx_info [ap|station|dnsmasq|ip|mac] [args]"
+            echo "usage: info [ap|station|dnsmasq|ip|mac] [args]"
         fi
         echo $($@)
         exit 1
