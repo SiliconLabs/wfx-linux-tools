@@ -14,7 +14,7 @@ kernel   = bash_res("uname -r")
 board    = bash_res("wfx_info --board")
 model    = bash_res("cat /sys/firmware/devicetree/base/model")
 bus      = bash_res("wfx_bus --show")
-mode     = bash_res("pidof hostapd > /dev/null && echo ap || pidof wpa_supplicant > /dev/null && echo sta || echo none")
+mode     = bash_res("pidof hostapd > /dev/null && echo ap || pidof wpa_supplicant > /dev/null && echo sta || echo stop")
 checks   = bash_res('wfx_troubleshooter --checks')
 hostname = bash_res('hostname')
 
