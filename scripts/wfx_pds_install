@@ -2,10 +2,9 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
+set -euo pipefail
 . wfx_set_env
 run_as_root
-
-set -e
 
 USAGE="Usage: $(basename $0) OPTION
 
@@ -16,52 +15,67 @@ PDS version is aligned with firmware version.
 
 Otpions:
   --help          display this message
-  --list          list supported EXP boards
-  --auto          auto-detect EXP board
-  --board MODEL   select EXP board MODEL
-  --custom FILE   select custom .pds.in FILE
+  --list-boards   list supported boards
+  --auto          auto-detect board
+  --board MODEL   select board MODEL
+  --custom FILE   install custom .pds.in FILE
 "
 
-GIT="git -C $GITHUB_FIRMWARE_PATH"
+BOARD=""
+INFILE=""
+PDS_PATH="$GITHUB_PDS_PATH"
 
-case "$1" in
-    --help)
-        echo "$USAGE"
-        exit 0
-        ;;
-    --list)
-        (cd $GITHUB_PDS_PATH; ls -1 *.pds.in | sed 's/\.pds\.in//')
-        exit 0
-        ;;
-    --auto)
-        BOARD="$(wfx_info --board)"
-        INFILE="$GITHUB_PDS_PATH/$BOARD.pds.in"
-        ;;
-    --board)
-        INFILE="$GITHUB_PDS_PATH/$2"
-        INFILE="${INFILE%.pds.in}.pds.in"
-        ;;
-    --custom)
-        INFILE="$2"
-        ;;
-    *)
-        echo "ERROR: unknown command $1" >&2
-        echo "$USAGE" >&2
-        exit 1
-        ;;
-esac
+[ $# -eq 0 ] && error
+LONGOPTS="help,list-boards,auto,board:,custom:,repo:"
+! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
+[[ ${PIPESTATUS[0]} -ne 0 ]] && error
+eval set -- "$PARSED"
+while true; do
+    case "$1" in
+        --list-boards)
+            tree $PDS_PATH -P '*.pds.in' -I definitions --noreport
+            exit 0
+            ;;
+        --auto)
+            BOARD="$(wfx_info --board)"
+            INFILE="$PDS_PATH/$BOARD.pds.in"
+            ;;
+        --board)
+            BOARD="${2%.pds.in}"; shift
+            INFILE="$PDS_PATH/$BOARD.pds.in"
+            ;;
+        --custom)
+            INFILE="$2"; shift
+            ;;
+        --repo)
+            PDS_PATH="$2"; shift
+            ;;
+        --help)
+            echo "$USAGE"; exit 0
+            ;;
+        --)
+            shift; break
+            ;;
+        *)
+            echo "ERROR: please use --auto, --board or --custom" >&2 ; error
+            ;;
+    esac
+    shift
+done
+[ $# -ne 0 ] && error
 
-if [ ! -e "$INFILE" ]; then
-    echo "ERROR: cannot find PDS $INFILE" >&2
-    exit 1
-fi
+[ -z "$BOARD" ] && [ -z "$INFILE" ] && error "please use --auto, --board or --custom"
+[ ! -e "$INFILE" ] && error "cannot find PDS $INFILE, board $BOARD may not be supported"
 
 INFILE_BASE=$(basename $INFILE)
-OUTFILE_BASE=${INFILE_BASE%.in}
+OUTFILE_BASE=${INFILE_BASE%.pds.in}.pds
 OUTFILE=/lib/firmware/$OUTFILE_BASE
 
-printf "Installing PDS %s\n" "$INFILE"
-set -x
-pds_compress $INFILE $OUTFILE
-ln -sfn $OUTFILE_BASE /lib/firmware/wf200.pds
-echo "Success"
+sudo pds_compress $INFILE $OUTFILE --include "$PDS_PATH/definitions"
+sudo ln -sfn $OUTFILE_BASE /lib/firmware/wf200.pds
+
+if [ ! -z "$BOARD" ]; then
+    echo "PDS installed for board $BOARD"
+else
+    echo "custom PDS $INFILE installed"
+fi
