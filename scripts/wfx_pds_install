@@ -38,7 +38,8 @@ case "$1" in
         INFILE="$GITHUB_PDS_PATH/$BOARD.pds.in"
         ;;
     --board)
-        INFILE="$GITHUB_PDS_PATH/$2.pds.in"
+        INFILE="$GITHUB_PDS_PATH/$2"
+        INFILE="${INFILE%.pds.in}.pds.in"
         ;;
     --custom)
         INFILE="$2"
