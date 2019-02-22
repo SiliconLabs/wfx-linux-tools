@@ -16,9 +16,9 @@ PDS version is aligned with firmware version.
 
 Otpions:
   --help          display this message
-  --list          list supported EXP board models
-  --auto          auto-detect EXP board model
-  --model MODEL   select EXP board MODEL
+  --list          list supported EXP boards
+  --auto          auto-detect EXP board
+  --board MODEL   select EXP board MODEL
   --custom FILE   select custom .pds.in FILE
 "
 
@@ -37,7 +37,7 @@ case "$1" in
         BOARD="$(wfx_info --board)"
         INFILE="$GITHUB_PDS_PATH/$BOARD.pds.in"
         ;;
-    --model)
+    --board)
         INFILE="$GITHUB_PDS_PATH/$2.pds.in"
         ;;
     --custom)
