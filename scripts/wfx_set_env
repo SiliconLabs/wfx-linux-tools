@@ -127,3 +127,13 @@ disable_line()
     LINE=$2
     sed -ire "/^$LINE/ s/^#*/#/" "$FILE"
 }
+
+error()
+{
+    if [ -z "${1:-}" ];then
+        echo -e "ERROR\n$USAGE" >&2
+    else
+        echo -e "ERROR: $1\n\n$USAGE" >&2
+    fi
+    exit 1
+}
