@@ -19,6 +19,13 @@ Otpions:
   --auto          auto-detect board
   --board MODEL   select board MODEL
   --custom FILE   install custom .pds.in FILE
+
+Examples:
+-install current PDS with board auto-detection
+$(basename $0) wfx_pds_install --auto
+
+-install custom PDS
+$(basename $0) wfx_pds_install --custom ~/my_test_PDS.pds.in
 "
 
 BOARD=""
