@@ -7,16 +7,6 @@ from wfx_test_functions import *
 from distutils.version import StrictVersion
 from time import sleep
 
-wf200_fw = ""
-
-
-def fw_version():
-    """ Retrieving the FW version from dmesg """
-    res = pi("wf200 sudo wfx_show | grep 'Firmware loaded version:'")
-    fw_label = res.split(':')[1].strip()
-    return fw_label
-
-
 def init_board(wlan_name="wf200"):
     """ Called to restart from a fresh copy of the template,
          after reloading the firmware.
@@ -26,14 +16,13 @@ def init_board(wlan_name="wf200"):
         4- generate the current .pds.in file based on the selected
             definitions and template
     """
-    global wf200_fw
 
     pi("wlan pi_traces  on")
     pi("wlan pds_traces on")
 
     pi(wlan_name + " " + "sudo wfx_driver_reload -C")
     sleep(0.5)
-    wf200_fw = fw_version()
+    wf200_fw = fw_version("refresh")
     print("wf200_fw " + wf200_fw)
 
     definitions_files = pi(wlan_name + " " + "ls " + pds_env['PDS_DEFINITION_ROOT'] + \
