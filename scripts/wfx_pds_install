@@ -26,6 +26,11 @@ $(basename $0) wfx_pds_install --auto
 
 -install custom PDS
 $(basename $0) wfx_pds_install --custom ~/my_test_PDS.pds.in
+
+Note:
+Two conditions must be met for --auto to work:
+-Board's EEPROM must be written with the right model reference
+-Board must be attached to the Raspberry Pi before boot (no hotplug)
 "
 
 BOARD=""
