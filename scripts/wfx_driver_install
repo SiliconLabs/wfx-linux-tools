@@ -57,4 +57,4 @@ sudo depmod $DEPMOD_VER
 set +x
 
 echo
-echo "Driver $($GIT describe --tags --dirty) installed, please reload (sudo wfx_driver_reload)"
+echo "Driver $($GIT describe --tags --dirty) installed, please reload (wfx_driver_reload)"
