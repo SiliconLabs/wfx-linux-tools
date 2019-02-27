@@ -27,7 +27,8 @@ case "$1" in
         exit 0
         ;;
     --version)
-        $WFX_GIT --version "$2"
+        VERSION="$2"
+        $WFX_GIT --version "$VERSION"
         ;;
     --list-tags)
         $WFX_GIT --list
@@ -56,4 +57,4 @@ done
 
 set -x
 sudo ln -sfn wfm_wf200_$DEFAULT_CHIP_KEY.sec /lib/firmware/wfm_wf200.sec
-echo "Success"
+echo "Firmware installed for version $VERSION"

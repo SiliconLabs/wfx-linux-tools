@@ -42,20 +42,19 @@ case "$1" in
         ;;
 esac
 
-printf "Installing driver %s for kernel %s\n" "$($GIT describe --tags --dirty)" "$(uname -r)"
-
-set -x
-
-$GIT submodule update --init
-make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} -j 5
-sudo make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} modules_install
-
 # depmod needs to work within a chroot too
 if [ -z "$KDIR" ]; then
     DEPMOD_VER=''
 else
     DEPMOD_VER="$(cat $KDIR/include/config/kernel.release)"
 fi
-sudo depmod $DEPMOD_VER
 
-echo "Driver installed, please reload (sudo wfx_driver_reload)"
+set -x
+$GIT submodule update --init
+make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} -j 5
+sudo make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} modules_install
+sudo depmod $DEPMOD_VER
+set +x
+
+echo
+echo "Driver $($GIT describe --tags --dirty) installed, please reload (sudo wfx_driver_reload)"
