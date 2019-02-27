@@ -10,12 +10,26 @@ The functions in this module provide generic access to
 import subprocess
 import sys
 import re
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--internal', action='store_true',
+                    help='(flag) uses internal test path')
+
+args = parser.parse_args()
 
 
 pds_env = dict()
-pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx-firmware/PDS/"
-pds_env['PDS_TEMPLATE_ROOT'] = pds_env['PDS_DEFINITION_ROOT'] + "test-resources/"
-pds_env['TEST_RESOURCES_ROOT'] = pds_env['PDS_DEFINITION_ROOT'] + "test-resources/"
+
+if args.internal == False:
+    pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx-firmware/PDS/"
+    pds_env['PDS_TEMPLATE_ROOT'] = pds_env['PDS_DEFINITION_ROOT'] + "test/"
+    pds_env['TEST_RESOURCES_ROOT'] = pds_env['PDS_TEMPLATE_ROOT']
+else:
+    pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx_pds/definitions/"
+    pds_env['PDS_TEMPLATE_ROOT'] = "/home/pi/siliconlabs/wfx_pds/test/"
+    pds_env['TEST_RESOURCES_ROOT'] = pds_env['PDS_TEMPLATE_ROOT']
+
 pds_env['PDS_CURRENT_FILE'] = "/tmp/current_pds_data.in"
 pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/phy0/wfx/send_pds"
 

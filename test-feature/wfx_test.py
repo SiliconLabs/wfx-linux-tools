@@ -38,34 +38,11 @@ def init_board(wlan_name="wf200"):
     pi(wlan_name + " " + "sudo wfx_driver_reload -C")
     sleep(0.5)
     wf200_fw = fw_version("refresh")
-    print("wf200_fw " + wf200_fw)
 
-    definitions_files = pi(wlan_name + " " + "ls " + pds_env['PDS_DEFINITION_ROOT'] + \
-         " | grep 'definitions-.*.in'").split("\n")
-    definitions_versions = []
-    for i in definitions_files:
-        definitions_versions.append(i.replace("definitions-","").replace(".in",""))
-    template_files = pi(wlan_name + " " + "ls " + pds_env['PDS_TEMPLATE_ROOT'] + " | grep 'template-.*.in'").split("\n")
-    template_versions = []
-    for i in template_files:
-        template_versions.append(i.replace("template-","").replace(".pds.in",""))
-    definitions_versions.sort(key=StrictVersion)
-    template_versions.sort(key=StrictVersion)
+    pds_definitions_file_path = pds_env['PDS_DEFINITION_ROOT'] + "definitions.in"
+    pds_template_file_path = pds_env['PDS_TEMPLATE_ROOT'] + "wfx_test.pds.in"
 
-    pds_definitions_file_path = ""
-    pds_template_file_path = ""
-    for template in template_versions:
-        if StrictVersion(template) <= StrictVersion(wf200_fw):
-            if template not in definitions_versions:
-                print("WARNING: PDS template " + template + " has no matching definitions file!")
-            else:
-                pds_definitions_file_path = pds_env['PDS_DEFINITION_ROOT'] + "definitions-" + template + ".in"
-                pds_template_file_path = pds_env['PDS_TEMPLATE_ROOT'] + "template-" + template + ".pds.in"
-                last_valid_template = template
-        else:
-            break
-
-    file_info = "Firmware version " + wf200_fw + "   File created based on " + last_valid_template + " files"
+    file_info = "Firmware version " + wf200_fw
 
     pds_definitions_file = open(pds_definitions_file_path)
     pds_definitions_data = pds_definitions_file.read()
