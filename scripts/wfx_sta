@@ -22,10 +22,6 @@ If only --conf is used, the supplied file is supposed to contain the AP(s) to co
 If --ssid is used, $(basename $0) wait for the connection to be established.
 "
 
-error(){
-    echo -e "ERROR\n$USAGE" >&2 && exit 1
-}
-
 SSID=""
 PASSWD=""
 CONF=""

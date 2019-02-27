@@ -19,10 +19,6 @@ Options:
   --version VER   checkout VER on repo
 "
 
-error(){
-    echo -e "ERROR\n$USAGE" >&2 && exit 1
-}
-
 REPO_PATH=""
 REPO_URL=""
 VERSION=""

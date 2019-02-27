@@ -19,10 +19,6 @@ Options:
   --no-forward     disable all traffic forwarding
 "
 
-error(){
-    echo -e "ERROR\n$USAGE" >&2 && exit 1
-}
-
 CONF=""
 SET_IP=""
 DHCP=""
