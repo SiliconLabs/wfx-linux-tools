@@ -78,7 +78,7 @@ case "$MODE" in
         # Fetch only when unknown version or branch from remote
         if ! $GIT checkout -q "$VERSION" 2>/dev/null ||
                 $GIT branch --list --all | grep -q "remotes/$VERSION$"; then
-            $GIT fetch --all --tags --prune --prune-tags
+            $GIT fetch --all --tags --prune
             if ! $GIT checkout -q "$VERSION"; then
                 echo "ERROR: cannot find version" >&2
                 exit 1
