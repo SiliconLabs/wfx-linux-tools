@@ -26,8 +26,6 @@ case "$1" in
         echo "$USAGE"
         exit 0
         ;;
-    --current)
-        ;;
     --version)
         $WFX_GIT --version "$2"
         ;;
