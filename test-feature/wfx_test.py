@@ -11,11 +11,13 @@ args = parser.parse_args()
 
 if args.internal == False:
     sys.path.insert(0, '/home/pi/siliconlabs/wfx-firmware/PDS/test/')
+    print("customer mode")
 else:
-    print("internal mode")
     sys.path.insert(0, '/home/pi/siliconlabs/wfx_pds/test/')
-    print("wfx_test           called  from " + os.getcwd())
-    print("wfx_test           running from " + os.path.dirname(os.path.abspath(__file__)))
+    print("internal mode")
+
+print("wfx_test           called  from " + os.getcwd())
+print("wfx_test           running from " + os.path.dirname(os.path.abspath(__file__)))
 
 
 from wfx_test_functions import *
