@@ -1,7 +1,22 @@
 #!/usr/bin/python3
 import sys
+import argparse
+import os
 
-sys.path.insert(0, '/home/pi/siliconlabs/wfx-firmware/PDS/test-resources/')
+parser = argparse.ArgumentParser()
+parser.add_argument('--internal', action='store_true',
+                    help='(flag) uses internal test path')
+
+args = parser.parse_args()
+
+if args.internal == False:
+    sys.path.insert(0, '/home/pi/siliconlabs/wfx-firmware/PDS/test/')
+else:
+    print("internal mode")
+    sys.path.insert(0, '/home/pi/siliconlabs/wfx_pds/test/')
+    print("wfx_test           called  from " + os.getcwd())
+    print("wfx_test           running from " + os.path.dirname(os.path.abspath(__file__)))
+
 
 from wfx_test_functions import *
 from distutils.version import StrictVersion
