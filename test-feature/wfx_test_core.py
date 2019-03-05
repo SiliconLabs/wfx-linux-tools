@@ -23,13 +23,10 @@ pds_env = dict()
 
 if args.internal == False:
     pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx-firmware/PDS/"
-    pds_env['PDS_TEMPLATE_ROOT'] = pds_env['PDS_DEFINITION_ROOT'] + "test/"
-    pds_env['TEST_RESOURCES_ROOT'] = pds_env['PDS_TEMPLATE_ROOT']
 else:
     pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx_pds/definitions/"
-    pds_env['PDS_TEMPLATE_ROOT'] = "/home/pi/siliconlabs/wfx_pds/test/"
-    pds_env['TEST_RESOURCES_ROOT'] = pds_env['PDS_TEMPLATE_ROOT']
 
+pds_env['PDS_TEMPLATE_ROOT'] = "/home/pi/siliconlabs/wfx-linux-tools/test-feature/"
 pds_env['PDS_CURRENT_FILE'] = "/tmp/current_pds_data.in"
 pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/phy0/wfx/send_pds"
 
@@ -110,6 +107,7 @@ def apply_pds():
         pds_warning = "WARNING: No pds data sent! " + result_string
         print(pds_warning)
     else:
+        print("      " + pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE']))
         if pds_traces:
             print("      " + pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE']))
         pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " " + pds_env['SEND_PDS_FILE'])

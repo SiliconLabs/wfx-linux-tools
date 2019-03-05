@@ -10,10 +10,10 @@ parser.add_argument('--internal', action='store_true',
 args = parser.parse_args()
 
 if args.internal == False:
-    sys.path.insert(0, '/home/pi/siliconlabs/wfx-firmware/PDS/test/')
+#    sys.path.insert(0, '/home/pi/siliconlabs/wfx-firmware/PDS/test/')
     print("customer mode")
 else:
-    sys.path.insert(0, '/home/pi/siliconlabs/wfx_pds/test/')
+#    sys.path.insert(0, '/home/pi/siliconlabs/wfx_pds/test/')
     print("internal mode")
 
 print("wfx_test           called  from " + os.getcwd())
@@ -42,6 +42,7 @@ def init_board(wlan_name="wf200"):
     wf200_fw = fw_version("refresh")
 
     pds_definitions_file_path = pds_env['PDS_DEFINITION_ROOT'] + "definitions.in"
+    pds_definitions_legacy_file_path = pds_env['PDS_DEFINITION_ROOT'] + "definitions_legacy.in"
     pds_template_file_path = pds_env['PDS_TEMPLATE_ROOT'] + "wfx_test.pds.in"
 
     file_info = "Firmware version " + wf200_fw
@@ -50,6 +51,10 @@ def init_board(wlan_name="wf200"):
     pds_definitions_data = pds_definitions_file.read()
     pds_definitions_file.close()
 
+    pds_definitions_legacy_file = open(pds_definitions_legacy_file_path)
+    pds_definitions_legacy_data = pds_definitions_legacy_file.read()
+    pds_definitions_legacy_file.close()
+
     pds_template_file = open(pds_template_file_path)
     pds_template_data = pds_template_file.read()
     pds_template_file.close()
@@ -57,8 +62,9 @@ def init_board(wlan_name="wf200"):
     pds_current_file = open(pds_env['PDS_CURRENT_FILE'], 'w')
     pds_current_file.write("/* " + file_info + " */\n")
     pds_current_file.write("/* Definitions: " + pds_definitions_file_path + "  */\n")
+    pds_current_file.write("/* Legacy Definitions: " + pds_definitions_legacy_file_path + "  */\n")
     pds_current_file.write("/* Template:    " + pds_template_file_path + " */\n")
-    pds_current_file.write(pds_definitions_data + "\n" + pds_template_data)
+    pds_current_file.write(pds_definitions_data + "\n" + pds_definitions_legacy_data + "\n" + pds_template_data)
     pds_current_file.close()
 
     pi("wlan pi_traces off")
