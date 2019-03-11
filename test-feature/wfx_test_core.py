@@ -37,8 +37,8 @@ else:
     print("internal mode")
     pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx_pds/definitions/"
 
-pds_env['PDS_CURRENT_FILE'] = "current_pds_data.in"
-pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/phy0/wfx/send_pds"
+pds_env['PDS_CURRENT_FILE'] = "/tmp/current_pds_data.in"
+pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/phy*/wfx/send_pds"
 
 from wfx_pds_tree import *
 import wfx_pds_tree
