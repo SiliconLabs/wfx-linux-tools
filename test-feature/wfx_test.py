@@ -1,73 +1,62 @@
 #!/usr/bin/python3
-import sys
-import argparse
-import os
+# -*- coding: utf-8 -*-
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--internal', action='store_true',
-                    help='(flag) uses internal test path')
-
-args = parser.parse_args()
-
-if args.internal == False:
-#    sys.path.insert(0, '/home/pi/siliconlabs/wfx-firmware/PDS/test/')
-    print("customer mode")
-else:
-#    sys.path.insert(0, '/home/pi/siliconlabs/wfx_pds/test/')
-    print("internal mode")
-
-print("wfx_test           called  from " + os.getcwd())
-print("wfx_test           running from " + os.path.dirname(os.path.abspath(__file__)))
-
+from time import sleep
 
 from wfx_test_functions import *
-from distutils.version import StrictVersion
-from time import sleep
+from wfx_pds_tree import *
+
 
 def init_board(wlan_name="wf200"):
     """ Called to restart from a fresh copy of the template,
          after reloading the firmware.
         1- reload driver (hence reload FW & PDS data from /lib/firmware)
         2- retrieve current FW version
-        3- select 'highest version for this fw' templates
-        4- generate the current .pds.in file based on the selected
-            definitions and template
+        3- generate the current pds tree based on the FW version
     """
-
     pi("wlan pi_traces  on")
     pi("wlan pds_traces on")
+
+    _pds = PdsTree()
 
     pi(wlan_name + " " + "sudo wfx_driver_reload -C")
     sleep(0.5)
     wf200_fw = fw_version("refresh")
 
-    pds_definitions_file_path = pds_env['PDS_DEFINITION_ROOT'] + "definitions.in"
-    pds_definitions_legacy_file_path = pds_env['PDS_DEFINITION_ROOT'] + "definitions_legacy.in"
-    pds_template_file_path = pds_env['PDS_TEMPLATE_ROOT'] + "wfx_test.pds.in"
+    _pds.fill_tree(wf200_fw)
 
-    file_info = "Firmware version " + wf200_fw
-
-    pds_definitions_file = open(pds_definitions_file_path)
-    pds_definitions_data = pds_definitions_file.read()
-    pds_definitions_file.close()
-
-    pds_definitions_legacy_file = open(pds_definitions_legacy_file_path)
-    pds_definitions_legacy_data = pds_definitions_legacy_file.read()
-    pds_definitions_legacy_file.close()
-
-    pds_template_file = open(pds_template_file_path)
-    pds_template_data = pds_template_file.read()
-    pds_template_file.close()
-
-    pds_current_file = open(pds_env['PDS_CURRENT_FILE'], 'w')
-    pds_current_file.write("/* " + file_info + " */\n")
-    pds_current_file.write("/* Definitions: " + pds_definitions_file_path + "  */\n")
-    pds_current_file.write("/* Legacy Definitions: " + pds_definitions_legacy_file_path + "  */\n")
-    pds_current_file.write("/* Template:    " + pds_template_file_path + " */\n")
-    pds_current_file.write(pds_definitions_data + "\n" + pds_definitions_legacy_data + "\n" + pds_template_data)
-    pds_current_file.close()
-
-    pi("wlan pi_traces off")
+    pi("wlan pi_traces on")
     pi("wlan pds_traces off")
 
-    return "Driver reloaded, " + pds_env['PDS_CURRENT_FILE'] + " " + file_info
+    print("Driver reloaded, FW" + wf200_fw)
+    return _pds
+
+
+if __name__ == '__main__':
+    pds = init_board()
+
+    print(channel())
+    print(tone())
+    print(tone_power())
+    print(tx_power())
+    print(tx_backoff())
+    print(tx_framing())
+    print(tx_mode())
+    print(tx_rx_select())
+
+    print(channel(7))
+    print(channel())
+
+    print(tx_power(11.25))
+    print(tx_power())
+
+    print(tx_rx_select(2, 2))
+    print(tx_rx_select())
+
+    print(tx_framing())
+    print(tx_framing(1, 12))
+
+    print(tx_mode())
+    print(tx_backoff())
+
+    print(pds.pretty())

@@ -1,124 +1,132 @@
-"""wfx_test_core.py
-
-This module first sets the python environment variables
-The functions in this module provide generic access to 
-    * the PDS file
-    * system calls 
-"""
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
+"""wfx_test_core.py
+# This module first sets the python environment variables
+# The functions in this module provide generic access to
+#    * the PDS file
+#    * system calls
+#
+#        Setting a single parameter: (PDS section sent immediately)
+#        wfx_set_dict({'NB_FRAME': 22})
+#
+#        Setting several parameters: (PDS section(s) sent once all set)
+#        wfx_set_dict({'NB_FRAME': 32, 'RF_PORTS': 'x1'})
+#
+#        Checking a single parameter:
+#        wfx_get_list({'RF_PORTS'})
+#
+#        Checking several parameters
+#        wfx_get_list({'NB_FRAME', 'RF_PORTS'})
+"""
 
 import subprocess
 import sys
-import re
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--internal', action='store_true',
-                    help='(flag) uses internal test path')
+parser.add_argument('--internal', action='store_true', help='(flag) uses internal test path')
 
 args = parser.parse_args()
 
-
 pds_env = dict()
 
-if args.internal == False:
+if args.internal:
+    print("customer mode")
     pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx-firmware/PDS/"
 else:
+    print("internal mode")
     pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx_pds/definitions/"
 
-pds_env['PDS_TEMPLATE_ROOT'] = "/home/pi/siliconlabs/wfx-linux-tools/test-feature/"
-pds_env['PDS_CURRENT_FILE'] = "/tmp/current_pds_data.in"
+pds_env['PDS_CURRENT_FILE'] = "current_pds_data.in"
 pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/phy0/wfx/send_pds"
+
+from wfx_pds_tree import *
+import wfx_pds_tree
 
 pi_traces = 1
 pds_traces = 1
 
-
 fw_label = ""
 pds_warning = ""
+
 
 def fw_version(refresh=None):
     """ Retrieving the FW version from dmesg """
     global fw_label
     if refresh is not None:
         res = pi("wf200 sudo wfx_show | grep 'Firmware loaded version:'")
-        fw_label = res.split(':')[1].strip()
+        if len(res) == 0:
+            print("Error: Can not determine FW_version. Assuming max (FW" + wfx_pds_tree.trunk.max_fw_version + ")")
+            return wfx_pds_tree.trunk.max_fw_version
+        else:
+            fw_label = res.split(':')[1].strip()
     return fw_label
 
 
-def pds_version():
-    """ Retrieving the PDS format version from the temporary file """
-    return set_pds_param("VERSION_MAJOR") + "." + set_pds_param("VERSION_MINOR")
-
-
-def check_pds_warning(msg):
-    global pds_warning
-    if pds_warning == "":
-        return msg
-    else:
-        ret = pds_warning
-        pds_warning = ""
-        return ret
-
-
-def set_pds_param(param, value=""):
-    """ Setting 'param' to 'value' in temporary PDS file """
-    global pi_traces
-    global pds_traces
-    pds_current_file = open(pds_env['PDS_CURRENT_FILE'])
-    pds_current_data = pds_current_file.read()
-    pds_current_file.close()
-    group1 = '(\n\s*[^/]\s*)'
-    group2 = '(' + param + '\s*:\s*)'
-    group3 = '(\+|-)?'
-    group4 = '(\[.*\]|\w*)'
-    group5 = '(,)?'
-    current_value = re.search(group1 + group2 + group3 + group4 + group5, pds_current_data)
-    if current_value:
-        if str(value) is "":
-            if current_value.group(3) is None:
-                return str(current_value.group(4))
-            else:
-                return str(current_value.group(3)) + str(current_value.group(4))
-        else:
-            # Replace current value for PARAM by new value
-            (new_pds_data, nb) = re.subn(group1 + group2 + group3 + group4 + group5, '\g<1>' + '\g<2>' + str(value) + '\g<5>', pds_current_data)
-            if nb > 0:
-                pds_current_file = open(pds_env['PDS_CURRENT_FILE'], 'w')
-                pds_current_file.write(new_pds_data)
-                pds_current_file.close()
-                new_value = re.search(group1 + group2 + group3 + group4 + group5, pds_current_data)
-                result_string = str(param) + " " + str(new_value.group(4))
-                if pds_traces:
-                    print(result_string)
-                return result_string
-            else:
-                print("Error: set_pds_param: no re.subn match for '" + param + "'!")
-    else:
-        print("set_pds_param: No match for '" + param + "' in " + pds_env['PDS_CURRENT_FILE'] + "!")
-
-
-def apply_pds():
+def send(_pds, parameters):
     """ Sending compressed PDS file content to FW """
     global pds_traces
-    global pds_warning
-    result_string = pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " 2>&1")
-    if ":error:" in result_string:
-        pds_warning = "WARNING: No pds data sent! " + result_string
-        print(pds_warning)
+    res = ""
+    _sub = PdsTree.sub_tree(_pds, parameters)
+
+    pds_sections = _sub.pretty()
+
+    pds_string = "#include \"" + pds_env['PDS_DEFINITION_ROOT'] + "definitions.in\"\n\n" + pds_sections
+
+    pds_current_file = open(pds_env['PDS_CURRENT_FILE'], 'w')
+    pds_current_file.write(pds_string)
+    pds_current_file.close()
+
+    compressed_string = pi("wf200 pds_compress " + pds_env['PDS_CURRENT_FILE'] + " 2>&1")
+
+    if ":error:" in compressed_string:
+        res += "WARNING: No pds data sent! " + compressed_string + "\n"
     else:
-        print("      " + pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE']))
         if pds_traces:
-            print("      " + pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE']))
-        pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " " + pds_env['SEND_PDS_FILE'])
+            print("      " + compressed_string)
+        res += pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " " +
+                  pds_env['SEND_PDS_FILE'] + " 2>&1") + "\n"
+    return res.strip()
 
 
-def pi(args):
+def wfx_set_dict(param_dict):
+    res = ''
+    parameters = []
+    for p, v in param_dict.items():
+        parameter = str(p)
+        value = str(v)
+        res += str(PdsTree.set(wfx_pds_tree.trunk, parameter, value)) + '\n'
+        parameters.append(parameter)
+    res += str(send(wfx_pds_tree.trunk, parameters))
+    return res.strip()
+
+
+def wfx_get_list(param_list, mode='verbose'):
+    res = ''
+    if type(param_list) is str:
+        my_list = []
+        for item in param_list.split(","):
+            my_list.append(str(item).strip())
+        param_list = my_list
+    if type(param_list) is set:
+        my_list = []
+        for list_item in param_list:
+            for item in list_item.split(","):
+                my_list.append(str(item).strip())
+        param_list = my_list
+    for parameter in param_list:
+        if mode == 'verbose':
+            res += parameter + '  '
+        res += PdsTree.get(wfx_pds_tree.trunk, parameter) + '     '
+    return res.strip()
+
+
+def pi(_args):
     """ Providing access to system or wf200 functions """
     global pi_traces
     global pds_traces
 
-    split_args = args.split(' ')
+    split_args = _args.split(' ')
     if len(split_args) == 0:
         return "wfx_test_core.pi: no arguments?"
     target = split_args[0]
@@ -154,7 +162,7 @@ def pi(args):
             return pi(target + " " + "uname -a")
         else:
             if pi_traces:
-                print("procs_wlan.pi: Execute:  " + ' '.join(cmd))
+                print("wfx_test_core.pi: Execute:  " + ' '.join(cmd))
             op = subprocess.Popen(' '.join(cmd), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             if op:
                 output = str(op.stdout.read(), "utf-8").strip()
@@ -173,3 +181,30 @@ def pi(args):
 if __name__ == '__main__':
     del sys.argv[0]
     print(pi(' '.join(sys.argv)))
+
+    pds = PdsTree()
+    print("\n# pds.fill_tree(\"2.0\")")
+    pds.fill_tree("2.0")
+    print(pds.pretty())
+
+    print("wfx_set_dict({'NB_FRAME': 22})")
+    print(wfx_set_dict({'NB_FRAME': 22}))
+
+    print("wfx_set_dict({'NB_FRAME': 32, 'RF_PORTS': 'TX1_RX1'}")
+    wfx_set_dict({'NB_FRAME': 32, 'RF_PORTS': 'TX1_RX1'})
+
+    print("wfx_set_dict({'RF_PORT': 'RF_PORT_1'}")
+    wfx_set_dict({'RF_PORT': 'RF_PORT_1'})
+
+    print("wfx_get_list({'RF_PORT'})")
+    print('RF_PORT = ' + wfx_get_list({'RF_PORT'}))
+    
+    print("wfx_get_list({'NB_FRAME', 'RF_PORTS'})")
+    print('NB_FRAME & RF_PORTS = ' + wfx_get_list({'NB_FRAME', 'RF_PORTS'}))
+    print("wfx_get_list('TEST_CHANNEL_FREQ' " + wfx_get_list('TEST_CHANNEL_FREQ'))
+
+    print("wfx_set_dict({'RF_PORT': 'RF_PORT_1'}")
+    wfx_set_dict({'RF_PORT': 'RF_PORT_1'})
+
+    print("wfx_get_list({'RF_PORT'})")
+    print('RF_PORT = ' + wfx_get_list({'RF_PORT'}))

@@ -1,35 +1,55 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 """wfx_test_functions.py
 
-These functions adapt the test API to the underlying FW API
-For this reason, they are closely related to the FW version
-Keeping these tied to the FW maintain a usable set of test functions
- despite possible API changes (such as attribute renaming)
-"""
-#!/usr/bin/python3
-import os
+    These functions adapt the test API to the underlying FW API
 
+"""
+
+import os
+import re
 from wfx_test_core import *
-from distutils.version import StrictVersion
-from time import sleep
 
 print("wfx_test_functions running from " + os.path.dirname(os.path.abspath(__file__)))
 
+
 def channel(ch=None):
     if ch is None:
-        return "TEST_CHANNEL" + " " + set_pds_param("TEST_CHANNEL")
+        return wfx_get_list({'TEST_CHANNEL_FREQ'})
     else:
-        set_pds_param("TEST_CHANNEL", ch)
-    apply_pds()
+        return wfx_set_dict({'TEST_CHANNEL_FREQ': ch})
+
+
+def tone(cmd=None, freq=0):
+    # CW Mode: generate CW @ (freq+1)*312.5Khz
+    if cmd is None:
+        test_mode = wfx_get_list({"TEST_MODE"}, mode='quiet')
+        if test_mode == "tx_cw":
+            return wfx_get_list({"TEST_MODE"})
+        else:
+            return wfx_get_list({"TEST_MODE", "NB_FRAME"})
+    else:
+        if cmd == "start":
+            return wfx_set_dict({"TEST_MODE": "tx_cw", "CW_MODE": "single", "FREQ1": freq})
+        elif cmd == "stop":
+            return wfx_set_dict({"TEST_MODE": "tx_packet", "NB_FRAME": 100})
+
+
+def tone_power(dbm=None):
+    if dbm is None:
+        power = int(wfx_get_list({"MAX_OUTPUT_POWER"}, mode='quiet'))
+        return "MAX_OUTPUT_POWER  " + str(power) + "  " + "     tone_power  " + str(power/4.0) + " dBm"
+    else:
+        return wfx_set_dict({"MAX_OUTPUT_POWER": int(4*dbm)})
 
 
 def tx_power(dbm=None):
     if dbm is None:
-        power = int(set_pds_param("MAX_OUTPUT_POWER_QDBM"))
-        return "MAX_OUTPUT_POWER_QDBM" + " " + str(power) + \
-            "tx_power " + str(int(power/4)) + " dBm"
+        power = int(wfx_get_list("MAX_OUTPUT_POWER_QDBM", mode='quiet'))
+        return "MAX_OUTPUT_POWER_QDBM" + "  " + str(power) + \
+            "     tx_power  " + str(power/4.0) + " dBm"
     else:
-        set_pds_param("MAX_OUTPUT_POWER_QDBM", int(4*dbm))
-    apply_pds()
+        return wfx_set_dict({"MAX_OUTPUT_POWER_QDBM": int(4*dbm)})
 
 
 def tx_backoff(mode_802_11=None, backoff_level=0):
@@ -38,12 +58,11 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
     if mode_802_11 == "RSVD":
         return
     if mode_802_11 is None:
-        backoff_val= set_pds_param("BACKOFF_VAL")
-        (backoff_data, nb) = re.subn('\[|\]| ','',backoff_val)
+        backoff_val = wfx_get_list({"BACKOFF_VAL"}, mode='quiet')
+        (backoff_data, nb) = re.subn('\[|\]| ', '', backoff_val)
         backoff_max = max(backoff_data.split(','))
-        backoff_dbm = str(int(int(backoff_max)/4))
-        return "BACKOFF_VAL " + backoff_max + "  tx_backoff " + \
-        backoff_dbm + " dB"
+        backoff_dbm = str(int(backoff_max)/4.0)
+        return "BACKOFF_VAL  " + backoff_max + "     tx_backoff  " + backoff_dbm + " dB"
     else:
         if "DSSS" in mode_802_11:
             index = 0
@@ -69,40 +88,21 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
             return "Unknown 802.11 mode"    
         value = [0, 0, 0, 0, 0, 0]
         value[index] = int(4 * backoff_level)
-        set_pds_param("BACKOFF_VAL", str(value))
-    apply_pds() 
-
-
-def tx_rx_select(tx_ant=None, rx_ant=None):
-    if tx_ant is None:
-        return "RF_PORTS" + " " + set_pds_param("RF_PORTS")
-    else:
-        set_pds_param("RF_PORTS", "TX" + str(tx_ant) + \
-                                 "_RX" + str(rx_ant))
-    apply_pds() 
-
-
-def tx_stop():
-    set_pds_param("NB_FRAME", 100)
-    apply_pds() 
+        wfx_set_dict({"BACKOFF_VAL": str(value)})
 
 
 def tx_framing(packet_length_bytes=None, delay_between_us=100):
     if packet_length_bytes is None:
-        return "FRAME_SIZE_BYTE " + set_pds_param("FRAME_SIZE_BYTE") + \
-             "  " + "IFS_US " + set_pds_param("IFS_US")
+        return wfx_get_list({"FRAME_SIZE_BYTE", "IFS_US"})
     else:
-        set_pds_param("FRAME_SIZE_BYTE", packet_length_bytes)
-        set_pds_param("IFS_US", delay_between_us)
+        return wfx_set_dict({"FRAME_SIZE_BYTE": packet_length_bytes, "IFS_US": delay_between_us})
 
 
 def tx_mode(mode_802_11=None):
     if mode_802_11 is None:
-        return "HT_PARAM " + set_pds_param("HT_PARAM") + "  " + \
-               "RATE " + set_pds_param("RATE")
+        return wfx_get_list({"HT_PARAM", "RATE"})
     else:
         res = re.findall("([^_]*)_(.*)", mode_802_11)
-        prefix = res[0][0]
         suffix = res[0][1]
         ht_param = "MM"
         if "GF_" in mode_802_11:
@@ -118,47 +118,55 @@ def tx_mode(mode_802_11=None):
             rate = "B_" + suffix + "Mbps"
         else:
             return "Unknown 802.11 mode"
-        set_pds_param("HT_PARAM", ht_param)
-        set_pds_param("RATE", rate)
+        return wfx_set_dict({"HT_PARAM": ht_param, "RATE": rate})
+
+
+def tx_rx_select(tx_ant=None, rx_ant=None):
+    if tx_ant is None:
+        return wfx_get_list({"RF_PORTS"})
+    else:
+        return wfx_set_dict({"RF_PORTS": "TX" + str(tx_ant) + "_RX" + str(rx_ant)})
 
 
 def tx_start(nb_frames=None):
     if nb_frames is None:
-        return "TEST_MODE " + set_pds_param("TEST_MODE") + "  " + \
-               "NB_FRAME "  + set_pds_param("NB_FRAME")
+        return wfx_get_list({"TEST_MODE", "NB_FRAME"})
     else:
-        set_pds_param("TEST_MODE", "tx_packet")
         if str(nb_frames) == "continuous":
-            set_pds_param("NB_FRAME", "0")
-        else:
-            set_pds_param("NB_FRAME", nb_frames)
-    apply_pds()
+            nb_frames = 0
+        return wfx_set_dict({"TEST_MODE": "tx_packet", "NB_FRAME": nb_frames})
 
 
-def tone(cmd=None, freq=0):
-    # CW Mode: generate CW @ (freq+1)*312.5Khz
-    if cmd is None:
-        test_mode = set_pds_param("TEST_MODE")
-        if test_mode == "tx_cw":
-            return test_mode
-        else:
-            return test_mode + " " + set_pds_param("NB_FRAME")
-    else:
-        if cmd == "start":
-            set_pds_param("CW_MODE", "single")
-            set_pds_param("TEST_MODE", "tx_cw")
-            set_pds_param("FREQ1", freq)
-        elif cmd == "stop":
-            set_pds_param("TEST_MODE", "tx_packet")
-            set_pds_param("NB_FRAME", 100)
-    apply_pds()
+def tx_stop():
+    return wfx_set_dict({"NB_FRAME": 100})
 
 
-def tone_power(dbm=None):
-    if dbm is None:
-        power = int(set_pds_param("MAX_OUTPUT_POWER"))
-        return "MAX_OUTPUT_POWER " + str(power) + "  " + \
-                "  tone_power " + str(int(power/4)) + " dBm"
-    else:
-        set_pds_param("MAX_OUTPUT_POWER", int(4*dbm))
-    apply_pds() 
+if __name__ == '__main__':
+    print("\n# pds = PdsTree(pds_structure)")
+    pds = PdsTree()
+    print("\n# pds.fill_tree(\"2.0\")")
+    pds.fill_tree("2.0")
+
+    print("\n# pds.pretty():")
+    print(pds.pretty())
+
+    print(channel())
+    print(tone())
+    print(tone_power())
+    print(tx_power())
+    print(tx_backoff())
+    print(tx_framing())
+    print(tx_mode())
+    print(tx_rx_select())
+
+    print(channel(7))
+    print(channel())
+
+    print(tx_power(11.25))
+    print(tx_power())
+
+    print(tx_rx_select(2, 2))
+    print(tx_rx_select())
+
+    print(tx_framing())
+    print(tx_framing(1, 12))
