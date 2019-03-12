@@ -31,6 +31,22 @@ def init_board(wlan_name="wf200"):
     # Recent kernel versions increment the phy index, so let's retrieve it
     send_pds_folder = pi("wlan sudo ls /sys/kernel/debug/ieee80211/")
     pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/" + send_pds_folder + "/wfx/send_pds"
+    pds_definition_file = pi("wlan ls " + pds_env['PDS_DEFINITION_ROOT'] + pds_env['PDS_DEFINITION_FILE'])
+    if pds_definition_file == "":
+        # Backward compatibility with previous naming scheme...
+        definitions_files = pi(wlan_name + " " + "ls " + pds_env['PDS_DEFINITION_ROOT'] + \
+             " | grep 'definitions-.*.in'").split("\n")
+        definitions_versions = []
+        for i in definitions_files:
+            definitions_versions.append(i.replace("definitions-","").replace(".in",""))
+        definitions_versions.sort(key=StrictVersion)
+
+        for definition in definitions_versions:
+            if StrictVersion(definition) <= StrictVersion(wf200_fw):
+                    pds_env['PDS_DEFINITION_FILE'] = "definitions-" + definition + ".in"
+            else:
+                break
+        print("Backward compatibility : Using PDS definitions from " + pds_env['PDS_DEFINITION_FILE'])
 
     print("\nDriver reloaded, FW" + wf200_fw + "\n")
     if StrictVersion(_pds.current_fw_version) > StrictVersion(wf200_fw):
