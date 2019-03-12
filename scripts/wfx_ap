@@ -17,6 +17,10 @@ Options:
   --dhcp           start a DHCP server
   --forward <if>   enable traffic forwarding to interface
   --no-forward     disable all traffic forwarding
+
+Example:
+-start an ap with address 192.168.1.1 on wlan and enable DHCP server (Wi-Fi configuration depends on hostapd.conf content)
+$(basename $0) --conf /home/pi/access_point/hostapd.conf --ip 192.168.1.1 --dhcp
 "
 
 CONF=""

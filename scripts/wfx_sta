@@ -20,6 +20,10 @@ Options:
 
 If only --conf is used, the supplied file is supposed to contain the AP(s) to connect to.
 If --ssid is used, $(basename $0) wait for the connection to be established.
+
+Example:
+-use wlan0 to connect to the AP 'foo' with password 'bar' and get an IP via DHCP
+$(basename $0) --ssid foo --password bar
 "
 
 SSID=""
