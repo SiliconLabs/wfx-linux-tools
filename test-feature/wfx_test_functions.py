@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 """wfx_test_functions.py
 
-    These functions adapt the test API to the underlying FW API
+    These functions adapt the test API to the underlying PDS API
+
+    NB: Functions dealing with TEST_FEATURE_CFG parameters don't send 
+      PDS data immediately. TEST_FEATURE_CFG PDS data is sent when calling start()
 
 """
 
@@ -18,6 +21,13 @@ def channel(ch=None):
         return wfx_get_list({'TEST_CHANNEL_FREQ'})
     else:
         return wfx_set_dict({'TEST_CHANNEL_FREQ': ch}, send_data=0)
+
+
+def dmesg_period(period=None):
+    if period is None:
+        return wfx_get_list({'TEST_IND'})
+    else:
+        return wfx_set_dict({'TEST_IND': period}, send_data=0)
 
 
 def tone(cmd=None, freq=0):
