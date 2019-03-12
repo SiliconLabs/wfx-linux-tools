@@ -112,7 +112,7 @@ When called with no argument, all functions return the corresponding value(s) of
 * `tone_power(dBm)`                  : Controls the tone power
 * `tx_backoff(mod, backoff_level)`   : Sets the backoff level for one group of modulations. 
 All other backoff values are set to 0.
-* `tx_dmesg_period(period)`          : Controls the delay between indication messages (in dmesg)
+* `dmesg_period(period)`             : Controls the delay between indication messages (in dmesg)
 * `tx_framing(pkt_len, delay_us)`    : Controls the frame size and IFS (InterFrame Spacing)
 * `tx_mode(mode)`                    : Selects between MM (mixed mode) & GF (Greenfield) and sets the rate
 * `tx_power(dBm)`                    : Sets the maximum output power
