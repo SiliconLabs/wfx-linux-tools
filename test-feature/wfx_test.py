@@ -47,14 +47,14 @@ def init_board(wlan_name="wf200"):
             else:
                 break
         print("Backward compatibility : Using PDS definitions from " + pds_env['PDS_DEFINITION_FILE'])
+    else:
+        wfx_pds_tree.pds_compatibility_text = ""
 
     print("\nDriver reloaded, FW" + wf200_fw + "\n")
     if StrictVersion(_pds.current_fw_version) > StrictVersion(wf200_fw):
         print("PDS tree filled with parameters supported by FW" + wf200_fw + " (not the latest FW)\n")
-        wfx_pds_tree.pds_compatibility_text = ""
     elif StrictVersion(_pds.current_fw_version) == StrictVersion(wf200_fw):
         print("PDS tree filled with parameters supported by FW" + _pds.current_fw_version + "\n")
-        wfx_pds_tree.pds_compatibility_text = ""
     else:
         print("PDS tree filled with parameters supported by FW" + _pds.current_fw_version + " (FW more recent than wfx_pds_tree)\n")
     print(_pds.pretty())
