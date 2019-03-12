@@ -49,7 +49,6 @@ pds_traces = 1
 fw_label = ""
 pds_warning = ""
 
-
 def fw_version(refresh=None):
     """ Retrieving the FW version from dmesg """
     global fw_label
@@ -63,7 +62,7 @@ def fw_version(refresh=None):
     return fw_label
 
 
-def send(_pds, parameters):
+def send(_pds, parameters, send_data=1):
     """ Sending compressed PDS file content to FW """
     global pds_traces
     res = ""
@@ -84,20 +83,25 @@ def send(_pds, parameters):
     else:
         if pds_traces:
             print("      " + compressed_string)
-        res += pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " " +
-                  pds_env['SEND_PDS_FILE'] + " 2>&1") + "\n"
+        if send_data == 1:
+            res += pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " " +
+                      pds_env['SEND_PDS_FILE'] + " 2>&1") + "\n"
+        else:
+            res += " not sent, waiting for start()"
+            
     return res.strip()
 
 
-def wfx_set_dict(param_dict):
+def wfx_set_dict(param_dict, send_data=1):
     res = ''
     parameters = []
     for p, v in param_dict.items():
         parameter = str(p)
         value = str(v)
-        res += str(PdsTree.set(wfx_pds_tree.trunk, parameter, value)) + '\n'
+        res += parameter + '  '
+        res += str(PdsTree.set(wfx_pds_tree.trunk, parameter, value)) + '     '
         parameters.append(parameter)
-    res += str(send(wfx_pds_tree.trunk, parameters))
+    res += str(send(wfx_pds_tree.trunk, parameters, send_data))
     return res.strip()
 
 
