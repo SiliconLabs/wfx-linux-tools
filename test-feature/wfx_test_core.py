@@ -72,7 +72,7 @@ def send(_pds, parameters, send_data=1):
 
     pds_sections = _sub.pretty()
 
-    pds_string = "#include \"" + pds_env['PDS_DEFINITION_ROOT'] + pds_env['PDS_DEFINITION_FILE'] + "\"\n\n" + pds_sections
+    pds_string = "#include \"" + pds_env['PDS_DEFINITION_ROOT'] + pds_env['PDS_DEFINITION_FILE'] + "\"\n\n" + wfx_pds_tree.pds_compatibility_text + pds_sections
 
     pds_current_file = open(pds_env['PDS_CURRENT_FILE'], 'w')
     pds_current_file.write(pds_string)
