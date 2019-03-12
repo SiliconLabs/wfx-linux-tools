@@ -198,6 +198,15 @@ class PdsTree(dict):
         else:
             return str(current_node[key])
 
+pds_compatibility_text = "\
+#ifndef MAX_TX_POWER_CFG\n\
+    #define MAX_TX_POWER_CFG h\n\
+    #define TEST_FEATURE_CFG i\n\
+    #define RF_ANTENNA_SEL_DIV_CFG j\n\
+    #define TEST_CHANNEL_FREQ a\n\
+#endif\n\n\
+"
+
 
 if __name__ == '__main__':
     print("\n# pds = PdsTree(pds_structure)")
