@@ -39,6 +39,8 @@ else:
 
 pds_env['PDS_CURRENT_FILE'] = "/tmp/current_pds_data.in"
 pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/phy0/wfx/send_pds"
+pds_env['PDS_DEFINITION_FILE'] = "definitions.in"
+
 
 from wfx_pds_tree import *
 import wfx_pds_tree
@@ -70,7 +72,7 @@ def send(_pds, parameters, send_data=1):
 
     pds_sections = _sub.pretty()
 
-    pds_string = "#include \"" + pds_env['PDS_DEFINITION_ROOT'] + "definitions.in\"\n\n" + pds_sections
+    pds_string = "#include \"" + pds_env['PDS_DEFINITION_ROOT'] + pds_env['PDS_DEFINITION_FILE'] + "\"\n\n" + pds_sections
 
     pds_current_file = open(pds_env['PDS_CURRENT_FILE'], 'w')
     pds_current_file.write(pds_string)
