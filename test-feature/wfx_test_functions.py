@@ -17,7 +17,7 @@ def channel(ch=None):
     if ch is None:
         return wfx_get_list({'TEST_CHANNEL_FREQ'})
     else:
-        return wfx_set_dict({'TEST_CHANNEL_FREQ': ch})
+        return wfx_set_dict({'TEST_CHANNEL_FREQ': ch}, send_data=0)
 
 
 def tone(cmd=None, freq=0):
@@ -30,9 +30,9 @@ def tone(cmd=None, freq=0):
             return wfx_get_list({"TEST_MODE", "NB_FRAME"})
     else:
         if cmd == "start":
-            return wfx_set_dict({"TEST_MODE": "tx_cw", "CW_MODE": "single", "FREQ1": freq})
+            return wfx_set_dict({"TEST_MODE": "tx_cw", "CW_MODE": "single", "FREQ1": freq}, send_data=0)
         elif cmd == "stop":
-            return wfx_set_dict({"TEST_MODE": "tx_packet", "NB_FRAME": 100})
+            return wfx_set_dict({"TEST_MODE": "tx_packet", "NB_FRAME": 100}, send_data=0)
 
 
 def tone_power(dbm=None):
@@ -40,7 +40,7 @@ def tone_power(dbm=None):
         power = int(wfx_get_list({"MAX_OUTPUT_POWER"}, mode='quiet'))
         return "MAX_OUTPUT_POWER  " + str(power) + "  " + "     tone_power  " + str(power/4.0) + " dBm"
     else:
-        return wfx_set_dict({"MAX_OUTPUT_POWER": int(4*dbm)})
+        return wfx_set_dict({"MAX_OUTPUT_POWER": int(4*dbm)}, send_data=0)
 
 
 def tx_power(dbm=None):
@@ -88,14 +88,14 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
             return "Unknown 802.11 mode"    
         value = [0, 0, 0, 0, 0, 0]
         value[index] = int(4 * backoff_level)
-        wfx_set_dict({"BACKOFF_VAL": str(value)})
+        wfx_set_dict({"BACKOFF_VAL": str(value)}, send_data=0)
 
 
 def tx_framing(packet_length_bytes=None, delay_between_us=100):
     if packet_length_bytes is None:
         return wfx_get_list({"FRAME_SIZE_BYTE", "IFS_US"})
     else:
-        return wfx_set_dict({"FRAME_SIZE_BYTE": packet_length_bytes, "IFS_US": delay_between_us})
+        return wfx_set_dict({"FRAME_SIZE_BYTE": packet_length_bytes, "IFS_US": delay_between_us}, send_data=0)
 
 
 def tx_mode(mode_802_11=None):
@@ -118,7 +118,7 @@ def tx_mode(mode_802_11=None):
             rate = "B_" + suffix + "Mbps"
         else:
             return "Unknown 802.11 mode"
-        return wfx_set_dict({"HT_PARAM": ht_param, "RATE": rate})
+        return wfx_set_dict({"HT_PARAM": ht_param, "RATE": rate}, send_data=0)
 
 
 def tx_rx_select(tx_ant=None, rx_ant=None):
@@ -134,11 +134,12 @@ def tx_start(nb_frames=None):
     else:
         if str(nb_frames) == "continuous":
             nb_frames = 0
-        return wfx_set_dict({"TEST_MODE": "tx_packet", "NB_FRAME": nb_frames})
+        return wfx_set_dict({"TEST_MODE": "tx_packet", "NB_FRAME": nb_frames}, send_data=1)
 
 
 def tx_stop():
-    return wfx_set_dict({"NB_FRAME": 100})
+    res = wfx_set_dict({"NB_FRAME": 100}, send_data=1)
+    return res
 
 
 if __name__ == '__main__':
