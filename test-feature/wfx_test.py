@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from time import sleep
+from distutils.version import StrictVersion
 
 from wfx_test_functions import *
 from wfx_pds_tree import *
@@ -27,8 +28,18 @@ def init_board(wlan_name="wf200"):
 
     pi("wlan pi_traces on")
     pi("wlan pds_traces off")
+    # Recent kernel versions increment the phy index, so let's retrieve it
+    send_pds_folder = pi("wlan sudo ls /sys/kernel/debug/ieee80211/")
+    pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/" + send_pds_folder + "/wfx/send_pds"
 
-    print("Driver reloaded, FW" + wf200_fw)
+    print("\nDriver reloaded, FW" + wf200_fw + "\n")
+    if StrictVersion(_pds.current_fw_version) > StrictVersion(wf200_fw):
+        print("PDS tree filled with parameters supported by FW" + wf200_fw + " (not the latest FW)\n")
+    elif StrictVersion(_pds.current_fw_version) == StrictVersion(wf200_fw):
+        print("PDS tree filled with parameters supported by FW" + _pds.current_fw_version + "\n")
+    else:
+        print("PDS tree filled with parameters supported by FW" + _pds.current_fw_version + " (FW more recent than wfx_pds_tree)\n")
+    print(_pds.pretty())
     return _pds
 
 
