@@ -1,14 +1,36 @@
-# wfx_pds_tree module 
+# wfx_test
+*wfx_test* is a set of python3 scripts allowing RF testing
+
+## Typical Use Case
+(the second command is a `tx_stop()` to avoid transmitting until all parameters are set)
+```
+cd /home/pi/siliconlabs/wfx-linux-tools/test-feature
+python3
+>>> from wfx_test import *
+>>> pds = init_board()
+>>> tx_stop()
+>>> tx_rx_select(1,1)
+>>> channel(11)
+>>> tx_mode('GF_MCS0')
+>>> tx_power(10)
+>>> tx_start('continuous')
+. . .
+>>> tx_stop()
+```
+
+# wfx_test modules details
+
+## wfx_pds_tree module 
 wfx_pds_tree.py manages the PDS data in a nested dict
 
-## wfx_pds{} defines the PDS data structure
+### wfx_pds{} defines the PDS data structure
  * item names are unique by design (FW constraint)
  * wfx_pds defines the miminum FW version and default value for each item
  * wfx_pds lists possible values for each item
  * wfx_pds contains the documentation relative to each item
  
 
-## class PdsTree
+### class PdsTree
  * `set_current_fw_version(version)` : Stores the current FW version (retrieved from HW by upper layers).
  * `fill_tree(version)`              : Fills the tree, adding only items supported by the current FW.
  * `set(key, value)`                 : Sets an item to a new value, wherever it is in the tree.
@@ -19,7 +41,7 @@ wfx_pds_tree.py manages the PDS data in a nested dict
  Used to avoid sending entire PDS data on each 'send'.
 
 
-# wfx_test_core module
+## wfx_test_core module
 wfx_test_core.py provides generic access to system calls and functions to set several PDS items before sending the 
 corresponding PDS data to the HW
 
@@ -32,7 +54,7 @@ then send it to the pds input file.
 * `wfx_set_list(parameters_dict)`    : Sets all selected items to their desired values & call `send(parameters_list)`.
 
 
-# wfx_test_functions module (user functions)
+## wfx_test_functions module (user functions)
 wfx_test_functions.py uses wfx_test_core functions to translate user function calls into PDS data and send it.
 These are the functions which are primarily used by users to test the product.
 When called with no argument, all functions return the corresponding value(s) of the parameters they control.
