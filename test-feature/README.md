@@ -2,17 +2,15 @@
 *wfx_test* is a set of python3 scripts allowing RF testing
 
 ## Typical Use Case
-(the second command is a `tx_stop()` to avoid transmitting until all parameters are set)
 ```
 cd /home/pi/siliconlabs/wfx-linux-tools/test-feature
 python3
 >>> from wfx_test import *
 >>> pds = init_board()
->>> tx_stop()
 >>> tx_rx_select(1,1)
 >>> channel(11)
 >>> tx_mode('GF_MCS0')
->>> tx_power(10)
+>>> tone_power(10)
 >>> tx_start('continuous')
 . . .
 >>> tx_stop()
