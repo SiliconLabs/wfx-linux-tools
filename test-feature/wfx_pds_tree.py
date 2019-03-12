@@ -25,8 +25,8 @@ wfx_pds = {
     'RF_PORT'                       : ('2.0', 'RF_PORT_BOTH'       , 'MAX_TX_POWER_CFG'              , "RF_PORT_1, RF_PORT_2, RF_PORT_BOTH(default)", "RF port affected by the MAX_TX_POWER_CFG parameters"),
     'MAX_OUTPUT_POWER_QDBM'         : ('2.0',  80                  , 'MAX_TX_POWER_CFG'              , "[-128; 127]", "Max Tx power value, in 1/4 of dBm. Resultant covered range in dBm: [-32; 31.75]"),
     'FRONT_END_LOSS_CORRECTION_QDB' : ('2.0',  0                   , 'MAX_TX_POWER_CFG'              , "[-128; 127]", "Front-end loss (loss between the chip and the antenna) in 1/4 of dB. Resultant covered range in dB: [-32; 31.75]"),
-    'CHANNEL_NUMBER'                : ('2.0', '[1, 14]'            , 'MAX_TX_POWER_CFG.BACKOFF_QDB'  , "[1, 14]", "Backoff CHANNEL_NUMBER : channel number (an integer) or range of channel numbers (an array) to which the backoff values apply"),
-    'BACKOFF_VAL'                   : ('2.0', '[0, 0, 0, 0, 0 ,0]' , 'MAX_TX_POWER_CFG.BACKOFF_QDB'  , "[0; 255] possible values", "BACKOFF_VAL is given in 1/4 of dB. Covered range in dB: [0; 63.75].\
+    'CHANNEL_NUMBER'                : ('2.0', '[1, 14]'            , 'MAX_TX_POWER_CFG.BACKOFF_QDB[]', "[1, 14]", "Backoff CHANNEL_NUMBER : channel number (an integer) or range of channel numbers (an array) to which the backoff values apply"),
+    'BACKOFF_VAL'                   : ('2.0', '[0, 0, 0, 0, 0 ,0]' , 'MAX_TX_POWER_CFG.BACKOFF_QDB[]', "[0; 255] possible values", "BACKOFF_VAL is given in 1/4 of dB. Covered range in dB: [0; 63.75].\
                                                                                                                                     Each value sets a backoff for a group of modulation.\
                                                                                                                                     A modulation group designates a subset of modulations :\
                                                                                                                                     # MOD_GROUP_0 : B_1Mbps, B_2Mbps, B_5.5Mbps, B_11Mbps\
@@ -124,9 +124,15 @@ class PdsTree(dict):
         result = ""
         for k, v in self.items():
             if isinstance(v, dict):
-                result += '\t' * indent + str(k) + " : {\n"
+                if '[]' in k:
+                    result += '\t' * indent + k.replace('[','').replace(']','') + " : [ {\n"
+                else:
+                    result += '\t' * indent + str(k) + " : {\n"
                 result += PdsTree.pretty(v, indent + 1)
-                result += '\t' * indent + "},\n"
+                if '[]' in k:
+                    result += '\t' * indent + "} ],\n"
+                else:
+                    result += '\t' * indent + "},\n"
             else:
                 if str(v) == "":
                     result += '\t' * indent + str(k) + ' :' + ' ' * max(1, 32 - len(k)) + '{ }' + ",\n"
