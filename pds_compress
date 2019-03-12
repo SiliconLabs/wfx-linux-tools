@@ -414,6 +414,7 @@ def main(options):
         else:
             (var, val) = (d, "")
         add_define(DebugInfo("<cmdline>"), var, val)
+    inc_paths = [ ]
     if options.includes:
         inc_paths = options.includes + inc_paths
     if options.input == sys.stdin or not hasattr(options.input, 'name'):
