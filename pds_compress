@@ -418,9 +418,9 @@ def main(options):
     if options.includes:
         inc_paths = options.includes + inc_paths
     if options.input == sys.stdin or not hasattr(options.input, 'name'):
-        inc_paths = [ "." ]
+        inc_paths += [ "." ]
     else:
-        inc_paths = [ os.path.dirname(options.input.name) ]
+        inc_paths += [ os.path.dirname(options.input.name) ]
     if not hasattr(options.input, 'name'):
         dbg_info = DebugInfo("<inline>")
     else:
