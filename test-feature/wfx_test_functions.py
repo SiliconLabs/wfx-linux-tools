@@ -40,9 +40,9 @@ def tone(cmd=None, freq=0):
             return wfx_get_list({"TEST_MODE", "NB_FRAME"})
     else:
         if cmd == "start":
-            return wfx_set_dict({"TEST_MODE": "tx_cw", "CW_MODE": "single", "FREQ1": freq}, send_data=0)
+            return wfx_set_dict({"TEST_MODE": "tx_cw", "CW_MODE": "single", "FREQ1": freq}, send_data=1)
         elif cmd == "stop":
-            return wfx_set_dict({"TEST_MODE": "tx_packet", "NB_FRAME": 100}, send_data=0)
+            return tx_stop()
 
 
 def tone_power(dbm=None):
@@ -148,7 +148,7 @@ def tx_start(nb_frames=None):
 
 
 def tx_stop():
-    res = wfx_set_dict({"NB_FRAME": 100}, send_data=1)
+    res = wfx_set_dict({"TEST_MODE": "tx_packet", "NB_FRAME": 100}, send_data=1)
     return res
 
 
