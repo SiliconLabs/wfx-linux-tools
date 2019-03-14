@@ -30,17 +30,9 @@ args = parser.parse_args()
 
 pds_env = dict()
 
-if args.internal:
-    print("internal mode")
-    pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx_pds/definitions/"
-else:
-    print("customer mode")
-    pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx-firmware/PDS/"
-
 pds_env['PDS_CURRENT_FILE'] = "/tmp/current_pds_data.in"
 pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/phy0/wfx/send_pds"
 pds_env['PDS_DEFINITION_FILE'] = "definitions.in"
-
 
 from wfx_pds_tree import *
 import wfx_pds_tree
@@ -182,6 +174,21 @@ def pi(_args):
                 return error
     else:
         return "wfx_test_core.pi: Target '" + target + "' not supported\n"
+
+
+def internal(yes_no=True):
+    if yes_no:
+        print("internal mode")
+        pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx_pds/definitions/"
+    else:
+        print("customer mode")
+        pds_env['PDS_DEFINITION_ROOT'] = "/home/pi/siliconlabs/wfx-firmware/PDS/"
+
+
+if args.internal:
+    internal(True)
+else:
+    internal(False)
 
 
 if __name__ == '__main__':
