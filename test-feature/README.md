@@ -120,7 +120,8 @@ All other backoff values are set to 0.
 * `tx_start(nb_frames)`              : Starts sending a selected number of frames. With 0 or 'continuous' = continuous
 * `tx_stop()`                        : Sends a burst of 100 frames to complete a previous continuous transmission 
 
-#### wfx_test_functions parameters vs PDS parameters 
+## [wfx_test API](#API)
+### wfx_test_functions parameters vs PDS parameters
 
 | function       | function parameters                                                          | PDS parameters                           |
 |----------------|------------------------------------------------------------------------------|------------------------------------------|
