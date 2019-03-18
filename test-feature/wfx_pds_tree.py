@@ -97,6 +97,20 @@ class PdsTree(dict):
             print("fill_tree has messages: \n" + msg)
         return msg
 
+
+    def add_tmp_param(self, version, path, key, default, trace=0):
+        msg = ""
+        if StrictVersion(version) > StrictVersion(self.current_fw_version):
+            msg += "  Info: '" + key + "' cannot be supported with FW" + self.current_fw_version + \
+                   ", it has been added in FW" + version + " (skipped)\n"
+            print(msg)
+        else:
+            self._add_node(str(path), str(key), str(default))
+            if trace:
+                PdsTree.pretty(self)
+                print("----------------")
+
+
     def sub_tree(self, keys_to_keep=None):
         pds_subtree = deepcopy(self)
         if len(keys_to_keep) == 0:
