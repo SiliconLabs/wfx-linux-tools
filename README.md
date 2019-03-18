@@ -62,3 +62,11 @@ Repository contents
    installed.
 
  - `pds_compress/` contains tool to process PDS files.
+
+Updating the tools
+-----------------------
+```
+cd /home/pi/siliconlabs/wfx-linux-tools/
+git fetch
+git checkout origin/master
+```
