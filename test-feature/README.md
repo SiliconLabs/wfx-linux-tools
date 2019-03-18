@@ -1,6 +1,13 @@
 # wfx_test
 *wfx_test* is a set of python3 scripts allowing RF testing
 
+## [Updating this tool](#updating)
+```
+cd /home/pi/siliconlabs/wfx-linux-tools/test-feature
+git fetch
+git checkout origin/master
+```
+
 ## [Typical Use Case](#typical-use-case)
 ```
 cd /home/pi/siliconlabs/wfx-linux-tools/test-feature
