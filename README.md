@@ -29,12 +29,12 @@ From a shell on the Raspberry (either directly or through a SSH client like PuTT
 
 Connecting to a network
 -----------------------
-Once hostname has been change, it is possible to plug the Raspberry Pi on a DHCP capable network.
+Once hostname has been changed, it is possible to plug the Raspberry Pi on a DHCP capable network.
 Then, just use SSH with the configured hostname (user is `pi`) to access the board.
 
 Stand alone use
 ---------------
-The Raspberry Pi can also be used directly like a PC, with a keyboard, mouse and screen plugged to it. This can be useful for troubleshooting network issue.
+The Raspberry Pi can also be used directly like a PC, with a keyboard, mouse and screen plugged to it. This can be useful for troubleshooting network issues.
 
 Bus change
 ----------
@@ -47,8 +47,8 @@ Repository contents
  - `demos/` mainly hosts two scripts (`wfx_demo_station` and `wfx_demo_ap`) that
    can be used to test the Wi-Fi. These scripts contain the usual commands for
    setting up basic station and access point so it is possible to use them as
-   reference for custom application, in this case, first copy the script
-   outside of the repository (e.g. `/home/pi/custom_scripts`) to avoid issue when
+   reference for custom applications> In this case, first copy the script
+   outside of the repository (e.g. `/home/pi/custom_scripts`) to avoid issues when
    updating the repository.
 
  - `examples/` contains an example for a custom PDS file.
@@ -62,6 +62,8 @@ Repository contents
    installed.
 
  - `pds_compress/` contains tool to process PDS files.
+ 
+ - `test_feature/` contains tools to test the RF using a tone or modulated output. Refer to https://github.com/SiliconLabs/wfx-linux-tools/blob/master/test-feature/README.md for more details on testing.  
 
 Updating the tools
 -----------------------
