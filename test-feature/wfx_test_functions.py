@@ -30,7 +30,9 @@ def dmesg_period(period=None):
         return wfx_set_dict({'TEST_IND': period}, send_data=0)
 
 
-def tone(cmd=None, freq=0):
+def tone(cmd=None, freq=None):
+    if freq is None:
+        freq = wfx_get_list({"FREQ1"})[1]
     # CW Mode: generate CW @ (freq+1)*312.5Khz
     if cmd is None:
         test_mode = wfx_get_list({"TEST_MODE"}, mode='quiet')
@@ -59,7 +61,7 @@ def tx_power(dbm=None):
         return "MAX_OUTPUT_POWER_QDBM" + "  " + str(power) + \
             "     tx_power  " + str(power/4.0) + " dBm"
     else:
-        return wfx_set_dict({"MAX_OUTPUT_POWER_QDBM": int(4*dbm)})
+        return wfx_set_dict({"MAX_OUTPUT_POWER_QDBM": int(4*dbm), "TEST_MODE": "tx_packet", "NB_FRAME": 0}, send_data=1)
 
 
 def tx_backoff(mode_802_11=None, backoff_level=0):
@@ -98,7 +100,8 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
             return "Unknown 802.11 mode"    
         value = [0, 0, 0, 0, 0, 0]
         value[index] = int(4 * backoff_level)
-        wfx_set_dict({"BACKOFF_VAL": str(value)}, send_data=0)
+        wfx_set_dict({"BACKOFF_VAL": str(value), "TEST_MODE": "tx_packet", "NB_FRAME": 0}, send_data=1)
+        
 
 
 def tx_framing(packet_length_bytes=None, delay_between_us=100):
