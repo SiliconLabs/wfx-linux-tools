@@ -32,7 +32,7 @@ def dmesg_period(period=None):
 
 def tone(cmd=None, freq=None):
     if freq is None:
-        freq = wfx_get_list({"FREQ1"})[1]
+        freq = wfx_get_list({"FREQ1"}, mode = "quiet")
     # CW Mode: generate CW @ (freq+1)*312.5Khz
     if cmd is None:
         test_mode = wfx_get_list({"TEST_MODE"}, mode='quiet')
