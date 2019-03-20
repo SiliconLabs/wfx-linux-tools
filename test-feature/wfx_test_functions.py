@@ -101,7 +101,6 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
         value = [0, 0, 0, 0, 0, 0]
         value[index] = int(4 * backoff_level)
         wfx_set_dict({"BACKOFF_VAL": str(value), "TEST_MODE": "tx_packet", "NB_FRAME": 0}, send_data=1)
-        
 
 
 def tx_framing(packet_length_bytes=None, delay_between_us=100):
