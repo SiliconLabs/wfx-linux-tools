@@ -56,7 +56,7 @@ wfx_pds = [
 
 trunk = {}
 pds_order = []
-pds_warning = "Initial pds warning message"
+pds_warning = ""
 
 class PdsTree(dict):
     """
