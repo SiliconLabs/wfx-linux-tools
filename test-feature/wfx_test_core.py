@@ -74,6 +74,7 @@ def send(_pds, parameters, send_data=1):
 
     if ":error:" in compressed_string:
         res += "WARNING: No pds data sent! " + compressed_string + "\n"
+        add_pds_warning("WARNING: No pds data sent! " + compressed_string + "\n")
     else:
         if pds_traces:
             print("      " + compressed_string)
@@ -82,7 +83,6 @@ def send(_pds, parameters, send_data=1):
                       pds_env['SEND_PDS_FILE'] + " 2>&1") + "\n"
         else:
             res += " not sent, waiting for tone('start') or tx_start(..)"
-            
     return res.strip()
 
 
