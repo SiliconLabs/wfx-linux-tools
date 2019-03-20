@@ -83,6 +83,7 @@ def send(_pds, parameters, send_data=1):
                       pds_env['SEND_PDS_FILE'] + " 2>&1") + "\n"
         else:
             res += " not sent, waiting for tone('start') or tx_start(..)"
+            add_pds_warning(" not sent, waiting for tone('start') or tx_start(..)\n")
     return res.strip()
 
 
