@@ -55,8 +55,8 @@ wfx_pds = [
 ]
 
 trunk = {}
-
 pds_order = []
+pds_warning = "Initial pds warning message"
 
 class PdsTree(dict):
     """
@@ -103,6 +103,7 @@ class PdsTree(dict):
                     pds_order.append(key)
                     self.pds_keys.append(key)
         if msg:
+            add_pds_warning(msg)
             print("fill_tree has messages: \n" + msg)
         return msg
 
@@ -111,6 +112,7 @@ class PdsTree(dict):
         if StrictVersion(version) > StrictVersion(self.current_fw_version):
             msg += "  Info: '" + key + "' cannot be supported with FW" + self.current_fw_version + \
                    ", it has been added in FW" + version + " (skipped)\n"
+            add_pds_warning(msg)
             print(msg)
         else:
             self._add_node(str(path), str(key), str(default))
@@ -132,6 +134,7 @@ class PdsTree(dict):
                     msg = "  Info: '" + key + "' cannot be supported with FW" + self.current_fw_version + \
                            ", it has been added in FW" + version + " (skipped)\n"
                     print(msg)
+                    add_pds_warning(msg)
                 else:
                     sections_to_keep.append(section_root)
         for key in pds_subtree.keys():
@@ -169,6 +172,7 @@ class PdsTree(dict):
     def set(self, key, value):
         if key not in self.pds_keys:
             msg = "key '" + key + "' not in pds_structure. Possible keys are " + str(self.pds_keys)
+            add_pds_warning(msg)
             return msg
         for item in self.pds_structure:
             k, version, default, path, values, doc = item
@@ -177,11 +181,13 @@ class PdsTree(dict):
                     return "Warning: '" + key + "' cannot be supported with FW" + self.current_fw_version + \
                            ", it has been added in FW" + version + " (skipped)\n"
                 return PdsTree._set_node_value(self, path, key, value)
+                add_pds_warning("Error setting " + key)
         return "Error setting " + key
 
     def get(self, key):
         if key not in self.pds_keys:
             msg = "key '" + key + "' not in pds_structure. Possible keys are " + str(self.pds_keys)
+            add_pds_warning(msg)
             return msg
         for item in self.pds_structure:
             k, version, default, path, values, doc = item
@@ -190,6 +196,7 @@ class PdsTree(dict):
                     return "Warning: '" + key + "' cannot be supported with FW" + self.current_fw_version + \
                            ", it has been added in FW" + version + " (skipped)\n"
                 return PdsTree._get_node_value(self, path, key)
+                add_pds_warning("Error checking " + key)
         return "Error checking " + key
 
     def _add_node(self, path, key, default):
@@ -223,6 +230,23 @@ class PdsTree(dict):
             return PdsTree._get_node_value(current_node, next_path, key)
         else:
             return str(current_node[key])
+
+
+
+def add_pds_warning(msg):
+    global pds_warning
+    pds_warning += msg
+
+
+def check_pds_warning(msg):
+    global pds_warning
+    if pds_warning == "":
+        return msg.strip()
+    else:
+        ret = pds_warning
+        pds_warning = ""
+        return ret.strip()
+
 
 pds_compatibility_text = "\
 #ifndef MAX_TX_POWER_CFG\n\
