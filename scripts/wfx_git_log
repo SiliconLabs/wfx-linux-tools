@@ -2,4 +2,4 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
-git log --date=relative --pretty=format:'%x1B[38;5;166m%<(7)%h %x1B[38;5;143m%>|(22,trunc)%ad %x1B[38;5;94m%<(17,trunc)%an %x1B[0m%s%x1B[38;5;220m%d%C(reset)' "$@"
+git log --graph --date=relative --pretty=format:'%x1B[38;5;166m%<(7)%h %x1B[38;5;143m%>|(22,trunc)%ad %x1B[38;5;94m%<(17,trunc)%an %x1B[0m%s%C(auto)%d%C(reset)' "$@"
