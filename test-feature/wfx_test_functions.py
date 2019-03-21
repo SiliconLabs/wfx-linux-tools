@@ -76,28 +76,37 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
         backoff_dbm = str(int(backoff_max)/4.0)
         return "BACKOFF_VAL  " + backoff_max + "     tx_backoff  " + backoff_dbm + " dB"
     else:
-        if "DSSS" in mode_802_11:
-            index = 0
-        elif "6Mbps" in mode_802_11 or "MCS0" in mode_802_11:
-            index = 1
-        elif "9Mbps" in mode_802_11:
-            index = 1
-        elif "12Mbps" in mode_802_11 or "MCS1" in mode_802_11:
-            index = 1
-        elif "18Mbps" in mode_802_11 or "MCS2" in mode_802_11:
-            index = 2
-        elif "24Mbps" in mode_802_11 or "MCS3" in mode_802_11:
-            index = 2
-        elif "36Mbps" in mode_802_11 or "MCS4" in mode_802_11:
-            index = 3
-        elif "48Mbps" in mode_802_11 or "MCS5" in mode_802_11:
-            index = 3
-        elif "54Mbps" in mode_802_11 or "MCS6" in mode_802_11:
-            index = 4
-        elif "MCS7" in mode_802_11:
-            index = 5
+        backoff_indexes_by_bitrate = {
+            0: ['1Mbps' , '2Mbps', '5_5Mbps' , '11Mbps'],
+            1: ['6Mbps' , '9Mbps', '12Mbps'],
+            2: ['18Mbps', '24Mbps'],
+            3: ['36Mbps', '48Mbps'],
+            4: ['54Mbps']
+        }
+        backoff_indexes_by_modulation = {
+            0: ['DSSS', 'CCK'],
+            1: ['MCS0', 'MCS1'],
+            2: ['MCS2', 'MCS3'],
+            3: ['MCS4', 'MCS5'],
+            4: ['MCS6'],
+            5: ['MCS7']
+        }
+        index = -1
+        if 'Mbps' in mode_802_11:
+            input_bitrate = '_'.join(mode_802_11.split('_')[1:])
+            for i in backoff_indexes_by_bitrate.keys():
+                for bitrate in backoff_indexes_by_bitrate[i]:
+                    if bitrate == input_bitrate:
+                        index = i
         else:
-            return "Unknown 802.11 mode"    
+            for i in backoff_indexes_by_modulation.keys():
+                modulations = backoff_indexes_by_modulation[i]
+                for modulation in modulations:
+                    if modulation in mode_802_11:
+                        index = i
+        if index == -1:
+            return "Unknown 802.11 mode"
+        print("mode_802_11", mode_802_11, "index", index)
         value = [0, 0, 0, 0, 0, 0]
         value[index] = int(4 * backoff_level)
         wfx_set_dict({"BACKOFF_VAL": str(value), "TEST_MODE": "tx_packet", "NB_FRAME": 0}, send_data=1)
@@ -178,8 +187,12 @@ if __name__ == '__main__':
     print(tx_power(11.25))
     print(tx_power())
 
+    pi("wf200 pi_traces off")
+    pi("wf200 pds_traces off")
     print(tx_rx_select(2, 2))
     print(tx_rx_select())
 
     print(tx_framing())
     print(tx_framing(1, 12))
+
+    
