@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: set sw=4 expandtab:
 #
+# Version: 1.0
 # Created: 2018-06-21 11:05:30+02:00
 # Main authors:
 #     - Jérôme Pouiller <jerome.pouiller@silabs.com>
@@ -20,13 +21,16 @@
 #
 # In two words, output of this script is more or less same as:
 #     cpp -undef -P | tr -d '\n\t '
-
-
+#
+#
 # Most C Preprocessor directives are not supported:
 #    - #if (however, #ifdef family is supported)
 #    - Multiple lines defines
 #    - Recursive defines
 #    - Support for strings (defines in strings, comment in strings, etc...)
+#
+# Note for developpers: if you modifiy this file, please don't forget to
+# increment version number.
 
 # Avoid syntax error with python 2.x
 from __future__ import print_function
