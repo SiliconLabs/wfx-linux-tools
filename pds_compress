@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # vim: set sw=4 expandtab:
 #
-# Version: 1.0
 # Created: 2018-06-21 11:05:30+02:00
 # Main authors:
 #     - Jérôme Pouiller <jerome.pouiller@silabs.com>
@@ -28,12 +27,12 @@
 #    - Multiple lines defines
 #    - Recursive defines
 #    - Support for strings (defines in strings, comment in strings, etc...)
-#
-# Note for developpers: if you modifiy this file, please don't forget to
-# increment version number.
 
 # Avoid syntax error with python 2.x
 from __future__ import print_function
+
+# If you modifiy this file, please don't forget to increment version number.
+__version__ = "1.1"
 
 import io
 import os
@@ -387,6 +386,8 @@ def formattiny(f_out, pds):
 def parse_cmdline(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(usage="%(prog)s [options] INPUT [OUTPUT]",
                   description="Generate a compressed version of PDS from a full PDS")
+    parser.add_argument('--version', action='version',
+                  version='%(prog)s {version}'.format(version=__version__))
     parser.add_argument("input", metavar='INPUT', type=argparse.FileType('r'),
                   help="input file (except C format, all output formats can be used as input)")
     parser.add_argument("output", metavar='OUTPUT', nargs="?", type=argparse.FileType('w'), default=sys.stdout,
