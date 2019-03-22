@@ -105,8 +105,9 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
                     if modulation in mode_802_11:
                         index = i
         if index == -1:
-            return "Unknown 802.11 mode"
-        print("mode_802_11", mode_802_11, "index", index)
+            warning_msg = "tx_backoff: Unknown 802.11 mode " + str(mode_802_11)
+            add_pds_warning(warning_msg)
+            return warning_msg
         value = [0, 0, 0, 0, 0, 0]
         value[index] = int(4 * backoff_level)
         wfx_set_dict({"BACKOFF_VAL": str(value), "TEST_MODE": "tx_packet", "NB_FRAME": 0}, send_data=1)
@@ -124,21 +125,33 @@ def tx_mode(mode_802_11=None):
         return wfx_get_list({"HT_PARAM", "RATE"})
     else:
         res = re.findall("([^_]*)_(.*)", mode_802_11)
-        suffix = res[0][1]
-        ht_param = "MM"
-        if "GF_" in mode_802_11:
-            rate = "N_" + suffix
-            ht_param = "GF"
-        elif "MM_" in mode_802_11:
-            rate = "N_" + suffix
-        elif "LEG_" in mode_802_11:
-            rate = "G_" + suffix
-        elif "DSSS_" in mode_802_11:
-            rate = "B_" + suffix + "Mbps"
-        elif "CCK_" in mode_802_11:
-            rate = "B_" + suffix + "Mbps"
-        else:
-            return "Unknown 802.11 mode"
+        mode = res[0][0]
+        suffix = res[0][1].replace('Mbps','')
+        ht_param = ""
+        rate = ""
+        ht_param_modes = {
+            'MM': ['B', 'DSSS', 'CCK', 'G', 'LEG', 'MM'],
+            'GF': ['GF'],
+        }
+        rate_prefix_modes = {
+            'B': ['B', 'DSSS', 'CCK'],
+            'G': ['G', 'LEG'],
+            'N': ['MM', 'GF'],
+        }
+        for i in ht_param_modes.keys():
+            for param_mode in ht_param_modes[i]:
+                if param_mode == mode:
+                    ht_param = i
+        for i in rate_prefix_modes.keys():
+            for rate_prefix in rate_prefix_modes[i]:
+                if rate_prefix == mode:
+                    rate = i + '_' + suffix
+        if 'MCS' not in rate:
+            rate += 'Mbps'
+        if ht_param == "":
+            warning_msg = "tx_mode: Unknown 802.11 mode " + str(mode_802_11)
+            add_pds_warning(warning_msg)
+            return warning_msg
         return wfx_set_dict({"HT_PARAM": ht_param, "RATE": rate}, send_data=0)
 
 
@@ -188,11 +201,10 @@ if __name__ == '__main__':
     print(tx_power())
 
     pi("wf200 pi_traces off")
-    pi("wf200 pds_traces off")
+    pi("wf200 pds_traces on")
     print(tx_rx_select(2, 2))
     print(tx_rx_select())
 
     print(tx_framing())
     print(tx_framing(1, 12))
-
     
