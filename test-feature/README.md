@@ -140,7 +140,7 @@ Additional functions
 | `tone_power`   |`dbm`: [TBD]                                                                  |`MAX_OUTPUT_POWER`                        |
 | `tx_backoff`   |`mode_802_11`:<br>'[B, CCK, DSS]\_[1, 2, 5_5, 11]Mbps'<br>'[G, LEG]\_[6, 9, 12, 18, 24, 36, 48, 54]Mbps'<br>'[N, MM, GF]\_MCS[0-7]'<br>Examples: 'B_1Mbps', 'LEG_54Mbps', 'GF_MCS5'<br>`backoff_level`: [0:63.75] dB|`BACKOFF_VAL`|
 | `tx_framing`   |`packet_length_bytes`:[25-4091] Frame size in bytes\(without CRC\)<br>`delay_between_us`:[0-255] Interframe spacing in us|`FRAME_SIZE_BYTE` |
-| `tx_mode`      |`mode_802_11`: 'GF_' 'MM_' 'LEG_' DSSS_' 'CCK_' followed by rate in Mbps \(1, 2, 5_5, 11, 6, 9, 12, 18, 24, 36, 48, 54\) depending on the mode|`HT_PARAM`<br>`RATE`|
+| `tx_mode`      |`mode_802_11`:<br>'[B, CCK, DSS]\_[1, 2, 5_5, 11]Mbps'<br>'[G, LEG]\_[6, 9, 12, 18, 24, 36, 48, 54]Mbps'<br>'[MM, GF]\_MCS[0-7]'<br>Examples: 'B_1Mbps', 'LEG_54Mbps', 'GF_MCS5'|`HT_PARAM`<br>`RATE`|
 | `tx_power`     |`dbm`: [TBD]                                                                  |`MAX_OUTPUT_POWER_QDBM`                   |
 | `tx_rx_select` |`tx_ant`: [1-2] Tx antenna<br>`rx_ant`: [1-2] Rx antenna                      |`RF_PORTS`                                |
 | `tx_start`     |`nb_frames`: [0-65535] or 'continuous'. Nb of frames to send before stopping. |`NB_FRAME`                                |
