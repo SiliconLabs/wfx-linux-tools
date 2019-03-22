@@ -138,7 +138,7 @@ Additional functions
 | `channel`      |`ch`: [1-14]\(channel\) or [2300-2530] MHz                                    |`TEST_CHANNEL_FREQ`                       |
 | `tone`         |`cmd`: 'start' 'stop'<br>`freq`: offset in 312.5 kHz steps                    |`TEST_MODE`<br>`NB_FRAME`<br>`FREQ1`      |
 | `tone_power`   |`dbm`: [TBD]                                                                  |`MAX_OUTPUT_POWER`                        |
-| `tx_backoff`   |`mode_802_11`:<br>'[B, CCK, DSS]\_[1, 2, 5_5, 11]Mbps'<br>'[G, LEG]\_[6, 9, 12, 18, 24, 36, 48, 54]Mbps'<br>'[N, MM, GF]\_MCS[0-7]'<br>Examples: 'B_1Mbps', 'LEG_54Mbps', 'GF_MCS5'<br>`backoff_level`: [0:63.75] dB|`BACKOFF_VAL`|
+| `tx_backoff`   |`mode_802_11`:<br>'[B, CCK, DSS]\_[1, 2, 5_5, 11]Mbps'<br>'[G, LEG]\_[6, 9, 12, 18, 24, 36, 48, 54]Mbps'<br>'[MM, GF]\_MCS[0-7]'<br>Examples: 'B_1Mbps', 'LEG_54Mbps', 'GF_MCS5'<br>`backoff_level`: [0:63.75] dB|`BACKOFF_VAL`|
 | `tx_framing`   |`packet_length_bytes`:[25-4091] Frame size in bytes\(without CRC\)<br>`delay_between_us`:[0-255] Interframe spacing in us|`FRAME_SIZE_BYTE` |
 | `tx_mode`      |`mode_802_11`:<br>'[B, CCK, DSS]\_[1, 2, 5_5, 11]Mbps'<br>'[G, LEG]\_[6, 9, 12, 18, 24, 36, 48, 54]Mbps'<br>'[MM, GF]\_MCS[0-7]'<br>Examples: 'B_1Mbps', 'LEG_54Mbps', 'GF_MCS5'|`HT_PARAM`<br>`RATE`|
 | `tx_power`     |`dbm`: [TBD]                                                                  |`MAX_OUTPUT_POWER_QDBM`                   |
