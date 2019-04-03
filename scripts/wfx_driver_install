@@ -49,6 +49,9 @@ else
     DEPMOD_VER="$(cat $KDIR/include/config/kernel.release)"
 fi
 
+# Enable ccache if it is installed
+export PATH=/usr/lib/ccache:$PATH
+
 set -x
 $GIT submodule update --init
 make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} -j 5
