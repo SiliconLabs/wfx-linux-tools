@@ -11,12 +11,14 @@ USAGE="Usage: $(basename $0) OPTION
 Start in station mode
 
 Options:
-  --help           display this message
-  --ssid <ssid>    connect to <ssid>
-  --pasword <pass> specify password
-  --conf <file>    use specific wpa_supplicant.conf
-  --interface <if> use interface instead of default wlan0
-  --no-dhcp        do not enable DHCP client
+  --help               display this message
+  --ssid <ssid>        connect to <ssid>
+  --pasword <pass>     specify password
+  --conf <file>        use specific wpa_supplicant.conf
+  --interface <if>     use interface instead of default wlan0
+  --no-dhcp            do not enable DHCP client
+  --dhcp yes|no|ignore enable DHCP client
+  --keep-supplicant    if any, use existing wpa_supplicant
 
 If only --conf is used, the supplied file is supposed to contain the AP(s) to connect to.
 If --ssid is used, $(basename $0) wait for the connection to be established.
@@ -30,10 +32,11 @@ SSID=""
 PASSWD=""
 CONF=""
 INTERFACE="wlan0"
-DHCP="true"
+DHCP="yes"
+KEEP_SUPP="false"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp"
+LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp,dhcp:,keep-supplicant"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
@@ -43,7 +46,9 @@ while true; do
         --password)  PASSWD="$2";    shift ;;
         --conf)      CONF="$2";      shift ;;
         --interface) INTERFACE="$2"; shift ;;
-        --no-dhcp)   DHCP="false"          ;;
+        --no-dhcp)   DHCP="no"          ;;
+        --dhcp)      DHCP="$2";      shift ;;
+        --keep-supplicant) KEEP_SUPP="true" ;;
         --help)      echo "$USAGE";  exit 0 ;;
         --)          shift; break ;;
         *)           error ;;
@@ -63,22 +68,37 @@ wpa_cli_run()
 
 check_interface "$INTERFACE"
 
-echo "Configuring dhcpcd"
-if [ "$DHCP" = "true" ]; then
-    ip addr flush dev "$INTERFACE"
-    dhcpcd --rebind "$INTERFACE" 2>/dev/null
-else
-    dhcpcd --release "$INTERFACE" 2>/dev/null
+case "$DHCP" in
+    yes)
+        echo "Asking dhcpcd to control $INTERFACE"
+        ip addr flush dev "$INTERFACE"
+        dhcpcd --rebind "$INTERFACE" 2>/dev/null
+        ;;
+    no)
+        echo "Asking dhcpcd to release $INTERFACE"
+        dhcpcd --release "$INTERFACE" 2>/dev/null
+        ;;
+    ignore)
+        ;;
+    *)
+        echo "ERROR: invalid value for --dhcp: $DHCP"
+        exit 1
+        ;;
+esac
+
+if [ "$KEEP_SUPP" = "false" ];then
+    killall --quiet --wait hostapd wpa_supplicant || true
 fi
 
-echo "Starting  wpa_supplicant"
-killall --quiet --wait hostapd wpa_supplicant || true
-if [ -z "$CONF" ]; then
-    WPA_ARGS="-C /var/run/wpa_supplicant"
-else
-    WPA_ARGS="-c $CONF"
+if ! pidof wpa_supplicant >/dev/null; then
+    echo "Starting  wpa_supplicant"
+    if [ -z "$CONF" ]; then
+        WPA_ARGS="-C /var/run/wpa_supplicant"
+    else
+        WPA_ARGS="-c $CONF"
+    fi
+    wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS
 fi
-wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS
 
 echo "Setting up connection"
 if [ ! -z "$SSID" ]; then
