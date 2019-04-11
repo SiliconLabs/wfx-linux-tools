@@ -89,3 +89,21 @@ if __name__ == '__main__':
     print(tx_backoff())
 
     print(pds.pretty())
+
+    print(wfx_get_list({'TEST_MODE','NB_FRAME'}))
+
+    print(wfx_set_dict({'NB_FRAME':25},0))
+    print(wfx_get_list({'NB_FRAME'}))
+
+    # Sending data with temporary items named with single lowercase path and names will work (up to PDS data sending), provided that the FW supports the path and names!
+    print(PdsTree.add_tmp_param(pds, '2.0', 'z.a.a', 'x', '12'))
+    print(PdsTree.add_tmp_param(pds, '2.0', 'z.a.b', 'y', '25'))
+    print(wfx_set_dict({'x':15, 'y':32},1))
+
+    # Sending data with temporary items named with 'human-readable' names will only work if the path items and names are declared in definitions.in!
+    print(PdsTree.add_tmp_param(pds, '2.0', 'HEADER', 'VERSION_MAJOR', '2'))
+    print(PdsTree.add_tmp_param(pds, '2.0', 'HEADER', 'VERSION_MINOR', '2'))
+    print(wfx_get_list({'VERSION_MAJOR','VERSION_MINOR' }))
+
+    print(pds.pretty())
+

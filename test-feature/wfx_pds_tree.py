@@ -116,9 +116,18 @@ class PdsTree(dict):
             print(msg)
         else:
             self._add_node(str(path), str(key), str(default))
+            levels = str(path).split('.')
+            for level in levels:
+                if level not in pds_order:
+                    pds_order.append(level)
+            if key not in self.pds_keys:
+                pds_order.append(key)
+                self.pds_keys.append(key)
+            self.pds_structure.append((str(key), str(version), str(default), str(path), "unknown range", "Temporary parameter, lost after closing"))
             if trace:
                 PdsTree.pretty(self)
-                print("----------------")
+                print("---- tmp -------")
+            return PdsTree.pretty(self)
 
     def sub_tree(self, keys_to_keep=None):
         pds_subtree = deepcopy(self)

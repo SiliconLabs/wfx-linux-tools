@@ -174,3 +174,92 @@ Edit `/tmp/current_pds_data.in` to check the PDS data
 | `print(pds.pretty())` | `print(pds.print())`  |
 
 Nb: the above is only possible if using `pds = init_board()`
+
+## Advanced features
+
+### Accessing a parameter if it's not managed by a test function
+
+All parameters (even those not managed by test functions) listed in the [test API](https://github.com/SiliconLabs/wfx-linux-tools/tree/master/test-feature#API)
+are still accessible using generic functions:
+
+**Reading**
+```
+wfx_get_list({'NB_FRAME'})
+wfx_get_list({'TEST_MODE','NB_FRAME'})
+```
+ 
+**Writing** (without sending PDS data)
+ 
+```
+wfx_set_dict({'NB_FRAME':12}, 0)
+wfx_set_dict({'TEST_MODE':'tx_packet','NB_FRAME':12}, 0)
+```
+
+**Writing**(sending PDS data)
+```
+wfx_set_dict({'NB_FRAME':12}, 1)
+wfx_set_dict({'TEST_MODE':'tx_packet','NB_FRAME':12}, 1)
+```
+
+### Adding a temporary test parameter
+
+It is always possible to define new parameters and access them using the generic `wfx_get_list` / `wfx_set_dict` functions described above.
+
+**Adding a parameter
+
+```
+add_tmp_param('version', 'path', 'key', 'default')
+```
+adds a (temporary) parameter to the PDS structure. This is useful to test FW release candidates in the lab
+example:
+
+```
+# Creating the params in the tree (Pending FW support for 'z.a.b.x' &  'z.a.b.y'):
+PdsTree.add_tmp_param(pds, '2.0', 'z.a.b', 'x', '10')
+PdsTree.add_tmp_param(pds, '2.0', 'z.a.b', 'y', '25')
+
+# Setting the value and sending PDS data:
+wfx_set_dict({'x':15, 'y':32}, 1)
+```
+
+## Advanced features
+
+### Accessing a parameter if it's not managed by a test function
+
+All parameters (even those not managed by test functions) listed in the [test API](https://github.com/SiliconLabs/wfx-linux-tools/tree/master/test-feature#API)
+are still accessible using generic functions:
+
+**Reading**
+```
+wfx_get_list({'NB_FRAME'})
+wfx_get_list({'TEST_MODE','NB_FRAME'})
+```
+
+**Writing** (without sending PDS data)
+
+```
+wfx_set_dict({'NB_FRAME':12}, 0)
+wfx_set_dict({'TEST_MODE':'tx_packet','NB_FRAME':12}, 0)
+```
+
+**Writing**(sending PDS data)
+```
+wfx_set_dict({'NB_FRAME':12}, 1)
+wfx_set_dict({'TEST_MODE':'tx_packet','NB_FRAME':12}, 1)
+```
+
+### Adding a temporary test parameter
+
+It is always possible to define a new parameter and access it using the generic `wfx_get_list` / `wfx_set_dict` functions described above.
+
+**Adding a parameter
+
+```
+add_tmp_param('version', 'path', 'key', 'default')
+```
+adds a (temporary) parameter to the PDS structure. This is useful to test FW release candicates in the lab
+
+example:
+```
+add_tmp_param('2.1', 'TEST_FEATURE_CFG:FOO', 'bar', '5')
+```
