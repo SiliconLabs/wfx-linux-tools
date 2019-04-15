@@ -10,7 +10,8 @@ commands:
   --help      display this message
   --list      list configuration files
   --dump      dump configuration files content
-  --checks    perform some checks on system configuration"
+  --checks    perform some checks on system configuration
+"
 
 . wfx_set_env
 
