@@ -16,7 +16,7 @@ Options:
   --pasword <pass>     specify password
   --conf <file>        use specific wpa_supplicant.conf
   --interface <if>     use interface instead of default wlan0
-  --no-dhcp            do not enable DHCP client
+  --no-dhcp            do not enable DHCP client (default is yes)
   --dhcp yes|no|ignore enable DHCP client
   --keep-supplicant    if any, use existing wpa_supplicant
 
