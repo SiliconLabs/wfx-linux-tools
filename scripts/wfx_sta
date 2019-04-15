@@ -113,21 +113,30 @@ if [ ! -z "$SSID" ]; then
     wpa_cli_run select_network 0
 
     echo "Waiting for connection"
-    for n in {1..20}; do
+    SUCCESS="false"
+    for n in {1..10}; do
         sleep 1
-        STATUS=$(wpa_cli -i $INTERFACE status)
-        if echo "$STATUS" | grep wpa_state | grep -q COMPLETED; then
-            if [ "$DHCP" = "true" ]; then
-                if echo "$STATUS" | grep -q ip_address; then
-                    echo "Associated and DHCP lease obtained"
-                    exit 0
-                fi
-            else
-                echo "Associated"
-                exit 0
-            fi
+        if echo "$(wpa_cli -i $INTERFACE status)" | grep wpa_state | grep -q COMPLETED; then
+            SUCCESS="true"
+            echo "Associated"
+            break
         fi
     done
-    echo "ERROR: Association or DHCP timeout" >&2
-    exit 1
+    [ "$SUCCESS" != true ] && error "Association timeout"
+
+    if [ "$DHCP" = "yes" ]; then
+        echo "Waiting for DHCP"
+        SUCCESS="false"
+        for n in {1..10}; do
+            sleep 1
+            if echo "$(wpa_cli -i $INTERFACE status)" | grep -q ip_address; then
+                SUCCESS="true"
+                echo "DHCP lease obtained"
+                break
+            fi
+        done
+        [ "$SUCCESS" != true ] && error "DHCP timeout"
+    fi
 fi
+
+echo "Success"
