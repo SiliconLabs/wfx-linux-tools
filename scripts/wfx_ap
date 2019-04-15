@@ -11,27 +11,27 @@ USAGE="Usage: $(basename $0) OPTION
 Start in access point mode
 
 Options:
-  --help           display this message
-  --conf <file>    hostapd.conf file
-  --ip <address>   set the IP (with /24 mask)
-  --dhcp           start a DHCP server
-  --forward <if>   enable traffic forwarding to interface
-  --no-forward     disable all traffic forwarding
+  --help               display this message
+  --conf <file>        hostapd.conf file
+  --ip <address>       set the IP (with /24 mask)
+  --dhcp yes|no|ignore enable DHCP server (default is no)
+  --forward <if>       enable traffic forwarding to interface
+  --no-forward         disable all traffic forwarding
 
 Example:
 -start an ap with address 192.168.1.1 on wlan and enable DHCP server (Wi-Fi configuration depends on hostapd.conf content)
-$(basename $0) --conf /home/pi/access_point/hostapd.conf --ip 192.168.1.1 --dhcp
+$(basename $0) --conf /home/pi/access_point/hostapd.conf --ip 192.168.1.1 --dhcp yes
 "
 
 CONF=""
 SET_IP=""
-DHCP=""
+DHCP="no"
 FWD_IF=""
 NO_FWD="false"
 INTERFACE="wlan0"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,conf:,ip:,dhcp,forward:,no-forward"
+LONGOPTS="help,conf:,ip:,dhcp:,forward:,no-forward"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
@@ -39,7 +39,7 @@ while true; do
     case "$1" in
         --conf)       CONF="$2";      shift ;;
         --ip)         SET_IP="$2";    shift ;;
-        --dhcp)       DHCP="true"           ;;
+        --dhcp)       DHCP="$2";      shift ;;
         --forward)    FWD_IF="$2";    shift ;;
         --no-forward) NO_FWD="true"         ;;
         --help)       echo "$USAGE"; exit 0 ;;
@@ -64,19 +64,28 @@ if [ ! -z "$SET_IP" ]; then
     ip addr add "$SET_IP/24" dev "$INTERFACE"
 fi
 
-if [ "$DHCP" = "true" ]; then
-    echo "Starting DHCP server dnsmasq"
-    killall --quiet --wait dnsmasq || true
-
-    IP=$(ip address show "$INTERFACE" | sed -ne 's/.*inet \([^\/]*\).*/\1/p')
-    if [ $(echo -n "$IP" | grep -c '') != "1" ]; then
-        echo "ERROR: $INTERFACE has not exactly one IP address (try --ip)" >&2
-        exit 1
-    fi
-
-    RANGE="${IP%.*}.100,${IP%.*}.200"
-    dnsmasq -C "" --interface "$INTERFACE" --dhcp-range "$RANGE"
-fi
+KILL_DNSMASQ='killall --quiet --wait dnsmasq || true'
+case "$DHCP" in
+    yes)
+        eval $KILL_DNSMASQ
+        echo "Starting DHCP server dnsmasq"
+        IP=$(ip address show "$INTERFACE" | sed -ne 's/.*inet \([^\/]*\).*/\1/p')
+        if [ $(echo -n "$IP" | grep -c '') != "1" ]; then
+            echo "ERROR: $INTERFACE has not exactly one IP address (try --ip)" >&2
+            exit 1
+        fi
+        RANGE="${IP%.*}.100,${IP%.*}.200"
+        dnsmasq -C "" --interface "$INTERFACE" --dhcp-range "$RANGE"
+        ;;
+    no)
+        eval $KILL_DNSMASQ
+        ;;
+    ignore)
+        ;;
+    *)
+        error "invalid value for --dhcp: $DHCP"
+        ;;
+esac
 
 if [ ! -z "$FWD_IF" ]; then
     echo "Enabling traffic forwarding"
