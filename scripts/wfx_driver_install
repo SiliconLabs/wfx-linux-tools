@@ -56,6 +56,7 @@ set -x
 $GIT submodule update --init
 make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} -j 5
 sudo make -C $GITHUB_DRIVER_PATH ${KDIR:+KDIR=$KDIR} modules_install
+sudo depmod $DEPMOD_VER
 set +x
 
 echo
