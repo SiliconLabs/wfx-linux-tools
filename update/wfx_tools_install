@@ -3,7 +3,17 @@
 # See license terms contained in COPYING file
 
 # DO NOT EDIT this script
-# this is just a wrapper to launch a specific version of tools_install.sh
+# This is just a wrapper to launch a specific version of tools_install.sh
+#
+# This first stage is designed to be as small as possible and never change.
+# It does not do the update himself to allow changes to the real update code.
+#
+# The update procedure internal flow is:
+#   wfx_tools_install VERSION (launch code update to VERSION)
+#     tools_install.sh        (update tools code)
+#       install.sh            (install updated tools)
+#
+# Usage: wfx_tools_install VERSION
 
 set -exo pipefail
 

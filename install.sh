@@ -2,6 +2,9 @@
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
+# This script performs actions needed to install public tools
+# It is typically ran by tools_install.sh after an update
+
 set -e
 # Always run as root
 [ $(id -u) = 0 ] || exec sudo $0 "$@"

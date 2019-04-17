@@ -4,6 +4,9 @@
 
 # DO NOT MOVE THIS SCRIPT OR MAKE IT EXECUTABLE
 # this script is to be run by wfx_tools_install
+#
+# This second stage is designed just to update wfx-linux-tools code
+# The installation itself is then delegated to install.sh
 
 set -ex
 
