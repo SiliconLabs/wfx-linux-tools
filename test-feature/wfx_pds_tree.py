@@ -22,11 +22,11 @@ from distutils.version import StrictVersion
 
 wfx_pds = [
   #  PARAMETER                      | VERSION | DEFAULT            | PATH                            | VALUES                    | DOC
-    ('RF_PORT'                       ,  '2.0', 'RF_PORT_BOTH'       , 'MAX_TX_POWER_CFG'              , "RF_PORT_1, RF_PORT_2, RF_PORT_BOTH(default)", "RF port affected by the MAX_TX_POWER_CFG parameters"),
-    ('MAX_OUTPUT_POWER_QDBM'         ,  '2.0',  80                  , 'MAX_TX_POWER_CFG'              , "[-128; 127]", "Max Tx power value, in 1/4 of dBm. Resultant covered range in dBm: [-32; 31.75]"),
-    ('FRONT_END_LOSS_CORRECTION_QDB' ,  '2.0',  0                   , 'MAX_TX_POWER_CFG'              , "[-128; 127]", "Front-end loss (loss between the chip and the antenna) in 1/4 of dB. Resultant covered range in dB: [-32; 31.75]"),
-    ('CHANNEL_NUMBER'                ,  '2.0', '[1, 14]'            , 'MAX_TX_POWER_CFG.BACKOFF_QDB[]', "[1, 14]", "Backoff CHANNEL_NUMBER : channel number (an integer) or range of channel numbers (an array) to which the backoff values apply"),
-    ('BACKOFF_VAL'                   ,  '2.0', '[0, 0, 0, 0, 0 ,0]' , 'MAX_TX_POWER_CFG.BACKOFF_QDB[]', "[0; 255] possible values", "BACKOFF_VAL is given in 1/4 of dB. Covered range in dB: [0; 63.75].\
+    ('RF_PORT'                       ,  '2.0', 'RF_PORT_BOTH'       , 'RF_POWER_CFG'                  , "RF_PORT_1, RF_PORT_2, RF_PORT_BOTH(default)", "RF port affected by the RF_POWER_CFG parameters"),
+    ('MAX_OUTPUT_POWER_QDBM'         ,  '2.0',  80                  , 'RF_POWER_CFG'                  , "[-128; 127]", "Max Tx power value, in 1/4 of dBm. Resultant covered range in dBm: [-32; 31.75]"),
+    ('FRONT_END_LOSS_CORRECTION_QDB' ,  '2.0',  0                   , 'RF_POWER_CFG'                  , "[-128; 127]", "Front-end loss (loss between the chip and the antenna) in 1/4 of dB. Resultant covered range in dB: [-32; 31.75]"),
+    ('CHANNEL_NUMBER'                ,  '2.0', '[1, 14]'            , 'RF_POWER_CFG.BACKOFF_QDB[]'    , "[1, 14]", "Backoff CHANNEL_NUMBER : channel number (an integer) or range of channel numbers (an array) to which the backoff values apply"),
+    ('BACKOFF_VAL'                   ,  '2.0', '[0, 0, 0, 0, 0 ,0]' , 'RF_POWER_CFG.BACKOFF_QDB[]'    , "[0; 255] possible values", "BACKOFF_VAL is given in 1/4 of dB. Covered range in dB: [0; 63.75].\
                                                                                                                                     Each value sets a backoff for a group of modulation.\
                                                                                                                                     A modulation group designates a subset of modulations :\
                                                                                                                                     # MOD_GROUP_0 : B_1Mbps, B_2Mbps, B_5.5Mbps, B_11Mbps\
@@ -35,6 +35,7 @@ wfx_pds = [
                                                                                                                                     # MOD_GROUP_3 : G_36Mbps, G_48Mbps, N_MCS4, N_MCS5\
                                                                                                                                     # MOD_GROUP_4 : G_54Mbps, N_MCS6\
                                                                                                                                     # MOD_GROUP_5 : N_MCS7"),
+    ('RSSI_CORRECTION'               ,  '2.3', 0                    , 'RF_POWER_CFG'                  , "[0, 255]"               , "Backoff CHANNEL_NUMBER : channel number (an integer) or range of channel numbers (an array) to which the backoff values apply"),
     ('RF_PORTS'                      ,  '2.0', 'TX1_RX1'            , 'RF_ANTENNA_SEL_DIV_CFG'        , "TX1_RX1, TX2_RX2, TX1_RX2, TX2_RX1, TX12_RX12", "Antenna selection"),
     ('TEST_CHANNEL_FREQ'             ,  '2.0',  11                  , 'TEST_FEATURE_CFG'              , "[1, 14]"                , "Wi-Fi channel to use for TEST_FEATURE"),
     ('TEST_MODE'                     ,  '2.0', 'tx_packet'          , 'TEST_FEATURE_CFG'              , "rx, tx_packet, tx_cw"   , "TEST_FEATURE selection"),
@@ -263,6 +264,9 @@ pds_compatibility_text = "\
     #define TEST_FEATURE_CFG i\n\
     #define RF_ANTENNA_SEL_DIV_CFG j\n\
     #define TEST_CHANNEL_FREQ a\n\
+#endif\n\n\
+#ifndef RF_POWER_CFG\n\
+    #define RF_POWER_CFG h\n\
 #endif\n\n\
 "
 
