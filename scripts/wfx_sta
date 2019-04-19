@@ -135,7 +135,7 @@ if [ ! -z "$SSID" ]; then
                 break
             fi
         done
-        [ "$SUCCESS" != true ] && error "DHCP timeout"
+        [ "$SUCCESS" != true ] && echo "DHCP timeout" >&2 && exit 1
     fi
 fi
 
