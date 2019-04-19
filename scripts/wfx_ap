@@ -57,9 +57,15 @@ fi
 
 check_interface "$INTERFACE"
 
+if [ ! -z "$SET_IP" ] || [ "$DHCP" = yes ]; then
+    # Disable DHCP client on the interface before reconfiguring it
+    dhcpcd --release "$INTERFACE" 2>/dev/null
+    # dhcpcd release is not instant
+    sleep 1
+fi
+
 if [ ! -z "$SET_IP" ]; then
     echo "Configuring IP"
-    dhcpcd --release "$INTERFACE" 2>/dev/null
     ip addr flush dev "$INTERFACE"
     ip addr add "$SET_IP/24" dev "$INTERFACE"
 fi
