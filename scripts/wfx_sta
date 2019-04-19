@@ -129,7 +129,7 @@ if [ ! -z "$SSID" ]; then
         SUCCESS="false"
         for n in {1..10}; do
             sleep 1
-            if echo "$(wpa_cli -i $INTERFACE status)" | grep -q ip_address; then
+            if echo "$(wpa_cli -i $INTERFACE status)" | grep ip_address | grep -qv '169.254.'; then
                 SUCCESS="true"
                 echo "DHCP lease obtained"
                 break
