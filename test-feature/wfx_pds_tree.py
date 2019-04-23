@@ -267,14 +267,14 @@ pds_compatibility_text = "\
 #endif /* MAX_TX_POWER_CFG */\n\n\
 #ifndef   RF_POWER_CFG\n\
     #define RF_POWER_CFG h\n\
-#endif /* RF_POWER_CFG */\
-#ifndef   CERTIFIED_Unrestricted \
+#endif /* RF_POWER_CFG */\n\
+#ifndef   CERTIFIED_Unrestricted\n\
     #define CERTIFIED_All          0\n\
     #define CERTIFIED_FCC          1\n\
     #define CERTIFIED_ETSI         2\n\
     #define CERTIFIED_JAPAN        3\n\
     #define CERTIFIED_Unrestricted 4\n\
-#endif /* CERTIFIED_Unrestricted */\
+#endif /* CERTIFIED_Unrestricted */\n\
 \n\n\
 "
 
