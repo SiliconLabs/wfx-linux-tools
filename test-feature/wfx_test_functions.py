@@ -113,6 +113,17 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
         wfx_set_dict({"BACKOFF_VAL": str(value), "TEST_MODE": "tx_packet", "NB_FRAME": 0}, send_data=1)
 
 
+def regulatory_mode(reg_mode):
+    if reg_mode is None:
+        return wfx_get_list("REG_MODE", mode='quiet')
+    else:
+        possible_reg_modes = ["All", "FCC", "ETSI", "JAPAN", "Unrestricted", "JP", "min"]
+        for m in possible_reg_modes:
+            if m in reg_mode:
+                return wfx_set_dict({"REG_MODE": "CERTIFIED_" + m}, send_data=1)
+        return "Unknown '" + reg_mode + " ' regulatory_mode. Use " + str(possible_reg_modes[0:5])
+
+
 def tx_framing(packet_length_bytes=None, delay_between_us=100):
     if packet_length_bytes is None:
         return wfx_get_list({"FRAME_SIZE_BYTE", "IFS_US"})
