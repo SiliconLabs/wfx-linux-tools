@@ -145,6 +145,7 @@ Additional functions
 | `tx_rx_select` |`tx_ant`: [1-2] Tx antenna<br>`rx_ant`: [1-2] Rx antenna                      |`RF_PORTS`                                |
 | `tx_start`     |`nb_frames`: [0-65535] or 'continuous'. Nb of frames to send before stopping. |`NB_FRAME`                                |
 | `tx_stop`      |**none**|`NB_FRAME` |
+| `regulatory_mode` | `reg_mode`:<br>'[All, FCC, ETSI, JAPAN, Unrestricted]'                    | `REG_MODE`                               |
 | `add_tmp_param`|`version`: min FW, `path`: position in tree, `key`: name, `default`:value     | `key` (as entered)                       |
 | `dmesg_period` |`period`:[0-TBD/65535?] delay in ms between messages                          |`TEST_IND`                                |
 
