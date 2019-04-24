@@ -117,10 +117,14 @@ def regulatory_mode(reg_mode):
     if reg_mode is None:
         return wfx_get_list("REG_MODE", mode='quiet')
     else:
-        possible_reg_modes = ["All", "FCC", "ETSI", "JAPAN", "Unrestricted", "JP", "min"]
+        possible_reg_modes = ["All", "FCC", "ETSI", "JAPAN", "Unrestricted"]
+        old_namings = {"JP":"JAPAN", "min":"All"}
+        for n in old_namings.keys():
+            if n in reg_mode:
+                reg_mode = old_namings[n]
         for m in possible_reg_modes:
             if m in reg_mode:
-                return wfx_set_dict({"REG_MODE": "CERTIFIED_" + m}, send_data=1)
+                return wfx_set_dict({"REG_MODE": "CERTIFIED_" + m}, send_data=0)
         return "Unknown '" + reg_mode + " ' regulatory_mode. Use " + str(possible_reg_modes[0:5])
 
 
