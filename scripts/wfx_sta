@@ -13,7 +13,7 @@ Start in station mode
 Options:
   --help               display this message
   --ssid <ssid>        connect to <ssid>
-  --pasword <pass>     specify password
+  --password <pass>    specify password
   --conf <file>        use specific wpa_supplicant.conf
   --interface <if>     use interface instead of default wlan0
   --no-dhcp            do not enable DHCP client (default is yes)
@@ -25,7 +25,7 @@ If --ssid is used, $(basename $0) wait for the connection to be established.
 
 Example:
   - use wlan0 to connect to the AP 'foo' with password 'bar' and get an IP via DHCP:
-      $(basename $0) --ssid foo --password bar
+      $(basename $0) --ssid foo --password bar --dhcp yes
 "
 
 SSID=""
