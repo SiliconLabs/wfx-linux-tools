@@ -21,9 +21,11 @@ print_command "Driver loaded version" "cat /sys/module/wfx/version"
 
 printf "\n"
 
-print_command "Firmware installed file" "realpath -e /lib/firmware/wfm_wf200.sec"
 print_command "Firmware loaded version" "sed -nre 's/Firmware:.* WFM(.*)/\1/p' /sys/kernel/debug/ieee80211/phy*/wfx/status | xargs | tr ' ' ."
 print_command "Firmware loaded label" "sed -nre \"s/FW label:.*'(.*)'/\1/p\" /sys/kernel/debug/ieee80211/phy*/wfx/status"
+
+# TODO: use status file once keyset is available
+print_command "Firmware loaded keyset" "dmesg | grep 'wfx.*Firmware' | tail -1 | sed -nre \"s/.*Keyset: (..).*/\1/p\""
 
 printf "\n"
 
