@@ -20,6 +20,7 @@ def init_board(wlan_name="wf200"):
 
     _pds = PdsTree()
 
+    pi(wlan_name + " " + "sudo killall -wq wpa_supplicant hostapd wpa_gui lighttpd")
     pi(wlan_name + " " + "sudo wfx_driver_reload -C")
     sleep(0.5)
     wf200_fw = fw_version("refresh")
