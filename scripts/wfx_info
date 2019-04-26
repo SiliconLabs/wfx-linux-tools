@@ -59,7 +59,7 @@ board()
 {
     if ! product_id=$(cat /proc/device-tree/hat/product_id | tr -d '\0') \
             || ! product_ver=$(cat /proc/device-tree/hat/product_ver | tr -d '\0'); then
-        echo "ERROR: cannot identify the board" >&2
+        echo "ERROR: cannot identify the board (maybe the EEPROM is absent or empty)" >&2
         exit 1
     fi
 
