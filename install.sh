@@ -17,6 +17,11 @@ rm -f /usr/local/bin/pds_compress
 # Create a link under /usr/local/bin for all files matching wfx_ (ignore files with extension and backup files)
 find ! -path '*/\.*' -type f \( -name 'wfx_*' -o -name pds_compress \) ! -name '*~' ! -name '*.*' -execdir bash -c 'ln -vs $(realpath {}) /usr/local/bin/$(basename {})' \;
 
+# Disable power save for best performance
+UDEV_FILE=/etc/udev/rules.d/80-wifi-powersave.rules
+UDEV_RULE='ACTION=="add", SUBSYSTEM=="net", KERNEL=="wl*", DRIVERS=="wfx-*", RUN+="/sbin/iw dev $name set power_save off"'
+[ -f $UDEV_FILE ] || echo "$UDEV_RULE"  | sudo tee $UDEV_FILE >/dev/null
+
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-spi-overlay.dts -o /boot/overlays/wfx-spi.dtbo
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-sdio-overlay.dts -o /boot/overlays/wfx-sdio.dtbo
 dtc -@ -W no-unit_address_vs_reg overlays/spidev-overlay.dts -o /boot/overlays/spidev.dtbo
