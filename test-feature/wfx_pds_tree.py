@@ -261,10 +261,12 @@ def check_pds_warning(msg):
 pds_compatibility_text = "\
 #ifndef   MAX_TX_POWER_CFG\n\
     #define MAX_TX_POWER_CFG h\n\
+#endif /* MAX_TX_POWER_CFG */\n\n\
+#ifndef   TEST_FEATURE_CFG\n\
     #define TEST_FEATURE_CFG i\n\
     #define RF_ANTENNA_SEL_DIV_CFG j\n\
     #define TEST_CHANNEL_FREQ a\n\
-#endif /* MAX_TX_POWER_CFG */\n\n\
+#endif /* TEST_FEATURE_CFG */\n\n\
 #ifndef   RF_POWER_CFG\n\
     #define RF_POWER_CFG h\n\
 #endif /* RF_POWER_CFG */\n\
