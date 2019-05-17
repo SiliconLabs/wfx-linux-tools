@@ -14,6 +14,7 @@ commands:
 "
 
 . wfx_set_env
+run_as_root
 
 check_file()
 {
@@ -32,12 +33,16 @@ check_file()
 
 tiny_cat()
 {
-    if [ -e "$1" ]; then
-        printf "───────────────────  %-40s\n" "$(realpath $1)"
-        grep -v -e '^#' -e '^$' $1
+    if [ -z "$1" ]; then
+        printf "───────────────────\n"
     else
-        printf "───────────────────  ${INV}%-40s NO_SUCH_FILE${NO}\n" "$1"
-    fi
+		if [ -e "$1" ]; then
+			printf "───────────────────  %-40s\n" "$(realpath $1)"
+			grep -v -e '^#' -e '^$' $1
+		else
+			printf "───────────────────  ${INV}%-40s NO_SUCH_FILE${NO}\n" "$1"
+		fi
+	fi
 }
 
 list()
@@ -97,36 +102,43 @@ dump()
     tiny_cat $GITHUB_CONF_PATH/dnsmasq.conf
 }
 
+print_command()
+{
+    TEXT=$1
+    if [ -z "$3" ]; then
+		ERROR="Not found"
+	else
+		ERROR=$3
+	fi
+    shift 1
+    RESULT=$(eval $1 2>/dev/null) || RESULT=$ERROR
+    printf "%-30s" "$TEXT: "
+    printf "$RESULT"
+    printf "\n"
+}
+
+print_error()
+{
+    printf "${RED}%-30s" "$1 Error: "
+    printf "$2 ${NO}"
+    printf "${INV}$3${NO}"
+    printf "\n"
+}
+
 checks()
 {
-    # Tracing all active lines in /boot/config.txt
-    config=$( cat /boot/config.txt  | grep -v ^# | grep -v ^$)
-    if [ -n "${config}" ]; then
-        echo "Current configuration"
-        for line in ${config[$@]}
-        do
-            echo " $line"
-        done
-        echo ""
-    fi
-
-    if [ $(id -u) != 0 ]; then
-        echo "  (please run this script as root to get more detailed info)" >&2
-    fi
+    tiny_cat /boot/config.txt
+    tiny_cat ""
 
     kernel=$(uname -r)
 
-    echo "System:   $(cat /sys/firmware/devicetree/base/model | tr -d '\0' )"
-    echo "System:   $(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f 2 | tr -d '"')"
-    echo "System:   Debian version $(cat /etc/debian_version)"
-    echo "System:   Linux kernel $kernel"
+    print_command "System:   Hardware"       "cat /sys/firmware/devicetree/base/model | tr -d '\0'"
+    print_command "System:   Distribution"   "cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f 2 | tr -d '\"' "
+    print_command "System:   Debian version" "cat /etc/debian_version"
+    print_command "System:   Linux kernel"   "uname -r"
 
     board=$(wfx_info --board 2> /dev/null)
-    if [ -n "$board" ]; then
-        printf "System:   Board $board\n"
-    else
-        printf "System:   ${RED}Error: Can't read board information${NO}\n"
-    fi
+    print_command "System:   Board"          "wfx_info --board"      "${YELLOW}Warning: Can't read board information${NO}\n"
 
     wfx_drv_dir=/lib/modules/$kernel/extra
     wfx_drv_file=/lib/modules/$kernel/extra/wfx.ko
@@ -153,12 +165,6 @@ checks()
         wfx_pds_file=$(ls $wfx_pds_base)
     else
         wfx_pds_file=$wfx_pds_base
-    fi
-
-    if [ -f $wfx_conf ]; then
-        wfx_power_mode_option=$(cat $wfx_conf | grep ^options | grep power_mode)
-    else
-        wfx_power_mode_option="not set (in ${wfx_conf} file)"
     fi
 
     missing_files=0
@@ -193,18 +199,18 @@ checks()
     fi
 
     if [ ${WFX_SDIO_Overlay_enabled} == 1 ] && [ ${WFX_SPI_Overlay_enabled} == 1 ]; then
-        printf "Setup:    ${RED}Error: both overlays are enabled.${NO}   ${INV}Use 'sudo wfx_<sdio/spi>_<auto/manual>' to select the bus and mode ${NO}\n"
+        print_error "Setup"  "both overlays are enabled."  "Use 'sudo wfx_<sdio/spi>_<auto/manual>' to select the bus and mode"
     fi
 
     if [ ${WFX_SDIO_Overlay_enabled} == 0 ] && [ ${WFX_SPI_Overlay_enabled} == 0 ]; then
-        printf "Setup:    ${RED}Error: No SDIO/SPI overlay enabled.${NO}   ${INV}Use 'sudo wfx_<sdio/spi>_<auto/manual>' to select the bus and mode ${NO}\n"
+        print_error "Setup:"  "No SDIO/SPI overlay enabled."  "Use 'sudo wfx_<sdio/spi>_<auto/manual>' to select the bus and mode"
     fi
 
     if [ ! -d /proc/device-tree/hat ]; then
         if  grep -q '^dtparam=i2c_vc=on' /boot/config.txt; then
-            printf "Startup   ${RED}Error: Cannot identify board, /proc/device-tree/hat/ does not exist.${NO} ${INV}Empty eeprom?${NO}\n" >&2
+            print_error "Startup"  "Cannot identify board, /proc/device-tree/hat/ does not exist."  "Empty eeprom?"
         else
-            printf "Setup:    ${RED}Error: Startup Cannot identify board, 'dtparam=i2c_vc=on' is not present in /boot/config.txt.${NO}\n" >&2
+            print_error "Setup"  "Startup Cannot identify board, 'dtparam=i2c_vc=on' is not present in /boot/config.txt."
         fi
     fi
 
@@ -214,15 +220,15 @@ checks()
         if [ -f $wfx_sdio_overlay ]; then
             echo "Setup:    $wfx_sdio_overlay file present"
         else
-            printf "Setup:    ${RED}Error: $wfx_sdio_overlay file missing${NO}   ${INV}This file should be available under ${GITHUB_TOOLS_PATH}/overlays${NO}\n"
+            print_error "Setup"  "$wfx_sdio_overlay file missing"  "This file should be available under ${GITHUB_TOOLS_PATH}/overlays"
             missing_files=$(( $missing_files + 1 ))
         fi
         # Check if SDIO has been detected at boot
         if [ -n "$mmc" ]; then
             echo "Startup:  SDIO Part detected at boot       ($mmc)"
         else
-            printf "Startup:  ${RED}Error: No part detected at boot on SDIO bus!${NO}   ${INV}Is there an EVB attached to the Pi, with the bus selection switch set to 'SDIO'?${NO}\n"
-            printf "          ${NO}(You may need to reboot the Pi if you changed the bus selection)${NO}\n"
+            print_error "Startup"  "No part detected at boot on SDIO bus!"  "Is there an EVB attached to the Pi, with the bus selection switch set to 'SDIO'?"
+            printf "          (You may need to reboot the Pi if you changed the bus selection)${NO}\n"
             IFS=$'\n' mmc1=($( dmesg | grep mmc1 ))
             if [ -n "$mmc1" ]; then
                 echo "Startup:  mmc1 activity:"
@@ -240,7 +246,7 @@ checks()
         if [ -f $wfx_spi_overlay ]; then
             echo "Setup:    $wfx_spi_overlay file present"
         else
-            printf "Setup:    ${RED}Error: $wfx_spi_overlay file missing${NO}   ${INV}This file should be available under ${GITHUB_TOOLS_PATH}/overlays${NO}\n"
+            print_error "Setup" "$wfx_spi_overlay file missing"  "This file should be available under ${GITHUB_TOOLS_PATH}/overlays"
             missing_files=$(( $missing_files + 1 ))
         fi
     fi
@@ -281,30 +287,32 @@ checks()
         done
     fi
 
+	print_command "System:   arm  clock"       "vcgencmd measure_clock arm"
+	print_command "System:   core clock"       "vcgencmd measure_clock core"
+	print_command "System:   emmc base clock"  "vcgencmd measure_clock emmc"
+    print_command "System:   emmc selected"    "sudo cat /sys/kernel/debug/mmc1/ios | grep ^clock"
+    print_command "System:   emmc using"       "sudo cat /sys/kernel/debug/mmc1/ios | grep actual"
+
     # Check WFx driver modules existence
     if [ -z "$wfx_drv_module" ]; then
         missing_files=$(( $missing_files + 1 ))
-        printf "Setup:    ${RED}Error: Missing WFX driver   ($wfx_drv_base_link)${RED}   ${INV}You need to check you WFX driver installation! Make sure you have the $WFX_DRIVER file!${NO}\n"
+        print_error "Setup"  "Missing WFX driver   ($wfx_drv_base_link)"  "You need to check you WFX driver installation! Make sure you have the $WFX_DRIVER file!"
     else
         echo "Setup:    WFX driver        $wfx_drv_module ($wfx_drv_dir/wfx.ko)"
         wfx_version=$(modinfo wfx  | grep -E "^version")
         if [ "${wfx_version}" != "" ]; then
-            echo "Setup:    WFX driver        $wfx_version (from 'modinfo wfx')"
-        else
-            printf "Setup:    ${RED}Error: No result from 'modinfo wfx'${NO}   ${INV}The modules dependencies may not be up to date. Use 'sudo depmod -a' to solve this!${NO}\n"
+            print_command "Setup:    WFX driver" "modinfo wfx  | grep -E '^version'" "No result from 'modinfo wfx'"  "The modules dependencies may not be up to date. Use 'sudo depmod -a' to solve this!"
         fi
     fi
 
     if [ -z "$wfx_fw_file" ]; then
         missing_files=$(( $missing_files + 1 ))
-        printf "Setup:    ${RED}Error: Missing WFX FW file driver ($wfx_fw_file)${NO}\n"
-        printf "                 You need to check you WFX driver installation! Make sure you have the $wfx_fw_file file!\n"
+        print_error "Setup"  "Missing WFX FW file driver ($wfx_fw_file)"  "You need to check you WFX driver installation! Make sure you have the $wfx_fw_file file!\n"
     fi
 
     if [ -z "$wfx_pds_file" ]; then
         missing_files=$(( $missing_files + 1 ))
-        printf "Setup:    ${RED}Error: Missing WFX FW file driver ($wfx_pds_file)${NO}"
-        printf "                 You need to check you WFX driver installation! Make sure you have the $wfx_pds_file file!\n"
+        print_error "Setup"  " Missing WFX FW file driver ($wfx_pds_file)"  "You need to check you WFX driver installation! Make sure you have the $wfx_pds_file file!"
     fi
 
     if [ -n "$wfx_fw_file" ]; then
@@ -316,13 +324,10 @@ checks()
         echo "Setup:    WFX PDS           $wfx_pds_link ($wfx_pds_base)"
     fi
 
-    if [ -n "$wfx_power_mode_option" ]; then
-        echo "User:     WFX Power mode    $wfx_power_mode_option"
-    fi
+    print_command "Startup:  GPIOs setup"     "cat /sys/kernel/debug/gpio"
 
     if [ $missing_files -gt 0 ]; then
-        printf "Setup:    ${RED}ERROR: There are $missing_files missing file(s)!${NO}\n"
-        printf "           Check your installation based on the above recommendations, and try again.\n"
+        print_error "Setup"  "There are $missing_files missing file(s)!"  "Check your installation based on the above recommendations, and try again."
         printf "           It may be worth using 'sudo halt' (to make sure any change is saved),\n"
         printf "           waiting for the activity led to stop blinking, then power-cycling the Pi.\n"
         exit 1
@@ -332,13 +337,11 @@ checks()
         if [ -n "$wfx_driver_loaded" ]; then
             echo "Startup:  Driver loaded     ($wfx_driver_loaded)"
             wfx_driver_success=$(ip addr show wlan0)
-            echo "Startup:  all OK, WFx part ready to act as wlan0"
+        	print_command "User:     WFX Power mode (set in $wfx_conf)"    "cat $wfx_conf | grep ^options | grep power_mode" "Not set (in $wfx_conf)"
             if [ -n "$wfx_driver_success" ]; then
-                echo "Startup:  Firmware loaded   $(dmesg | grep wfx- | grep Firmware)"
-                echo "Startup:  Power Mode $(cat /sys/module/wfx/parameters/power_mode)      (/sys/module/wfx/parameters/power_mode)"
-                if [ $(id -u) == 0 ]; then
-                    echo "Startup:  Firmware $(grep 'FW label' /sys/kernel/debug/ieee80211/phy0/wfx/status | cut -d\' -f 2)"
-                fi
+                print_command "Startup:  WFX Power Mode (from /sys/module/wfx/parameters/power_mode)"    "cat /sys/module/wfx/parameters/power_mode"
+                echo "Startup:  Firmware $(grep 'FW label' /sys/kernel/debug/ieee80211/phy0/wfx/status | cut -d\' -f 2)"
+                print_command "Startup:  Firmware loaded"   "dmesg | grep wfx- | grep Firmware"
                 echo "Startup:  current wlan0 status from 'ip addr show wlan0':"
                 echo "$wfx_driver_success"
                 wpa_supplicant=$(ps -few | grep wpa_supplicant | grep -v grep)
@@ -370,8 +373,7 @@ checks()
                     fi
                 fi
             else
-                printf "Startup:  ${RED}Error: WFx part not visible as wlan0${NO}\n"
-                printf "${INV}$(dmesg | grep wfx)${NO}\n"
+                print_error "Startup" "WFx part not visible as wlan0" "\n$(dmesg | grep wfx)"
                 echo "               Look at the complete dmesg to get more details"
                 echo "               Consult the WFx documentation for information on error messages"
                 exit 1
@@ -382,7 +384,7 @@ checks()
         fi
     fi
     if [ $startup_errors -gt 0 ]; then
-        echo "Startup:  ERROR: There are $startup_errors error(s)!"
+        print_error "Startup" "There are $startup_errors error(s)!"
     fi
 }
 
