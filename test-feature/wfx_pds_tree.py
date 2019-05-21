@@ -248,7 +248,7 @@ def add_pds_warning(msg):
     pds_warning += msg
 
 
-def check_pds_warning(msg):
+def check_pds_warning(msg=""):
     global pds_warning
     if pds_warning == "":
         return msg.strip()
