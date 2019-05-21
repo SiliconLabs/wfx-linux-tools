@@ -11,6 +11,7 @@
 
 import os
 import re
+import time
 from wfx_test_core import *
 
 print("wfx_test_functions running from " + os.path.dirname(os.path.abspath(__file__)))
@@ -189,6 +190,64 @@ def tx_start(nb_frames=None):
 def tx_stop():
     res = wfx_set_dict({"TEST_MODE": "tx_packet", "NB_FRAME": 100}, send_data=1)
     return res
+
+
+def rx_start():
+    res = wfx_set_dict({"TEST_MODE": "rx"}, send_data=1)
+    return res
+
+
+def rx_stop():
+    return rx_stop()
+
+
+def rx_stats(mode=None):
+    re_NbFPERThr = re.compile('Num. of frames: (.*), PER \(x10e4\): (.*), Throughput: (.*)Kbps/s*')
+    re_Timestamp = re.compile('Timestamp: (.*)us')
+    lines = pi(wlan_name + " " + "sudo cat /sys/kernel/debug/ieee80211/phy0/wfx/rx_stats")
+    match_count = 0
+    Timestamp = NbFrames = PER_10000 = Throughput = 0
+    for line in lines.split('\n'):
+        matches = re_Timestamp.match(line)
+        if matches is not None:
+            Timestamp = matches.group(1)
+            match_count += 1
+        matches = re_NbFPERThr.match(line)
+        if matches is not None:
+            NbFrames = matches.group(1)
+            PER_10000 = matches.group(2)
+            Throughput = matches.group(3)
+            match_count += 1
+        if match_count == 2:
+            if mode == 'verbose':
+               print('Timestamp' , Timestamp, 'NbFrames' , NbFrames, 
+                      'PER_10000', PER_10000, 'Throughput' , Throughput)
+            break
+    return Timestamp, NbFrames, PER_10000, Throughput
+
+
+def rx_results(at_least_frames=1000, sleep_ms=100, mode=None):
+    nb_pkt = nb_pkt_error = last_timestamp = nb_same_timestamp = 0
+    PER = 1
+    while nb_pkt < at_least_frames:
+        time.sleep(sleep_ms/1000.0)
+        (Timestamp, NbFrames, PER_10000, Throughput) = rx_stats()
+        if int(Timestamp) != last_timestamp:
+            last_timestamp = int(Timestamp)
+            nb_pkt += int(NbFrames)
+            nb_pkt_error += (int(PER_10000)*int(NbFrames))
+        else:
+            nb_same_timestamp += 1
+        if nb_same_timestamp > 3:
+            msg = 'Rx stats timestamp not changing. Rx not running!'
+            add_pds_warning(msg)
+            print(msg)
+            break
+    if nb_pkt > 0:
+        PER = str.format("%.3e" % (nb_pkt_error / (nb_pkt*10000)))
+    if mode == 'verbose':
+       print('PER', PER)
+    return PER
 
 
 if __name__ == '__main__':
