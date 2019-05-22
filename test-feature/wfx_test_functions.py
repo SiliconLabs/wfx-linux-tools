@@ -198,13 +198,13 @@ def rx_start():
 
 
 def rx_stop():
-    return rx_stop()
+    return tx_stop()
 
 
 def rx_stats(mode=None):
     re_NbFPERThr = re.compile('Num. of frames: (.*), PER \(x10e4\): (.*), Throughput: (.*)Kbps/s*')
     re_Timestamp = re.compile('Timestamp: (.*)us')
-    lines = pi("wlan sudo cat /sys/kernel/debug/ieee80211/phy0/wfx/rx_stats")
+    lines = pi("wlan sudo cat /sys/kernel/debug/ieee80211/" + pds_env['PHY'] + "/wfx/rx_stats")
     match_count = 0
     Timestamp = NbFrames = PER_10000 = Throughput = 0
     for line in lines.split('\n'):
