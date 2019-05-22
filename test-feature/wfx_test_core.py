@@ -31,7 +31,8 @@ args = parser.parse_args()
 pds_env = dict()
 
 pds_env['PDS_CURRENT_FILE'] = "/tmp/current_pds_data.in"
-pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/phy0/wfx/send_pds"
+pds_env['PHY'] = "phy0"
+pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/" + pds_env['PHY'] + "/wfx/send_pds"
 pds_env['PDS_DEFINITION_FILE'] = "definitions.in"
 
 from wfx_pds_tree import *
