@@ -182,7 +182,7 @@ All other backoff values are set to 0.
 * `rx_start()`                       : Starts receiving frames (all modulations)
 * `rx_stop()`                        : Calls tx_stop() to stop receiving
 * `rx_receive(mode, frames, sleep_ms, timeout)` : Clear Rx logs and polls FW info (updated every 1000 ms) until it has received the required number of frames
-* `rx_logs(mode)`                    : Retrieves Rx logs. Full table is no argument, otherwise only the row matching the 'mode'
+* `rx_logs(mode)`                    : Retrieves Rx logs. Full table if no argument, otherwise only the row matching the 'mode'
 
 Additional functions
 * `add_tmp_param("version", "path", "key", "default")`: Add a (temporary) parameter to the PDs structure. Useful to test FW release candicates in the lab
@@ -208,8 +208,8 @@ Additional functions
 | `dmesg_period` |`period`:[0-TBD/65535?] delay in ms between messages                          |`TEST_IND`                                |
 | `rx_start`     |**none**                                                                        |`TEST_MODE`                               |
 | `rx_stop`      |**none**                                                                        |`NB_FRAME`                                |
-| `rx_receive`   |`mode`: <br>'global'(default if '')<br>'[1, 2, 5.5, 11, 6, 9, 12, 18, 24, 36, 48, 54]M'<br>'MCS[0-7]'<br>`frames`: Nb of frames to receive before stopping'<br>`sleep_ms`:[(750)]. Polling period. No need to poll too often, the FW updates the table only every second<br>`timeout`: max number of seconds to poll (useful if very few frames are received) |**none**                                  |
-| `rx_logs`      |`mode`: <br>'global'(default if '')<br>'[1, 2, 5.5, 11, 6, 9, 12, 18, 24, 36, 48, 54]M'<br>'MCS[0-7]'|`NB_FRAME`                                |
+| `rx_receive`   |`mode`: <br>'global'(default if '')<br>'[1, 2, 5.5, 11, 6, 9, 12, 18, 24, 36, 48, 54]M'<br>'MCS[0-7]'<br>`frames`: Nb of frames to receive before stopping'<br>`sleep_ms`:[(750)]. Polling period. No need to poll too often, the FW updates the table only every second<br>`timeout`: max number of seconds to poll (useful if very few frames are received) |**none**|
+| `rx_logs`      |`mode`: <br>'global'(default if '')<br>'[1, 2, 5.5, 11, 6, 9, 12, 18, 24, 36, 48, 54]M'<br>'MCS[0-7]'|**none**|
 
 
 ### Rx testing
