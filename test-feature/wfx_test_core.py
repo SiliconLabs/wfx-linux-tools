@@ -126,7 +126,7 @@ def pi(_args):
     global pi_traces
     global pds_traces
 
-    split_args = _args.split(' ')
+    split_args = _args.split()
     if len(split_args) == 0:
         return "wfx_test_core.pi: no arguments?"
     target = split_args[0]
