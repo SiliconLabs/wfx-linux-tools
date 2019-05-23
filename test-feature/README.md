@@ -33,7 +33,7 @@ wfx_wlan: End of TX packet test
 wfx_wlan: Start TX packet test feature
 wfx_wlan: End of TX packet test
 ```
-NB: The last 2 lines correspond to the `stop()` call, which is sending 100 frames
+NB: The last 2 lines correspond to the `stop()` call, which is sending 100 frames<br>
 NB: `dmesg_period()` allows controlling the delay between these messages
 
 ### Rx
@@ -50,13 +50,18 @@ python3
 >>> rx_logs('MCS7')
 >>> rx_logs()
 . . .
->>> tx_stop()
+>>> rx_stop()
 ```
 While testing, an rx_stats indication message is updated by the FW every 1000 ms,
- and copied by the driver under `/sys/kernel/debug/ieee80211/phy0/wfx/rx_stats`
- This content is polled by `rx_receive` and results are accumulated and averaged in rx_res
- Those results are retrieved by the user using `rx_logs`
+ and copied by the driver under `/sys/kernel/debug/ieee80211/phy0/wfx/rx_stats`.
+This content is polled by `rx_receive()`, results are accumulated and averaged internally
+ Those results are retrieved by the user using `rx_logs()`
 ```
+>>> rx_logs('global')
+frames   588  errors   116  PER 1.973e-01  Throughput    78  deltaT 10000057  loops    10  start_us 2245737  last_us 12245794
+>>> rx_logs('24M')
+frames    76  errors    48  PER 6.316e-01  RSSI   -79  SNR     7  CFO   -18
+>>> rx_logs():
 mode  global  frames   588  errors   116  PER 1.973e-01  Throughput    78  deltaT 10000057  loops    10  start_us 2245737  last_us 12245794
 mode      1M  frames   457  errors    14  PER 3.063e-02  RSSI   -77  SNR    10  CFO   -28
 mode      2M  frames     0  errors     0  PER 1.000e+00  RSSI     0  SNR     0  CFO     0
@@ -82,7 +87,7 @@ mode    MCS7  frames     0  errors     0  PER 1.000e+00  RSSI     0  SNR     0  
 NB: PER values above are only considering received packets, not lost packets.
 To get a PER taking into account the lost packets it is necessary to compute 
 the total number of packets for each mode using the deltaT value 
-from rx_logs('global'), based on the ideal throughput for the mode.
+from `rx_logs('global')`, based on the ideal throughput for the mode.
 
 ## PDS structure
 The PDS structure as filled before calling pds_compress is as follows:
