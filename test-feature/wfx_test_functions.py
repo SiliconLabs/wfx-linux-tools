@@ -12,6 +12,7 @@
 import os
 import re
 import time
+import threading 
 from wfx_test_core import *
 
 print("wfx_test_functions running from " + os.path.dirname(os.path.abspath(__file__)))
@@ -242,9 +243,9 @@ def __rx_stats(modulation=None):
             else:
                 return_val = 1
             rx_res['global']['last_us'] = Timestamp
-            rx_res['global']['deltaT'] = Timestamp - rx_res['global']['start_us']
+            rx_res['global']['deltaT'] = (Timestamp - rx_res['global']['start_us'])%pow(2,31)
             if rx_res['global']['loops'] == 0:
-                rx_res['global']['start_us'] = Timestamp - 1000000
+                rx_res['global']['start_us'] = (Timestamp - 1000000)%pow(2,31)
             rx_res['global']['loops'] += 1
         cumulated = re_NbFPERThr.match(line)
         if cumulated is not None and int(cumulated.group(1)) > 0:
@@ -281,7 +282,7 @@ def rx_logs(mode=None):
     return ''.join(res).rstrip()
 
 
-def rx_receive(mode='global', frames=1000, sleep_ms=750, timeout=0):
+def rx_receive(mode='global', frames=1000, timeout_s=0, sleep_ms=750):
     global rx_res
     start = time.time()
     __rx_clear()
@@ -302,7 +303,7 @@ def rx_receive(mode='global', frames=1000, sleep_ms=750, timeout=0):
                 add_pds_warning(msg)
                 print('\n', msg, '\n')
                 break
-        if timeout > 0 and elapsed > timeout:
+        if timeout_s > 0 and elapsed > timeout_s:
                 msg = str.format(' Warning: Rx stats timeout after %5.2f seconds!' , (str(elapsed)) )
                 add_pds_warning(msg)
                 print('\n', msg, '\n')
@@ -336,11 +337,10 @@ def __rx_clear():
         rx_res[mode] = dict_items
 
 
-rx_modulations = ['1M', '2M', '5.5M', '11M',
-                  '6M', '9M', '12M', '18M', 
-                  '24M', '36M', '48M', '54M',
-                  'MCS0', 'MCS1', 'MCS2', 'MCS3', 
-                  'MCS4', 'MCS5', 'MCS6', 'MCS7']
+rx_modulations = [
+    '1M', '2M', '5.5M', '11M',
+    '6M', '9M', '12M', '18M', '24M', '36M', '48M', '54M',
+    'MCS0', 'MCS1', 'MCS2', 'MCS3', 'MCS4', 'MCS5', 'MCS6', 'MCS7']
 rx_items = ['frames', 'errors', 'PER', 'RSSI', 'SNR', 'CFO']
 rx_averaging= ['RSSI', 'SNR', 'CFO']
 rx_globals = ['frames', 'errors', 'PER', 'Throughput', 'deltaT', 
