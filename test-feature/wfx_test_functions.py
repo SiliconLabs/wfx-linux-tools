@@ -12,8 +12,8 @@
 import os
 import re
 import time
-import threading 
 from wfx_test_core import *
+from job import *
 
 print("wfx_test_functions running from " + os.path.dirname(os.path.abspath(__file__)))
 
@@ -220,6 +220,8 @@ def rx_start():
 
 
 def rx_stop():
+    if rx_job is not None:
+            rx_job.stop()
     return tx_stop()
 
 
@@ -284,9 +286,16 @@ def rx_logs(mode=None):
 
 def rx_receive(mode='global', frames=1000, timeout_s=0, sleep_ms=750):
     global rx_res
+    global rx_job
     start = time.time()
     __rx_clear()
     nb_pkt = nb_same_timestamp = 0
+    if mode == 'endless':
+        if rx_job is not None:
+                rx_job.stop()
+        rx_job = Job(750, __rx_stats, 'global')
+        rx_job.start()
+        return "Endless rx loop started. Use 'rx_logs()' to monitor Rx, 'rx_kill()' to stop Rx monitoring, 'rx_stop()' to stop Rx entirely"
     mode = 'global' if mode not in rx_modulations else mode
     while nb_pkt < frames:
         time.sleep(sleep_ms/1000.0)
@@ -309,6 +318,12 @@ def rx_receive(mode='global', frames=1000, timeout_s=0, sleep_ms=750):
                 print('\n', msg, '\n')
                 break
     return rx_logs(mode)
+
+
+def rx_kill():
+    """ Killing 'endless' Rx monitoring loop """
+    if rx_job is not None:
+            rx_job.stop()
 
 
 def __rx_clear():
@@ -345,6 +360,7 @@ rx_items = ['frames', 'errors', 'PER', 'RSSI', 'SNR', 'CFO']
 rx_averaging= ['RSSI', 'SNR', 'CFO']
 rx_globals = ['frames', 'errors', 'PER', 'Throughput', 'deltaT', 
               'loops', 'start_us', 'last_us']
+rx_job = None
 
 __rx_clear()
 
