@@ -136,7 +136,7 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
         wfx_set_dict({"BACKOFF_VAL": str(value), "TEST_MODE": "tx_packet", "NB_FRAME": 0}, send_data=1)
 
 
-def regulatory_mode(reg_mode):
+def regulatory_mode(reg_mode=None):
     if reg_mode is None:
         return wfx_get_list("REG_MODE", mode='quiet')
     else:
