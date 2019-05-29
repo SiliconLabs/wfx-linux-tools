@@ -83,8 +83,8 @@ def send(_pds, parameters, send_data=1):
             res += pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " " +
                       pds_env['SEND_PDS_FILE'] + " 2>&1") + "\n"
         else:
-            res += " not sent, waiting for tone('start') or tx_start(..)"
-            add_pds_warning(" not sent, waiting for tone('start') or tx_start(..)\n")
+            res += " not sent, waiting for tone('start'), tx_start(..) or rx_start()"
+            add_pds_warning(" not sent, waiting for tone('start'), tx_start(..) or rx_start()\n")
     return res.strip()
 
 
