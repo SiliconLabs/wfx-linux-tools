@@ -24,6 +24,6 @@ UDEV_RULE='ACTION=="add", SUBSYSTEM=="net", KERNEL=="wl*", DRIVERS=="wfx-*", RUN
 
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-spi-overlay.dts -o /boot/overlays/wfx-spi.dtbo
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-sdio-overlay.dts -o /boot/overlays/wfx-sdio.dtbo
-dtc -@ -W no-unit_address_vs_reg overlays/spidev-overlay.dts -o /boot/overlays/spidev.dtbo
+#dtc -@ -W no-unit_address_vs_reg overlays/spidev-overlay.dts -o /boot/overlays/spidev.dtbo
 
 echo "Success"
