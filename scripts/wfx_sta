@@ -69,7 +69,7 @@ wpa_cli_run()
 check_interface "$INTERFACE"
 
 # Needed to disable background scan
-killall lxpanel
+killall -q lxpanel || true
 
 case "$DHCP" in
     yes)
