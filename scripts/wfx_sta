@@ -68,6 +68,9 @@ wpa_cli_run()
 
 check_interface "$INTERFACE"
 
+# Needed to disable background scan
+killall lxpanel
+
 case "$DHCP" in
     yes)
         echo "Asking dhcpcd to control $INTERFACE"
