@@ -67,10 +67,12 @@ wpa_cli_run()
 }
 
 check_interface "$INTERFACE"
+PIDFILE=/var/run/wpa_supplicant-$INTERFACE.pid
 
 # Needed to disable background scan
 killall -q lxpanel || true
 
+pkill -F /var/run/dnsmasq-$INTERFACE.pid &>/dev/null || true
 case "$DHCP" in
     yes)
         echo "Asking dhcpcd to control $INTERFACE"
@@ -90,17 +92,19 @@ case "$DHCP" in
 esac
 
 if [ "$KEEP_SUPP" = "false" ];then
-    killall --quiet --wait hostapd wpa_supplicant || true
+    pkill -F $PIDFILE &>/dev/null || true
 fi
 
-if ! pidof wpa_supplicant >/dev/null; then
+pkill -F /var/run/hostapd-$INTERFACE.pid &>/dev/null || true
+
+if ! wpa_cli -i $INTERFACE status &>/dev/null; then
     echo "Starting  wpa_supplicant"
     if [ -z "$CONF" ]; then
         WPA_ARGS="-C /var/run/wpa_supplicant"
     else
         WPA_ARGS="-c $CONF"
     fi
-    wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS
+    wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS -P $PIDFILE
 fi
 
 echo "Setting up connection"

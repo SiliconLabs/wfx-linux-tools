@@ -56,6 +56,8 @@ if [ ! -z "$CONF" ]; then
 fi
 
 check_interface "$INTERFACE"
+HOSTAPD_PIDFILE=/var/run/hostapd-$INTERFACE.pid
+DNSMASQ_PIDFILE=/var/run/dnsmasq-$INTERFACE.pid
 
 if [ ! -z "$SET_IP" ] || [ "$DHCP" = yes ]; then
     # Disable DHCP client on the interface before reconfiguring it
@@ -70,7 +72,7 @@ if [ ! -z "$SET_IP" ]; then
     ip addr add "$SET_IP/24" dev "$INTERFACE"
 fi
 
-KILL_DNSMASQ='killall --quiet --wait dnsmasq || true'
+KILL_DNSMASQ='pkill -F $DNSMASQ_PIDFILE &>/dev/null || true'
 case "$DHCP" in
     yes)
         eval $KILL_DNSMASQ
@@ -81,7 +83,7 @@ case "$DHCP" in
             exit 1
         fi
         RANGE="${IP%.*}.100,${IP%.*}.200"
-        dnsmasq -C "" --interface "$INTERFACE" --dhcp-range "$RANGE"
+        dnsmasq --conf-file=/dev/null --interface="$INTERFACE" --bind-interfaces --except-interface=lo --dhcp-range="$RANGE" --pid-file="$DNSMASQ_PIDFILE"
         ;;
     no)
         eval $KILL_DNSMASQ
@@ -108,8 +110,9 @@ fi
 
 if [ ! -z "$CONF" ]; then
     echo "Starting hostapd"
-    killall --quiet --wait hostapd wpa_supplicant || true
-    hostapd -B "$CONF" >/dev/null
+    pkill -F "$HOSTAPD_PIDFILE" &>/dev/null || true
+    pkill -F /var/run/wpa_supplicant-$INTERFACE.pid &>/dev/null || true
+    hostapd -B "$CONF" -P "$HOSTAPD_PIDFILE" >/dev/null
 fi
 
 echo "Success"
