@@ -66,13 +66,23 @@ wpa_cli_run()
     fi
 }
 
+kill_wait()
+{
+    local PID=$(cat $1 2>/dev/null)
+    if [ -n "$PID" ]; then
+        if kill $PID 2>/dev/null; then
+            tail --pid=$PID -f /dev/null
+        fi
+    fi
+}
+
 check_interface "$INTERFACE"
 PIDFILE=/var/run/wpa_supplicant-$INTERFACE.pid
 
 # Needed to disable background scan
 killall -q lxpanel || true
 
-pkill -F /var/run/dnsmasq-$INTERFACE.pid &>/dev/null || true
+kill_wait /var/run/dnsmasq-$INTERFACE.pid
 case "$DHCP" in
     yes)
         echo "Asking dhcpcd to control $INTERFACE"
@@ -92,10 +102,10 @@ case "$DHCP" in
 esac
 
 if [ "$KEEP_SUPP" = "false" ];then
-    pkill -F $PIDFILE &>/dev/null || true
+    kill_wait $PIDFILE
 fi
 
-pkill -F /var/run/hostapd-$INTERFACE.pid &>/dev/null || true
+kill_wait /var/run/hostapd-$INTERFACE.pid
 
 if ! wpa_cli -i $INTERFACE status &>/dev/null; then
     echo "Starting  wpa_supplicant"

@@ -50,6 +50,16 @@ while true; do
 done
 [ $# -ne 0 ] && error
 
+kill_wait()
+{
+    local PID=$(cat $1 2>/dev/null)
+    if [ -n "$PID" ]; then
+        if kill $PID 2>/dev/null; then
+            tail --pid=$PID -f /dev/null
+        fi
+    fi
+}
+
 # Try to get interface from hostapd.conf
 if [ ! -z "$CONF" ]; then
     INTERFACE=$(sed -ne 's/^interface=\(.*\)/\1/p' "$CONF")
@@ -72,10 +82,9 @@ if [ ! -z "$SET_IP" ]; then
     ip addr add "$SET_IP/24" dev "$INTERFACE"
 fi
 
-KILL_DNSMASQ='pkill -F $DNSMASQ_PIDFILE &>/dev/null || true'
 case "$DHCP" in
     yes)
-        eval $KILL_DNSMASQ
+        kill_wait $DNSMASQ_PIDFILE
         echo "Starting DHCP server dnsmasq"
         IP=$(ip address show "$INTERFACE" | sed -ne 's/.*inet \([^\/]*\).*/\1/p')
         if [ $(echo -n "$IP" | grep -c '') != "1" ]; then
@@ -86,7 +95,7 @@ case "$DHCP" in
         dnsmasq --conf-file=/dev/null --interface="$INTERFACE" --bind-interfaces --except-interface=lo --dhcp-range="$RANGE" --pid-file="$DNSMASQ_PIDFILE"
         ;;
     no)
-        eval $KILL_DNSMASQ
+        kill_wait $DNSMASQ_PIDFILE
         ;;
     ignore)
         ;;
@@ -110,8 +119,8 @@ fi
 
 if [ ! -z "$CONF" ]; then
     echo "Starting hostapd"
-    pkill -F "$HOSTAPD_PIDFILE" &>/dev/null || true
-    pkill -F /var/run/wpa_supplicant-$INTERFACE.pid &>/dev/null || true
+    kill_wait "$HOSTAPD_PIDFILE"
+    kill_wait /var/run/wpa_supplicant-$INTERFACE.pid
     hostapd -B "$CONF" -P "$HOSTAPD_PIDFILE" >/dev/null
 fi
 
