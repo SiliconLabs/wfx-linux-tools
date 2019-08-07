@@ -92,6 +92,8 @@ case "$DHCP" in
     no)
         echo "Asking dhcpcd to release $INTERFACE"
         dhcpcd --release "$INTERFACE" 2>/dev/null
+        # dhcpcd release is not instant
+        sleep 1
         ;;
     ignore)
         ;;
