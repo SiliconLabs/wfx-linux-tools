@@ -44,6 +44,7 @@ pds_traces = 1
 fw_label = ""
 pds_warning = ""
 
+
 def fw_version(refresh=None):
     """ Retrieving the FW version from dmesg """
     global fw_label
