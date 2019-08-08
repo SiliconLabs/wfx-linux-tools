@@ -31,8 +31,8 @@
 # Avoid syntax error with python 2.x
 from __future__ import print_function
 
-# If you modifiy this file, please don't forget to increment version number.
-__version__ = "1.1"
+# If you modify this file, please don't forget to increment version number.
+__version__ = "1.2"
 
 import io
 import os
@@ -459,6 +459,10 @@ def main(options):
 # as a python module (also note it is necessary to add .py extention to this in
 # order to import it).
 def compress_string(str_in, extra_options=""):
+    global g_defs, g_result, g_ret_value
+    g_defs = {}
+    g_result = []
+    g_ret_value = 0
     options = parse_cmdline([ "-" ] + extra_options.split())
     options.input = io.StringIO(str_in)
     options.output = io.StringIO()
