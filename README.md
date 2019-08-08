@@ -76,9 +76,8 @@ Repository contents
    installed.
 
  - `pds_compress/` contains tool to process PDS files.
- 
- - `test_feature/` contains tools to test the RF using a tone or modulated output. Refer to https://github.com/SiliconLabs/wfx-linux-tools/blob/master/test-feature/README.md for more details on testing.  
 
+ - `test_feature/` contains tools to test the RF using a tone or modulated output. Refer to https://github.com/SiliconLabs/wfx-linux-tools/blob/master/test-feature/README.md for more details on testing.
 Updating the tools
 -----------------------
 ```
