@@ -42,6 +42,20 @@ By default, the Raspberry Pi is configured to use SDIO.
 To change to SPI, run `wfx_bus --set spi`. For checking bus mode, use `wfx_bus --show`.
 Do not forget to reboot after a bus change.
 
+Wi-Fi connection
+----------------
+To experiment with Wi-Fi, it is possible to use the helper scripts `wfx_sta` and
+`wfx_ap`, they just wrap some of the most used tools and configurations.
+To get usage and supported features, run the desired tool with `--help`.
+
+Enabling combo mode
+-------------------
+To enable a second (virtual) interface a.k.a. combo mode, run
+`iw dev wlan0 interface add wlan1 type managed`.
+
+Note: both interfaces cannot be in the same mode (station or access point) at
+the same time.
+
 Repository contents
 -------------------
  - `demos/` mainly hosts two scripts (`wfx_demo_station` and `wfx_demo_ap`) that
