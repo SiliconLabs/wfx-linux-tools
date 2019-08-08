@@ -168,8 +168,7 @@ These are the functions which are primarily used by users to test the product.
 When called with no argument, all functions return the corresponding value(s) of the parameters they control.
 
 * `channel(ch)`                      : Sets the test channel.
-* `tone(cmd, freq)`                  : Selects between 'cw' (i.e. 'Continuous Wave') or 'packet' transmission modes
- as well as the tone frequency.
+* `tone(cmd, freq)`                  : Start/stop 'cw' (i.e. 'Continuous Wave') transmission with freq*312.5kHz offset
 * `tone_power(dBm)`                  : Controls the tone power
 * `tx_backoff(mod, backoff_level)`   : Sets the backoff level for one group of modulations. 
 All other backoff values are set to 0.
