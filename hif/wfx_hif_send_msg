@@ -4,7 +4,7 @@
 #
 # wfx_hif_send_msg sends a request payload (received as a text string)
 # to the firmware via the debugfs 'wfx/send_hif_msg' file,
-# and retrieve the confirmation message's status code (0 means 'SUCCESS')
+# and retrieves the confirmation message's status code (0 means 'SUCCESS')
 
 # Filling HIF_INPUT with proper PHY number
 PHY=$(iw dev | grep phy | sed -e 's/#//')
