@@ -1,6 +1,8 @@
 #!/bin/bash
 # Copyright (c) 2019, Silicon Laboratories
 # See license terms contained in COPYING file
+#
+#
 
 USAGE="Usage: $(basename $0) OPTION
 
@@ -20,10 +22,7 @@ case "$1" in
         exit 0
         ;;
     send_msg)
-        PHY=$(iw dev | grep phy | sed -e 's/#//')
-        hif_input=$(sudo ls /sys/kernel/debug/ieee80211/${PHY}/wfx/send_hif_msg)
-        echo -en ${2} | sudo tee ${hif_input}
-        echo "'${2}' sent to ${hif_input}"
+        wfx_exec wfx_hif_send_msg "${2}"
         exit 0
         ;;
     log_message)
