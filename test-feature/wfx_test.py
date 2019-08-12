@@ -1,8 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+from time import sleep
+from distutils.version import StrictVersion
+
 from wfx_test_functions import *
-from wfx_connection import *
+from wfx_pds_tree import *
 
 
 def init_board(wlan_name="wf200"):
@@ -19,70 +22,7 @@ def init_board(wlan_name="wf200"):
 
     pi(wlan_name + " " + "sudo killall -wq wpa_supplicant hostapd wpa_gui lighttpd")
     pi(wlan_name + " " + "sudo wfx_driver_reload -C")
-    time.sleep(0.5)
-    wf200_fw = fw_version("refresh")
-
-    _pds.fill_tree(wf200_fw)
-
-    pi("wlan pi_traces on")
-    pi("wlan pds_traces off")
-    # Recent kernel versions increment the phy index, so let's retrieve it
-    pds_env['PHY'] = pi("wlan sudo ls /sys/kernel/debug/ieee80211/")
-    pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/" + pds_env['PHY'] + "/wfx/send_pds"
-    pds_definition_file = pi("wlan ls " + pds_env['PDS_DEFINITION_ROOT'] + pds_env['PDS_DEFINITION_FILE'])
-    if pds_definition_file == "":
-        # Backward compatibility with previous naming scheme...
-        definitions_files = pi(wlan_name + " " + "ls " + pds_env['PDS_DEFINITION_ROOT'] + \
-             " | grep 'definitions-.*.in'").split("\n")
-        definitions_versions = []
-        for i in definitions_files:
-            definitions_versions.append(i.replace("definitions-","").replace(".in",""))
-        definitions_versions.sort(key=StrictVersion)
-
-        for definition in definitions_versions:
-            if StrictVersion(definition) <= StrictVersion(wf200_fw):
-                    pds_env['PDS_DEFINITION_FILE'] = "definitions-" + definition + ".in"
-            else:
-                break
-        print("Backward compatibility : Using PDS definitions from " + pds_env['PDS_DEFINITION_FILE'])
-
-    with open(pds_env['PDS_DEFINITION_ROOT'] + pds_env['PDS_DEFINITION_FILE'] , 'r') as f:
-        if "definitions_legacy" in f.read():
-            wfx_pds_tree.pds_compatibility_text = ""
-
-    print("\nDriver reloaded, FW" + wf200_fw + "\n")
-    if StrictVersion(_pds.current_fw_version) > StrictVersion(wf200_fw):
-        print("PDS tree filled with parameters supported by FW" + wf200_fw + " (not the latest FW)\n")
-    elif StrictVersion(_pds.current_fw_version) == StrictVersion(wf200_fw):
-        print("PDS tree filled with parameters supported by FW" + _pds.current_fw_version + "\n")
-    else:
-        print("PDS tree filled with parameters supported by FW" + _pds.current_fw_version + " (FW more recent than wfx_pds_tree)\n")
-    print(_pds.pretty())
-    return _pds
-
-
-def init_tree(firmware):
-    _pds = PdsTree()
-    _pds.fill_tree(firmware)
-    print(_pds.pretty())
-    return _pds
-
-
-def init_pi(wlan_name="wf200"):
-    """ Called to restart from a fresh copy of the template,
-         after reloading the firmware.
-        1- reload driver (hence reload FW & PDS data from /lib/firmware)
-        2- retrieve current FW version
-        3- generate the current pds tree based on the FW version
-    """
-    pi("wlan pi_traces  on")
-    pi("wlan pds_traces on")
-
-    _pds = PdsTree()
-
-    pi(wlan_name + " " + "sudo killall -wq wpa_supplicant hostapd wpa_gui lighttpd")
-    pi(wlan_name + " " + "sudo wfx_driver_reload -C")
-    time.sleep(0.5)
+    sleep(0.5)
     wf200_fw = fw_version("refresh")
 
     _pds.fill_tree(wf200_fw)
