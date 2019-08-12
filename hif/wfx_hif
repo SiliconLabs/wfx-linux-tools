@@ -1,8 +1,6 @@
 #!/bin/bash
 # Copyright (c) 2019, Silicon Laboratories
 # See license terms contained in COPYING file
-#
-#
 
 USAGE="Usage: $(basename $0) OPTION
 
