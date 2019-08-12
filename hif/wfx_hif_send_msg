@@ -7,9 +7,18 @@
 # and retrieves the confirmation message's status code (0 means 'SUCCESS')
 
 # Filling HIF_INPUT with proper PHY number
-PHY=$(iw dev | grep phy | sed -e 's/#//')
-HIF_INPUT=$(ls /sys/kernel/debug/ieee80211/${PHY}/wfx/send_hif_msg)
 
+PHY=$(iw dev | grep phy | sed -e 's/#//')
+if [ ! -e "/sys/kernel/debug/ieee80211/${PHY}/wfx/send_hif_msg" ]; then
+	if [ ! -e "/sys/kernel/debug/ieee80211/${PHY}/wfx/status" ]; then
+		echo "ERROR: wfx driver is not loaded..."
+	else
+		echo "ERROR: wfx driver does not support send_hif_msg, please update it..."
+	fi
+	exit 1
+fi
+
+HIF_INPUT=$(ls /sys/kernel/debug/ieee80211/${PHY}/wfx/send_hif_msg)
 #set -ex
 
 # Opening file descriptor # 3 for reading and writing
