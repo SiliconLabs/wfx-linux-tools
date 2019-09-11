@@ -28,6 +28,10 @@
 			wfx_gpios: wfx_gpios {
 				brcm,pins = <12 13>;
 				brcm,function = <1 1>; /* out */
+				// This pull-up/pull-down configuration is used
+				// when device is unbind (indeed, in this case,
+				// GPIO function are set to INPUT)
+				brcm,pull = <0 0>; /* no pull-up/pull-down */
 			};
 		};
 	};
