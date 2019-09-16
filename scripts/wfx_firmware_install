@@ -44,6 +44,9 @@ esac
 FIRMWARE_VER=$($GIT describe --tags --dirty)
 
 printf "Installing firmware %s\n" "$FIRMWARE_VER"
+sudo rm -fv /lib/firmware/wfm_wf200.sec
+sudo rm -fv /lib/firmware/wfm_wf200_[A-Z0-9][0-9].sec
+sudo rm -fv /lib/firmware/wfm_wf200_[A-Z0-9][0-9]-FW[0-9].[0-9].[0-9].sec
 for i in $GITHUB_FIRMWARE_PATH/wfm_wf200_??.sec; do
     INFILE=$i
     INFILE_BASE=$(basename $INFILE)
