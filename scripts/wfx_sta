@@ -92,8 +92,12 @@ fi
 
 if ! pidof wpa_supplicant >/dev/null; then
     echo "Starting  wpa_supplicant"
+    CONF_DIR=/tmp/wfx_sta/$INTERFACE
+    rm -rf $CONF_DIR
     if [ -z "$CONF" ]; then
-        WPA_ARGS="-C /var/run/wpa_supplicant"
+        mkdir -p $CONF_DIR
+        echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev" > $CONF_DIR/wpa_supplicant.conf
+        WPA_ARGS="-c $CONF_DIR/wpa_supplicant.conf"
     else
         WPA_ARGS="-c $CONF"
     fi
