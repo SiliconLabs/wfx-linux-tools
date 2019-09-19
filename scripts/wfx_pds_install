@@ -49,33 +49,15 @@ LONGOPTS="help,list-boards,auto,board:,version:,custom:,repo:"
 eval set -- "$PARSED"
 while true; do
     case "$1" in
-        --list-boards)
-            LIST="true"
-            ;;
-        --auto)
-            BOARD="$(wfx_info --board)"
-            ;;
-        --board)
-            BOARD="${2%.pds.in}"; shift
-            ;;
-        --custom)
-            INFILE="$2"; shift
-            ;;
-        --version)
-            VERSION="$2"; shift
-            ;;
-        --repo)
-            PDS_PATH="$2"; shift
-            ;;
-        --help)
-            echo "$USAGE"; exit 0
-            ;;
-        --)
-            shift; break
-            ;;
-        *)
-            echo "ERROR: please use --auto, --board or --custom" >&2 ; error
-            ;;
+        --list-boards) LIST="true" ;;
+        --auto)        BOARD="$(wfx_info --board)" ;;
+        --board)       BOARD="${2%.pds.in}"; shift ;;
+        --custom)      INFILE="$2"; shift ;;
+        --version)     VERSION="$2"; shift ;;
+        --repo)        PDS_PATH="$2"; shift ;;
+        --help)        echo "$USAGE"; exit 0 ;;
+        --)            shift; break ;;
+        *)             error ;;
     esac
     shift
 done
