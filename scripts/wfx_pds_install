@@ -38,7 +38,7 @@ BOARD=""
 INFILE=""
 VERSION=""
 LIST="false"
-PDS_PATH="$GITHUB_PDS_PATH"
+PDS_DEF_PATH="$GITHUB_PDS_PATH"
 PDS_PATH_NEW="$GITHUB_PDS_PATH_NEW"
 WFX_GIT="wfx_git --url https://github.com/SiliconLabs/wfx-pds.git --path $PDS_PATH_NEW"
 
@@ -54,7 +54,6 @@ while true; do
         --board)       BOARD="${2%.pds.in}"; shift ;;
         --custom)      INFILE="$2"; shift ;;
         --version)     VERSION="$2"; shift ;;
-        --repo)        PDS_PATH="$2"; shift ;;
         --help)        echo "$USAGE"; exit 0 ;;
         --)            shift; break ;;
         *)             error ;;
@@ -69,7 +68,7 @@ done
 if [ -z "$INFILE" ]; then
     if [ -z "$VERSION" ]; then
         echo "INFO: no --version specified, autodecting..."
-        VERSION=origin/API$(sed -nre 's/#define DEFINITIONS_(.)_(.)_(.)_IN/\1.\2/p' $PDS_PATH/definitions.in)
+        VERSION=origin/API$(sed -nre 's/#define DEFINITIONS_(.)_(.)_(.)_IN/\1.\2/p' $PDS_DEF_PATH/definitions.in)
     fi
     $WFX_GIT --version "$VERSION"
     INFILE="$PDS_PATH_NEW/$BOARD.pds.in"
@@ -88,7 +87,7 @@ OUTFILE_BASE=${INFILE_BASE%.pds.in}.pds
 OUTFILE=/lib/firmware/$OUTFILE_BASE
 
 set -x
-sudo pds_compress $INFILE $OUTFILE --include "$PDS_PATH"
+sudo pds_compress $INFILE $OUTFILE --include "$PDS_DEF_PATH"
 sudo ln -sfn $OUTFILE_BASE /lib/firmware/wf200.pds
 set +x
 
