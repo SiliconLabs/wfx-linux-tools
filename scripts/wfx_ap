@@ -21,6 +21,11 @@ Options:
 Example:
   - start an ap with address 192.168.1.1 on wlan and enable DHCP server (Wi-Fi configuration depends on hostapd.conf content):
       $(basename $0) --conf /home/pi/access_point/hostapd.conf --ip 192.168.1.1 --dhcp yes
+
+Note:
+An example hostapd.conf file is provided in /home/pi/wfx-linux-tools/examples,
+it can be copied outside of Silicon Labs repositories (e.g. /home/pi/access_point)
+and edited.
 "
 
 CONF=""
