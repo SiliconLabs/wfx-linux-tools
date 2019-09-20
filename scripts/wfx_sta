@@ -34,9 +34,10 @@ CONF=""
 INTERFACE="wlan0"
 DHCP="yes"
 KEEP_SUPP="false"
+SCAN="false"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp,dhcp:,keep-supplicant"
+LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp,dhcp:,keep-supplicant,scan"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
@@ -46,9 +47,10 @@ while true; do
         --password)  PASSWD="$2";    shift ;;
         --conf)      CONF="$2";      shift ;;
         --interface) INTERFACE="$2"; shift ;;
-        --no-dhcp)   DHCP="no"          ;;
+        --no-dhcp)   DHCP="no"             ;;
         --dhcp)      DHCP="$2";      shift ;;
         --keep-supplicant) KEEP_SUPP="true" ;;
+        --scan)      SCAN="true"            ;;
         --help)      echo "$USAGE";  exit 0 ;;
         --)          shift; break ;;
         *)           error ;;
@@ -79,34 +81,37 @@ kill_wait()
 check_interface "$INTERFACE"
 PIDFILE=/var/run/wpa_supplicant-$INTERFACE.pid
 
-# Needed to disable background scan
-killall -q lxpanel || true
+if [ "$SCAN" = "false" ]; then
+    # Needed to disable background scan
+    killall -q lxpanel || true
 
-kill_wait /var/run/dnsmasq-$INTERFACE.pid
-case "$DHCP" in
-    yes)
-        echo "Asking dhcpcd to control $INTERFACE"
-        ip addr flush dev "$INTERFACE"
-        dhcpcd --rebind "$INTERFACE" 2>/dev/null
-        ;;
-    no)
-        echo "Asking dhcpcd to release $INTERFACE"
-        dhcpcd --release "$INTERFACE" 2>/dev/null
-        # dhcpcd release is not instant
-        sleep 1
-        ;;
-    ignore)
-        ;;
-    *)
-        echo "ERROR: invalid value for --dhcp: $DHCP"
-        exit 1
-        ;;
-esac
+    kill_wait /var/run/dnsmasq-$INTERFACE.pid
+    case "$DHCP" in
+        yes)
+            echo "Asking dhcpcd to control $INTERFACE"
+            ip addr flush dev "$INTERFACE"
+            dhcpcd --rebind "$INTERFACE" 2>/dev/null
+            ;;
+        no)
+            echo "Asking dhcpcd to release $INTERFACE"
+            dhcpcd --release "$INTERFACE" 2>/dev/null
+            # dhcpcd release is not instant
+            sleep 1
+            ;;
+        ignore)
+            ;;
+        *)
+            echo "ERROR: invalid value for --dhcp: $DHCP"
+            exit 1
+            ;;
+    esac
+else
+    KEEP_SUPP="true"    
+fi
 
 if [ "$KEEP_SUPP" = "false" ];then
     kill_wait $PIDFILE
 fi
-
 kill_wait /var/run/hostapd-$INTERFACE.pid
 
 if ! wpa_cli -i $INTERFACE status &>/dev/null; then
@@ -121,6 +126,14 @@ if ! wpa_cli -i $INTERFACE status &>/dev/null; then
         WPA_ARGS="-c $CONF"
     fi
     wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS -P $PIDFILE
+fi
+
+if [ "$SCAN" = "true" ]; then
+    echo "Scanning access points..."
+    wpa_cli -i $INTERFACE scan >/dev/null
+    sleep 5
+    wpa_cli -i $INTERFACE scan_results
+    exit 0
 fi
 
 echo "Setting up connection"
