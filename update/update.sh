@@ -17,4 +17,4 @@ set -x
 
 wfx_driver_install --version 2.2.3-public
 wfx_firmware_install --version FW3.0.0
-sudo wfx_pds_install --auto
+wfx_pds_install --auto
