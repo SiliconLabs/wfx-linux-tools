@@ -15,7 +15,7 @@
 / {
 	compatible = "brcm,bcm2708";
 
-	fragment@0 {
+	fragment@7 {
 		target = <&gpio>;
 		__overlay__ {
 			wfx_irq: wfx_irq {
@@ -38,7 +38,7 @@
 		};
 	};
 
-	fragment@1 {
+	fragment@8 {
 		target-path = "/";
 		__overlay__ {
 			wfx_pwrseq: wfx_pwrseq {
@@ -56,7 +56,7 @@
 		};
 	};
 
-	fragment@2 {
+	fragment@9 {
 		target = <&mmc>;
 		__overlay__ {
 			#address-cells = <1>; /* needed to avoid dtc warning */
