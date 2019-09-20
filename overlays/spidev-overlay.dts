@@ -1,5 +1,11 @@
 /include/ "wfx-spi-overlay.dts"
 
-&wfx {
-     compatible = "silabs,wfx-spi", "spidev";
+/ {
+        fragment@1 {
+                __overlay__ {
+                        wfx: spidev@0 {
+                                compatible = "silabs,wfx-spi", "spidev";
+                        };
+                };
+        };
 };
