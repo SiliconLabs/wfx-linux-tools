@@ -31,7 +31,8 @@ args = parser.parse_args()
 pds_env = dict()
 
 pds_env['PDS_CURRENT_FILE'] = "/tmp/current_pds_data.in"
-pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/phy0/wfx/send_pds"
+pds_env['PHY'] = "phy0"
+pds_env['SEND_PDS_FILE'] = "/sys/kernel/debug/ieee80211/" + pds_env['PHY'] + "/wfx/send_pds"
 pds_env['PDS_DEFINITION_FILE'] = "definitions.in"
 
 from wfx_pds_tree import *
@@ -42,6 +43,7 @@ pds_traces = 1
 
 fw_label = ""
 pds_warning = ""
+
 
 def fw_version(refresh=None):
     """ Retrieving the FW version from dmesg """
@@ -82,8 +84,8 @@ def send(_pds, parameters, send_data=1):
             res += pi("wf200 sudo pds_compress " + pds_env['PDS_CURRENT_FILE'] + " " +
                       pds_env['SEND_PDS_FILE'] + " 2>&1") + "\n"
         else:
-            res += " not sent, waiting for tone('start') or tx_start(..)"
-            add_pds_warning(" not sent, waiting for tone('start') or tx_start(..)\n")
+            res += " not sent, waiting for tone('start'), tx_start(..) or rx_start()"
+            add_pds_warning(" not sent, waiting for tone('start'), tx_start(..) or rx_start()\n")
     return res.strip()
 
 
@@ -125,7 +127,7 @@ def pi(_args):
     global pi_traces
     global pds_traces
 
-    split_args = _args.split(' ')
+    split_args = _args.split()
     if len(split_args) == 0:
         return "wfx_test_core.pi: no arguments?"
     target = split_args[0]

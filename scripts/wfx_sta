@@ -66,8 +66,23 @@ wpa_cli_run()
     fi
 }
 
-check_interface "$INTERFACE"
+kill_wait()
+{
+    local PID=$(cat $1 2>/dev/null)
+    if [ -n "$PID" ]; then
+        if kill $PID 2>/dev/null; then
+            tail --pid=$PID -f /dev/null
+        fi
+    fi
+}
 
+check_interface "$INTERFACE"
+PIDFILE=/var/run/wpa_supplicant-$INTERFACE.pid
+
+# Needed to disable background scan
+killall -q lxpanel || true
+
+kill_wait /var/run/dnsmasq-$INTERFACE.pid
 case "$DHCP" in
     yes)
         echo "Asking dhcpcd to control $INTERFACE"
@@ -77,6 +92,8 @@ case "$DHCP" in
     no)
         echo "Asking dhcpcd to release $INTERFACE"
         dhcpcd --release "$INTERFACE" 2>/dev/null
+        # dhcpcd release is not instant
+        sleep 1
         ;;
     ignore)
         ;;
@@ -87,10 +104,12 @@ case "$DHCP" in
 esac
 
 if [ "$KEEP_SUPP" = "false" ];then
-    killall --quiet --wait hostapd wpa_supplicant || true
+    kill_wait $PIDFILE
 fi
 
-if ! pidof wpa_supplicant >/dev/null; then
+kill_wait /var/run/hostapd-$INTERFACE.pid
+
+if ! wpa_cli -i $INTERFACE status &>/dev/null; then
     echo "Starting  wpa_supplicant"
     CONF_DIR=/tmp/wfx_sta/$INTERFACE
     rm -rf $CONF_DIR
@@ -101,7 +120,7 @@ if ! pidof wpa_supplicant >/dev/null; then
     else
         WPA_ARGS="-c $CONF"
     fi
-    wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS
+    wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS -P $PIDFILE
 fi
 
 echo "Setting up connection"

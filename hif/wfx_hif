@@ -1,0 +1,36 @@
+#!/bin/bash
+# Copyright (c) 2019, Silicon Laboratories
+# See license terms contained in COPYING file
+
+USAGE="Usage: $(basename $0) OPTION
+
+  --help                display this message
+  send_msg              write hif data to debugfs
+  read_agent_version    return current agent version
+  log_message           add message to dmesg
+"
+
+case "$1" in
+    --help)
+        echo "$USAGE"
+        exit 0
+        ;;
+    read_agent_version)
+        echo "1.1.0"
+        exit 0
+        ;;
+    send_msg)
+        wfx_exec wfx_hif_send_msg "${2}"
+        exit 0
+        ;;
+    log_message)
+        echo "${2}" | tee /dev/kmsg
+        echo "Done"
+        exit 0
+        ;;
+    *)
+        echo "ERROR: unknown $(basename $0) option $1" >&2
+        echo "$USAGE" >&2
+        exit 1
+        ;;
+esac

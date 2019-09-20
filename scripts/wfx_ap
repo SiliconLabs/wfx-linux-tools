@@ -50,12 +50,24 @@ while true; do
 done
 [ $# -ne 0 ] && error
 
+kill_wait()
+{
+    local PID=$(cat $1 2>/dev/null)
+    if [ -n "$PID" ]; then
+        if kill $PID 2>/dev/null; then
+            tail --pid=$PID -f /dev/null
+        fi
+    fi
+}
+
 # Try to get interface from hostapd.conf
 if [ ! -z "$CONF" ]; then
     INTERFACE=$(sed -ne 's/^interface=\(.*\)/\1/p' "$CONF")
 fi
 
 check_interface "$INTERFACE"
+HOSTAPD_PIDFILE=/var/run/hostapd-$INTERFACE.pid
+DNSMASQ_PIDFILE=/var/run/dnsmasq-$INTERFACE.pid
 
 if [ ! -z "$SET_IP" ] || [ "$DHCP" = yes ]; then
     # Disable DHCP client on the interface before reconfiguring it
@@ -70,10 +82,9 @@ if [ ! -z "$SET_IP" ]; then
     ip addr add "$SET_IP/24" dev "$INTERFACE"
 fi
 
-KILL_DNSMASQ='killall --quiet --wait dnsmasq || true'
 case "$DHCP" in
     yes)
-        eval $KILL_DNSMASQ
+        kill_wait $DNSMASQ_PIDFILE
         echo "Starting DHCP server dnsmasq"
         IP=$(ip address show "$INTERFACE" | sed -ne 's/.*inet \([^\/]*\).*/\1/p')
         if [ $(echo -n "$IP" | grep -c '') != "1" ]; then
@@ -81,10 +92,10 @@ case "$DHCP" in
             exit 1
         fi
         RANGE="${IP%.*}.100,${IP%.*}.200"
-        dnsmasq -C "" --interface "$INTERFACE" --dhcp-range "$RANGE"
+        dnsmasq --conf-file=/dev/null --interface="$INTERFACE" --bind-interfaces --except-interface=lo --dhcp-range="$RANGE" --pid-file="$DNSMASQ_PIDFILE"
         ;;
     no)
-        eval $KILL_DNSMASQ
+        kill_wait $DNSMASQ_PIDFILE
         ;;
     ignore)
         ;;
@@ -108,8 +119,9 @@ fi
 
 if [ ! -z "$CONF" ]; then
     echo "Starting hostapd"
-    killall --quiet --wait hostapd wpa_supplicant || true
-    hostapd -B "$CONF" >/dev/null
+    kill_wait "$HOSTAPD_PIDFILE"
+    kill_wait /var/run/wpa_supplicant-$INTERFACE.pid
+    hostapd -B "$CONF" -P "$HOSTAPD_PIDFILE" >/dev/null
 fi
 
 echo "Success"

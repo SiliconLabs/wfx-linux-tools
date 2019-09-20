@@ -11,9 +11,15 @@
 
 import os
 import re
+import time
 from wfx_test_core import *
+from job import *
 
 print("wfx_test_functions running from " + os.path.dirname(os.path.abspath(__file__)))
+
+global rx_res
+global rx_avg
+global rx_cnt
 
 
 def channel(ch=None):
@@ -21,6 +27,23 @@ def channel(ch=None):
         return wfx_get_list({'TEST_CHANNEL_FREQ'})
     else:
         return wfx_set_dict({'TEST_CHANNEL_FREQ': ch}, send_data=0)
+
+
+def __errors_from_per(nb, per):
+    return int((int(nb)*int(per)/10000) + 0.5)
+
+
+def __per(nb=0, err=0):
+    if nb == 0:
+        return str.format("%.3e" % (1))
+    else:
+        return str.format("%.3e" % (int(err) / int(nb)))
+
+
+def __average(num, count):
+    div = 1 if count == 0 else count
+    offset = 0.5 if num >=0 else -0.5
+    return int((num + offset)/div)
 
 
 def dmesg_period(period=None):
@@ -113,7 +136,7 @@ def tx_backoff(mode_802_11=None, backoff_level=0):
         wfx_set_dict({"BACKOFF_VAL": str(value), "TEST_MODE": "tx_packet", "NB_FRAME": 0}, send_data=1)
 
 
-def regulatory_mode(reg_mode):
+def regulatory_mode(reg_mode=None):
     if reg_mode is None:
         return wfx_get_list("REG_MODE", mode='quiet')
     else:
@@ -189,6 +212,157 @@ def tx_start(nb_frames=None):
 def tx_stop():
     res = wfx_set_dict({"TEST_MODE": "tx_packet", "NB_FRAME": 100}, send_data=1)
     return res
+
+
+def rx_start():
+    res = wfx_set_dict({"TEST_MODE": "rx"}, send_data=1)
+    return res
+
+
+def rx_stop():
+    if rx_job is not None:
+            rx_job.stop()
+    return tx_stop()
+
+
+def __rx_stats(modulation=None):
+    global rx_res
+    global rx_avg
+    global rx_cnt
+    re_NbFPERThr = re.compile('Num. of frames: (.*), PER \(x10e4\): (.*), Throughput: (.*)Kbps/s*')
+    re_Timestamp = re.compile('Timestamp: (.*)us')
+    re_modulation = re.compile('\s*(\d+\w|\w+\d)\s*([-]*\d*)\s*([-]*\d*)\s*([-]*\d*)\s*([-]*\d*)\s*([-]*\d*)')
+    lines = pi("wlan sudo cat /sys/kernel/debug/ieee80211/" + pds_env['PHY'] + "/wfx/rx_stats")
+    return_val = 0
+    for line in lines.split('\n'):
+        stamp = re_Timestamp.match(line)
+        if stamp is not None:
+            Timestamp = int(stamp.group(1))
+            if Timestamp == 0:
+                break
+            if Timestamp == rx_res['global']['last_us']:
+                break
+            else:
+                return_val = 1
+            rx_res['global']['last_us'] = Timestamp
+            rx_res['global']['deltaT'] = (Timestamp - rx_res['global']['start_us'])%pow(2,31)
+            if rx_res['global']['loops'] == 0:
+                rx_res['global']['start_us'] = (Timestamp - 1000000)%pow(2,31)
+            rx_res['global']['loops'] += 1
+        cumulated = re_NbFPERThr.match(line)
+        if cumulated is not None and int(cumulated.group(1)) > 0:
+            rx_res['global']['frames']    += int(cumulated.group(1))
+            rx_res['global']['errors']    += __errors_from_per(cumulated.group(1), cumulated.group(2))
+            rx_res['global']['PER']        = __per(rx_res['global']['frames'], rx_res['global']['errors'])
+            rx_res['global']['Throughput'] = int(cumulated.group(3))
+        modline = re_modulation.match(line)
+        if modline is not None and int(modline.group(2)) > 0:
+            Modulation = modline.group(1)
+            rx_res[Modulation]['frames'] += int(modline.group(2))
+            rx_res[Modulation]['errors'] += __errors_from_per(modline.group(2), modline.group(3))
+            rx_res[Modulation]['PER']  = __per(rx_res[Modulation]['frames'], rx_res[Modulation]['errors'])
+            index = 4
+            for item in rx_averaging:
+                rx_cnt[Modulation][item] += 1
+                rx_avg[Modulation][item] += int(modline.group(index))
+                rx_res[Modulation][item] = __average(rx_avg[Modulation][item], rx_cnt[Modulation][item])
+                index += 1
+    return return_val
+
+
+def rx_logs(mode=None):
+    global rx_res
+    res = []
+    if mode is None:
+        for mode in (['global'] + rx_modulations):
+            res.append(str.format("mode %7s  %s\n" % (mode, rx_logs(mode))))
+        return ''.join(res).strip()
+    mode = 'global' if mode not in rx_modulations else mode
+    keys = rx_globals if mode == 'global' else rx_items
+    for key in keys:
+        res.append(str.format("%s %5s  " % (key, str(rx_res[mode][key]))))
+    return ''.join(res).rstrip()
+
+
+def rx_receive(mode='global', frames=1000, timeout_s=0, sleep_ms=750):
+    global rx_res
+    global rx_job
+    start = time.time()
+    __rx_clear()
+    nb_pkt = nb_same_timestamp = 0
+    if mode == 'endless':
+        if rx_job is not None:
+                rx_job.stop()
+        rx_job = Job(750, __rx_stats, 'global')
+        rx_job.start()
+        return "Endless rx loop started. Use 'rx_logs()' to monitor Rx, 'rx_kill()' to stop Rx monitoring, 'rx_stop()' to stop Rx entirely"
+    mode = 'global' if mode not in rx_modulations else mode
+    while nb_pkt < frames:
+        time.sleep(sleep_ms/1000.0)
+        Timestamp_changed = __rx_stats()
+        elapsed = time.time() - start
+        if Timestamp_changed != 0:
+            nb_same_timestamp = 0
+            print(str.format(' >>> rx_receive:   mode %s %s   (%5.2f s)' % (mode, rx_logs(mode), elapsed)))
+            nb_pkt = rx_res[mode]['frames']
+        else:
+            nb_same_timestamp += 1
+            if nb_same_timestamp > 3:
+                msg = ' Error: Rx stats timestamp not changing. Rx not running!'
+                add_pds_warning(msg)
+                print('\n', msg, '\n')
+                break
+        if timeout_s > 0 and elapsed > timeout_s:
+                msg = str.format(' Warning: Rx stats timeout after %5.2f seconds!' , (str(elapsed)) )
+                add_pds_warning(msg)
+                print('\n', msg, '\n')
+                break
+    return rx_logs(mode)
+
+
+def rx_kill():
+    """ Killing 'endless' Rx monitoring loop """
+    if rx_job is not None:
+            rx_job.stop()
+
+
+def __rx_clear():
+    global rx_res
+    global rx_avg
+    global rx_cnt
+    rx_res = {}
+    rx_avg = {}
+    rx_cnt = {}
+    for mode in rx_modulations:
+        dict_items = {}
+        for item in rx_items:
+            dict_items[item] = __per() if item == 'PER' else 0
+        rx_res[mode] = dict_items
+        cnt_items = {}
+        avg_items = {}
+        for item in rx_averaging:
+            avg_items[item] = 0
+            cnt_items[item] = 0
+        rx_avg[mode] = avg_items
+        rx_cnt[mode] = cnt_items
+    for mode in ['global']:
+        dict_items = {}
+        for item in rx_globals:
+            dict_items[item] = __per() if item == 'PER' else 0
+        rx_res[mode] = dict_items
+
+
+rx_modulations = [
+    '1M', '2M', '5.5M', '11M',
+    '6M', '9M', '12M', '18M', '24M', '36M', '48M', '54M',
+    'MCS0', 'MCS1', 'MCS2', 'MCS3', 'MCS4', 'MCS5', 'MCS6', 'MCS7']
+rx_items = ['frames', 'errors', 'PER', 'RSSI', 'SNR', 'CFO']
+rx_averaging= ['RSSI', 'SNR', 'CFO']
+rx_globals = ['frames', 'errors', 'PER', 'Throughput', 'deltaT', 
+              'loops', 'start_us', 'last_us']
+rx_job = None
+
+__rx_clear()
 
 
 if __name__ == '__main__':

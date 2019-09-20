@@ -1,0 +1,24 @@
+#!/bin/bash
+# Copyright (c) 2019, Silicon Laboratories
+# See license terms contained in COPYING file
+#
+# wfx_exec allows execution of commands in root mode,
+#  regardless of the caller's privileges
+# (convenient to keep scripts identical between linux platforms)
+
+USER=$(id -u)
+#set -ex
+
+if [ "$USER" = '0' ] ; then
+    res=$(exec "${1}" "${2}" ${@:3})
+else
+res=$(
+sudo sh << EOF
+exec "${1}" "${2}" ${@:3}
+EOF
+)
+fi
+
+echo $((${res}))
+
+exit 0
