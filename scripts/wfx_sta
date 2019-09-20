@@ -162,4 +162,6 @@ if [ ! -z "$SSID" ]; then
     fi
 fi
 
-echo "Success"
+echo -n "Success: "
+echo -n "$INTERFACE connected to $(wpa_cli -i $INTERFACE status | sed -nre 's/^ssid=(.*)/\1/p') "
+echo "with IP $(wpa_cli status | sed -nre 's/^ip_address=(.*)/\1/p')"
