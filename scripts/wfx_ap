@@ -126,7 +126,7 @@ if [ ! -z "$CONF" ]; then
     echo "Starting hostapd"
     kill_wait "$HOSTAPD_PIDFILE"
     kill_wait /var/run/wpa_supplicant-$INTERFACE.pid
-    hostapd -B "$CONF" -P "$HOSTAPD_PIDFILE" >/dev/null
+    hostapd -B "$CONF" -P "$HOSTAPD_PIDFILE"
 fi
 
 echo "Success"
