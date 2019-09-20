@@ -1,4 +1,4 @@
-// overlay for SILABS WF200/WFM200/WF250 SPI
+// overlay for SILABS WF200/WFM200 SPI
 /dts-v1/;
 /plugin/;
 
