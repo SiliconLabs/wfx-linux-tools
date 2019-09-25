@@ -30,4 +30,4 @@ print_command "Firmware loaded keyset" "dmesg | grep 'wfx.*Firmware' | tail -1 |
 printf "\n"
 
 print_command "PDS file" "realpath -e /lib/firmware/wf200.pds"
-print_command "PDS version" "pds_compress /lib/firmware/wf200.pds | sed -ne 's/^{a:{a:\(.\),b:\(.\).*/\1.\2/p'"
+print_command "PDS API version" "pds_compress /lib/firmware/wf200.pds | sed -ne 's/^{a:{a:\(.\),b:\(.\).*/\1.\2/p'"
