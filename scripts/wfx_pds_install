@@ -13,7 +13,7 @@ Install PDS
 Run wfx_firmware_install before running this command to make sure
 PDS definitions are aligned with firmware version.
 
-Otpions:
+Options:
   --help          display this message
   --list-boards   list supported boards
   --auto          auto-detect board
