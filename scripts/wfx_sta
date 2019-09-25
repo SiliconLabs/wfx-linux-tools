@@ -147,32 +147,32 @@ if [ ! -z "$SSID" ]; then
         wpa_cli_run set_network 0 psk \"$PASSWD\"
     fi
     wpa_cli_run select_network 0
+fi
 
-    echo "Waiting for connection"
+echo "Waiting for connection"
+SUCCESS="false"
+for n in {1..10}; do
+    sleep 1
+    if echo "$(wpa_cli -i $INTERFACE status)" | grep wpa_state | grep -q COMPLETED; then
+        SUCCESS="true"
+        echo "Associated"
+        break
+    fi
+done
+[ "$SUCCESS" != true ] && error "Association timeout"
+
+if [ "$DHCP" = "yes" ]; then
+    echo "Waiting for DHCP"
     SUCCESS="false"
     for n in {1..10}; do
         sleep 1
-        if echo "$(wpa_cli -i $INTERFACE status)" | grep wpa_state | grep -q COMPLETED; then
+        if echo "$(wpa_cli -i $INTERFACE status)" | grep ip_address | grep -qv '169.254.'; then
             SUCCESS="true"
-            echo "Associated"
+            echo "DHCP lease obtained"
             break
         fi
     done
-    [ "$SUCCESS" != true ] && error "Association timeout"
-
-    if [ "$DHCP" = "yes" ]; then
-        echo "Waiting for DHCP"
-        SUCCESS="false"
-        for n in {1..10}; do
-            sleep 1
-            if echo "$(wpa_cli -i $INTERFACE status)" | grep ip_address | grep -qv '169.254.'; then
-                SUCCESS="true"
-                echo "DHCP lease obtained"
-                break
-            fi
-        done
-        [ "$SUCCESS" != true ] && echo "DHCP timeout" >&2 && exit 1
-    fi
+    [ "$SUCCESS" != true ] && echo "DHCP timeout" >&2 && exit 1
 fi
 
 echo -n "Success: "
