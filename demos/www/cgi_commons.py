@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # We need to call bash scripts to execute command with superuser
 #   privileges when called from a web page
 # This works as long as all scripts are chmod'ed with a+rx
@@ -40,10 +40,10 @@ def bash_res(cmd, trace=0):
     if trace_cmd:
         print("<>cmd<>" + cmd + "<>cmd<>")
     res = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True)
-    ret = str(res.stdout.read().strip())
+    ret = res.stdout.read().strip()
     if trace_res:
         print("<>res<>" + ret + "<>res<>")
-    return ret
+    return ret.decode()
 
 def dmesg_print(txt):
     bash_res("echo " + called_script + ": " + txt + " | sudo tee  /dev/kmsg")

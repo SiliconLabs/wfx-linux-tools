@@ -121,11 +121,12 @@ wpa_supplicant -i "${STA_IF}" -B -s -t -T -c "${STA_CONF}" -P /var/run/wpa_suppl
 
 # ---------------------------------------------------------
 echo "Starting lighttpd WEB server with conf in ${LIGHTTPD_CONF}"
+set -x
 lighttpd -f "$LIGHTTPD_CONF"
 
 for led in {0..1}
 do
-    ./www/led_toggle.sh ${led}
+    /home/pi/siliconlabs/wfx-linux-tools/demos/www/led_toggle.sh ${led}
 done
 
 echo "AP process"

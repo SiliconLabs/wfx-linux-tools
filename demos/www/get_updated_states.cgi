@@ -27,7 +27,7 @@ def main():
     state["STA_IP_address"] = bash_res("ip addr show " + STA_IF + " | grep 'global' | grep 'wlan' | grep 'inet '| cut -d '/' -f 1 | cut -d ' ' -f 6")
     # Additional state values (initially not visible in the web page)
     state["AP_IP_address"]  = bash_res("ip addr show " + AP_IF  + " | grep 'global' | grep 'wlan' | grep 'inet '| cut -d '/' -f 1 | cut -d ' ' -f 6")
-    state["AP_ssid"]  = bash_res("hostapd_cli status | grep ^ssid | cut -d '=' -f 2")
+    state["AP_ssid"] = bash_res("hostapd_cli status | grep ^ssid | cut -d '=' -f 2")
     state["wpa_cli"] = bash_res("wpa_cli status | grep wpa_state | cut -d '=' -f 2")
 
     profile("all_done", 1)
