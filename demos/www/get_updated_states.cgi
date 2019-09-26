@@ -18,15 +18,17 @@ def main():
     state["LED0"] = bash_res("./led_state.sh 0")
     state["LED1"] = bash_res("./led_state.sh 1")
     state["Connection"] = bash_res("wpa_cli status | grep wpa_state | cut -d '=' -f 2")
+    STA_ssid = "SSID"
+    STA_ssid = bash_res("wpa_cli status | grep ^ssid | cut -d '=' -f 2")
     if state["Connection"] == "COMPLETED":
-        state["Connection"] = "Connected"
-    if state["Connection"] == "DISCONNECTED":
+        state["Connection"] = "STA Connected to " + STA_ssid
+    else:
         state["Connection"] = "Not Connected"
     state["STA_IP_address"] = bash_res("ip addr show " + STA_IF + " | grep 'global' | grep 'wlan' | grep 'inet '| cut -d '/' -f 1 | cut -d ' ' -f 6")
     # Additional state values (initially not visible in the web page)
     state["AP_IP_address"]  = bash_res("ip addr show " + AP_IF  + " | grep 'global' | grep 'wlan' | grep 'inet '| cut -d '/' -f 1 | cut -d ' ' -f 6")
     state["AP_ssid"]  = bash_res("hostapd_cli status | grep ^ssid | cut -d '=' -f 2")
-    state["STA_ssid"] = bash_res("wpa_cli status | grep ^ssid | cut -d '=' -f 2")
+    state["wpa_cli"] = bash_res("wpa_cli status | grep wpa_state | cut -d '=' -f 2")
 
     profile("all_done", 1)
     state["Profiling"] = str(profiling)
