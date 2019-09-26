@@ -27,7 +27,9 @@ do
         chmod g+rw    /sys/class/leds/led${led}/${item}
         chown :netdev /sys/class/leds/led${led}/${item}
     done
-    ./www/led_toggle.sh ${led}
+    set +e
+    /home/pi/siliconlabs/wfx-linux-tools/demos/www/led_toggle.sh ${led}
+    set -e
 done
 
 wfx_demo_stop
