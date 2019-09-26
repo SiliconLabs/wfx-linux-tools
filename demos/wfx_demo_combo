@@ -107,10 +107,6 @@ cat << EOF > ${STA_CONF}
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=0
 country=${COUNTRY}
-network={
-    key_mgmt=NONE
-    priority=1
-}
 EOF
 
 dhcpcd --release "${STA_IF}" 2>/dev/null
