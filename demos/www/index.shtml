@@ -10,14 +10,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="theme-color" content="#bb342f">
-  <link rel="icon" href="http://demo.silabs.com/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="http://demo.silabs.com/themes/silabs-theme.min.css" />
-  <link rel="stylesheet" href="http://demo.silabs.com/themes/jquery.mobile.icons.min.css" />
-  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-  <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/silabs-theme.min.css" />
+  <link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
+  <link rel="stylesheet" href="css/jquery.mobile.structure-1.4.5.min.css" />
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="js/jquery-1.11.1.min.js"></script>
+  <script src="js/jquery.mobile-1.4.5.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
   <title>WF200 Wi-Fi Transceiver Demo</title>
   <style>
     .modal {
@@ -142,7 +142,7 @@
         if (window.jQuery) {
           $.ajax({
             type: 'GET',
-            url: '/get_updated_states.cgi?&buster=' + new Date().getTime(),
+            url: '/test.fcgi?&buster=' + new Date().getTime(),
             dataType: 'json',
             success: function(info) {
               if (led0_state != info[0].state) {
@@ -198,7 +198,7 @@
           });
         } else {
           var xhr = new XMLHttpRequest();
-          xhr.open('GET', 'get_updated_states.cgi?&buster=' + new Date().getTime(), true);
+          xhr.open('GET', 'test.fcgi?&buster=' + new Date().getTime(), true);
 
           xhr.onload = function() {
             if (this.status >= 200 && this.status < 400) {
