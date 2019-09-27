@@ -72,6 +72,14 @@ bus_set()
     disable_line /boot/config.txt 'dtoverlay=spidev'
     enable_line /boot/config.txt "dtoverlay=$DRIVER"
 
+    if [ "$DRIVER" = "wfx-spi" ]; then
+        PI_VER=$(sed -nre 's/Raspberry Pi ?(.).*/\1/p' /proc/device-tree/model)
+        if [ "$PI_VER" = "4" ]; then
+            echo "WARNING: Raspberry Pi 4 detected, please be sure to use a SPI frequency of 25MHz"
+            echo "manually check/edit dtoverlay=wfx-spi... in /boot/config.txt"
+        fi
+    fi
+
     echo "WARNING: reboot the board for the bus change to take effect (sudo reboot)"
 }
 
