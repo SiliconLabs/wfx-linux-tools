@@ -17,7 +17,3 @@ iw dev wlan0 interface add wlan1 type managed
 # IP configuration of AP interface
 /sbin/dhcpcd --release wlan1
 ip addr add 192.168.5.1/24 dev wlan1
-
-# Enable traffic to be routed from AP to STA network
-echo 1 > /proc/sys/net/ipv4/ip_forward
-iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
