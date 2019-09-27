@@ -10,7 +10,7 @@
 #  to 'default-on' works, though
 #
 
-led_trigger=$( cat /sys/class/leds/led${1}/trigger | grep -o '\[.*\]' )
+led_trigger=$( grep -o '\[.*\]' /sys/class/leds/led${1}/trigger )
 
 if [ ${led_trigger} == "[none]" ]; then
     echo default-on > /sys/class/leds/led${1}/trigger

@@ -142,7 +142,7 @@
         if (window.jQuery) {
           $.ajax({
             type: 'GET',
-            url: '/test.fcgi?&buster=' + new Date().getTime(),
+            url: '/get_updated_states.fcgi?&buster=' + new Date().getTime(),
             dataType: 'json',
             success: function(info) {
               if (led0_state != info[0].state) {
@@ -198,7 +198,7 @@
           });
         } else {
           var xhr = new XMLHttpRequest();
-          xhr.open('GET', 'test.fcgi?&buster=' + new Date().getTime(), true);
+          xhr.open('GET', 'get_updated_states.fcgi?&buster=' + new Date().getTime(), true);
 
           xhr.onload = function() {
             if (this.status >= 200 && this.status < 400) {
