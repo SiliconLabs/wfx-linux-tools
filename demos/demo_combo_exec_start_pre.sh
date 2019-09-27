@@ -15,7 +15,7 @@ chown :netdev /sys/class/leds/led{0,1}/{trigger,brightness}
 iw dev wlan0 interface add wlan1 type managed
 
 # IP configuration of AP interface
-dhcpcd --release wlan1
+/sbin/dhcpcd --release wlan1
 ip addr add 192.168.5.1/24 dev wlan1
 
 # Enable traffic to be routed from AP to STA network
