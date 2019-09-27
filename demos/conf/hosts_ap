@@ -1,2 +1,0 @@
-# File used by dnsmasq to access the Raspberry Pi with its name
-192.168.51.1       silabs-pi-demo
