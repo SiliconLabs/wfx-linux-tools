@@ -14,20 +14,13 @@
 
 / {
 	fragment@7 {
-		target = <&sdhost>;
-		__overlay__ {
-			status = "disabled";
-		};
-	};
-
-	fragment@8 {
 		target = <&mmcnr>;
 		__overlay__ {
 			status = "disabled";
 		};
 	};
 
-	fragment@9 {
+	fragment@8 {
 		target = <&gpio>;
 		__overlay__ {
 			wfx_irq: wfx_irq {
@@ -50,7 +43,7 @@
 		};
 	};
 
-	fragment@10 {
+	fragment@9 {
 		target-path = "/";
 		__overlay__ {
 			wfx_pwrseq: wfx_pwrseq {
@@ -68,7 +61,7 @@
 		};
 	};
 
-	fragment@11 {
+	fragment@10 {
 		target = <&mmc>;
 		__overlay__ {
 			#address-cells = <1>; /* needed to avoid dtc warning */
