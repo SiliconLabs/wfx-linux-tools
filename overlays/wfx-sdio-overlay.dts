@@ -13,9 +13,14 @@
  */
 
 / {
-	compatible = "brcm,bcm2708";
-
 	fragment@7 {
+		target = <&sdhost>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@8 {
 		target = <&gpio>;
 		__overlay__ {
 			wfx_irq: wfx_irq {
@@ -38,7 +43,7 @@
 		};
 	};
 
-	fragment@8 {
+	fragment@9 {
 		target-path = "/";
 		__overlay__ {
 			wfx_pwrseq: wfx_pwrseq {
@@ -56,7 +61,7 @@
 		};
 	};
 
-	fragment@9 {
+	fragment@10 {
 		target = <&mmc>;
 		__overlay__ {
 			#address-cells = <1>; /* needed to avoid dtc warning */
