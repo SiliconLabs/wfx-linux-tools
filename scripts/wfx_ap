@@ -113,7 +113,7 @@ if [ ! -z "$FWD_IF" ]; then
     echo "Enabling traffic forwarding"
     echo 1 > /proc/sys/net/ipv4/ip_forward
     RULE="POSTROUTING -o $FWD_IF -j MASQUERADE"
-    iptables -t nat -C $RULE || iptables -t nat -A $RULE
+    iptables -t nat -C $RULE 2>/dev/null || iptables -t nat -A $RULE
 fi
 
 if [ "$NO_FWD" = "true" ]; then
