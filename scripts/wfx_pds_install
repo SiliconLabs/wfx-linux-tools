@@ -4,20 +4,21 @@
 
 set -euo pipefail
 . wfx_set_env
-run_as_root
+check_not_root
 
 USAGE="Usage: $(basename $0) OPTION
 
 Install PDS
 
 Run wfx_firmware_install before running this command to make sure
-PDS version is aligned with firmware version.
+PDS definitions are aligned with firmware version.
 
-Otpions:
+Options:
   --help          display this message
   --list-boards   list supported boards
   --auto          auto-detect board
   --board MODEL   select board MODEL
+  --version VER   install version VER (default is to autodetect)
   --custom FILE   install custom .pds.in FILE
 
 Examples:
@@ -35,59 +36,63 @@ Two conditions must be met for --auto to work:
 
 BOARD=""
 INFILE=""
-PDS_PATH="$GITHUB_PDS_PATH"
+VERSION=""
+LIST="false"
+PDS_DEF_PATH="$GITHUB_PDS_PATH"
+PDS_PATH_NEW="$GITHUB_PDS_PATH_NEW"
+WFX_GIT="wfx_git --url https://github.com/SiliconLabs/wfx-pds.git --path $PDS_PATH_NEW"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,list-boards,auto,board:,custom:,repo:"
+LONGOPTS="help,list-boards,auto,board:,version:,custom:,repo:"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
 while true; do
     case "$1" in
-        --list-boards)
-            tree $PDS_PATH -P '*.pds.in' -I definitions --noreport
-            exit 0
-            ;;
-        --auto)
-            BOARD="$(wfx_info --board)"
-            INFILE="$PDS_PATH/$BOARD.pds.in"
-            ;;
-        --board)
-            BOARD="${2%.pds.in}"; shift
-            INFILE="$PDS_PATH/$BOARD.pds.in"
-            ;;
-        --custom)
-            INFILE="$2"; shift
-            ;;
-        --repo)
-            PDS_PATH="$2"; shift
-            ;;
-        --help)
-            echo "$USAGE"; exit 0
-            ;;
-        --)
-            shift; break
-            ;;
-        *)
-            echo "ERROR: please use --auto, --board or --custom" >&2 ; error
-            ;;
+        --list-boards) LIST="true" ;;
+        --auto)        BOARD="$(wfx_info --board)" ;;
+        --board)       BOARD="${2%.pds.in}"; shift ;;
+        --custom)      INFILE="$2"; shift ;;
+        --version)     VERSION="$2"; shift ;;
+        --help)        echo "$USAGE"; exit 0 ;;
+        --)            shift; break ;;
+        *)             error ;;
     esac
     shift
 done
 [ $# -ne 0 ] && error
 
-[ -z "$BOARD" ] && [ -z "$INFILE" ] && error "please use --auto, --board or --custom"
-[ ! -e "$INFILE" ] && error "cannot find PDS $INFILE, board $BOARD may not be supported"
+[ "$LIST" = "false" ] && [ -z "$BOARD" ] && [ -z "$INFILE" ] && error "please use --auto, --board or --custom"
+[ -n "$VERSION" ] && [ -n "$INFILE" ] && error "cannot use --version and --custom"
+
+if [ -z "$INFILE" ]; then
+    if [ -z "$VERSION" ]; then
+        echo "INFO: no --version specified, autodecting..."
+        VERSION=origin/API$(sed -nre 's/#define DEFINITIONS_(.)_(.)_(.)_IN/\1.\2/p' $PDS_DEF_PATH/definitions.in)
+    fi
+    $WFX_GIT --version "$VERSION"
+    INFILE="$PDS_PATH_NEW/$BOARD.pds.in"
+fi
+
+if [ "$LIST" = "true" ]; then
+    echo "Version $VERSION supports the following boards"
+    tree $PDS_PATH_NEW -P '*.pds.in' -I definitions --noreport
+    exit 0
+fi
+
+[ ! -e "$INFILE" ] && error "cannot find PDS $INFILE, board $BOARD may not be supported by version $VERSION"
 
 INFILE_BASE=$(basename $INFILE)
 OUTFILE_BASE=${INFILE_BASE%.pds.in}.pds
 OUTFILE=/lib/firmware/$OUTFILE_BASE
 
-sudo pds_compress $INFILE $OUTFILE --include "$PDS_PATH/definitions"
+set -x
+sudo pds_compress $INFILE $OUTFILE --include "$PDS_DEF_PATH"
 sudo ln -sfn $OUTFILE_BASE /lib/firmware/wf200.pds
+set +x
 
-if [ ! -z "$BOARD" ]; then
-    echo "PDS installed for board $BOARD"
+if [ -n "$BOARD" ]; then
+    echo "PDS installed for board $BOARD version $VERSION"
 else
     echo "custom PDS $INFILE installed"
 fi
