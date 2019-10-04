@@ -23,16 +23,16 @@ UDEV_RULE='ACTION=="add", SUBSYSTEM=="net", KERNEL=="wl*", DRIVERS=="wfx-*", RUN
 [ -f $UDEV_FILE ] || echo "$UDEV_RULE"  | sudo tee $UDEV_FILE >/dev/null
 
 # Allow IP forward to enable wfx_ap --forward (it is still needed to enable it with sysctl)
-perl -i.old -p0e 's/-P FORWARD DROP/-P FORWARD ACCEPT/igs' rules.v4
+perl -i.old -p0e 's/-P FORWARD DROP/-P FORWARD ACCEPT/igs' /etc/iptables/rules.v4
 
 # Allow traffic from all Ethernet interfaces
-perl -i -p0e 's/-A INPUT -i eth0 -j ACCEPT\n-A INPUT -i eth1 -j ACCEPT/-A INPUT -i eth+ -j ACCEPT/igs' rules.v4
+perl -i -p0e 's/-A INPUT -i eth0 -j ACCEPT\n-A INPUT -i eth1 -j ACCEPT/-A INPUT -i eth+ -j ACCEPT/igs' /etc/iptables/rules.v4
 
 # Allow DHCP server on all interfaces instead of only wlan1
-perl -i -p0e 's/# Allow DHCP server for wfx-demo-combo\n-A INPUT -i wlan1 -p udp --dport 67:68 --sport 67:68 -j ACCEPT/# Allow DHCP server\n-A INPUT -p udp --dport 67:68 --sport 67:68 -j ACCEPT/igs' rules.v4
+perl -i -p0e 's/# Allow DHCP server for wfx-demo-combo\n-A INPUT -i wlan1 -p udp --dport 67:68 --sport 67:68 -j ACCEPT/# Allow DHCP server\n-A INPUT -p udp --dport 67:68 --sport 67:68 -j ACCEPT/igs' /etc/iptables/rules.v4
 
 # Allow DNS
-perl -i -p0e 's/(-A INPUT -p tcp -m tcp --dport http -j ACCEPT\n)(\n# Allow iperf and iperf3)/$1\n# Allow DNS server\n-A INPUT -p udp --dport 53 -j ACCEPT\n$2/igs' rules.v4
+perl -i -p0e 's/(-A INPUT -p tcp -m tcp --dport http -j ACCEPT\n)(\n# Allow iperf and iperf3)/$1\n# Allow DNS server\n-A INPUT -p udp --dport 53 -j ACCEPT\n$2/igs' /etc/iptables/rules.v4
 
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-spi-overlay.dts -o /boot/overlays/wfx-spi.dtbo
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-sdio-overlay.dts -o /boot/overlays/wfx-sdio.dtbo
