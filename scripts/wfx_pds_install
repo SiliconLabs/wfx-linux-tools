@@ -18,11 +18,12 @@ Options:
   --list-boards   list supported boards
   --auto          auto-detect board
   --board MODEL   select board MODEL
+  --list-tags     list PDS versions
   --version VER   install version VER (default is to autodetect)
   --custom FILE   install custom .pds.in FILE
 
 Examples:
-  - install current PDS with board auto-detection
+  - install PDS with board auto-detection and version auto-detection
       $(basename $0) wfx_pds_install --auto
 
   - install custom PDS
@@ -43,7 +44,7 @@ PDS_PATH_NEW="$GITHUB_PDS_PATH_NEW"
 WFX_GIT="wfx_git --url https://github.com/SiliconLabs/wfx-pds.git --path $PDS_PATH_NEW"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,list-boards,auto,board:,version:,custom:,repo:"
+LONGOPTS="help,list-boards,auto,board:,list-tags,version:,custom:,repo:"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
@@ -53,6 +54,7 @@ while true; do
         --auto)        BOARD="$(wfx_info --board)" ;;
         --board)       BOARD="${2%.pds.in}"; shift ;;
         --custom)      INFILE="$2"; shift ;;
+        --list-tags)   $WFX_GIT --list; exit 0 ;;
         --version)     VERSION="$2"; shift ;;
         --help)        echo "$USAGE"; exit 0 ;;
         --)            shift; break ;;
