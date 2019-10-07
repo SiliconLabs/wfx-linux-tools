@@ -21,6 +21,7 @@ Options:
   --list-tags     list PDS versions
   --version VER   install version VER (default is to autodetect)
   --custom FILE   install custom .pds.in FILE
+  --repo REPO     use specific repository for both PDS files and definitions
 
 Examples:
   - install PDS with board auto-detection and version auto-detection
@@ -39,9 +40,9 @@ BOARD=""
 INFILE=""
 VERSION=""
 LIST="false"
+LIST_TAGS="false"
 PDS_DEF_PATH="$GITHUB_PDS_PATH"
 PDS_PATH_NEW="$GITHUB_PDS_PATH_NEW"
-WFX_GIT="wfx_git --url https://github.com/SiliconLabs/wfx-pds.git --path $PDS_PATH_NEW"
 
 [ $# -eq 0 ] && error
 LONGOPTS="help,list-boards,auto,board:,list-tags,version:,custom:,repo:"
@@ -54,8 +55,9 @@ while true; do
         --auto)        BOARD="$(wfx_info --board)" ;;
         --board)       BOARD="${2%.pds.in}"; shift ;;
         --custom)      INFILE="$2"; shift ;;
-        --list-tags)   $WFX_GIT --list; exit 0 ;;
+        --list-tags)   LIST_TAGS="true" ;;
         --version)     VERSION="$2"; shift ;;
+        --repo)        PDS_DEF_PATH="$2/definitions"; PDS_PATH_NEW="$2"; shift ;;
         --help)        echo "$USAGE"; exit 0 ;;
         --)            shift; break ;;
         *)             error ;;
@@ -63,6 +65,13 @@ while true; do
     shift
 done
 [ $# -ne 0 ] && error
+
+WFX_GIT="wfx_git --url https://github.com/SiliconLabs/wfx-pds.git --path $PDS_PATH_NEW"
+
+if [ "$LIST_TAGS" = "true" ]; then
+    $WFX_GIT --list
+    exit 0
+fi
 
 [ "$LIST" = "false" ] && [ -z "$BOARD" ] && [ -z "$INFILE" ] && error "please use --auto, --board or --custom"
 [ -n "$VERSION" ] && [ -n "$INFILE" ] && error "cannot use --version and --custom"
