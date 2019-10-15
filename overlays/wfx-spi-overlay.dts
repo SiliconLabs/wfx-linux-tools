@@ -50,16 +50,22 @@
 				// GPIO function are set to INPUT)
 				brcm,pull = <0>; /* BCM2835_PUD_OFF */
 			};
+			spi_pins: spi_pins {
+				brcm,pins = <7 8 9 10 11>;
+				brcm,function = <4>; /* BCM2835_FSEL_ALT0 */
+			};
 		};
 	};
 
 	fragment@1 {
-		target = <&spi0>;
+		target = <&spi>;
 		__overlay__ {
 			#address-cells = <1>; /* needed to avoid dtc warning */
 			#size-cells = <0>; /* needed to avoid dtc warning */
 			status = "okay";
 
+			pinctrl-names = "default";
+			pinctrl-0 = <&spi_pins>;
 			wfx: spidev@0 {
 				spi-max-frequency = <42000000>; // necessary for dtparam
 				reg = <0>;
