@@ -27,6 +27,11 @@
  */
 
 / {
+	/*
+	 * On Raspberry kernels, wireless chip is connected on device "mmcnr"
+	 * and conflict with "sdhci". If you use device tree from vanilla
+	 * kernel, make sure this node exist (or comment fragment below).
+	 */
 	fragment@0 {
 		target = <&mmcnr>;
 		__overlay__ {
@@ -81,7 +86,7 @@
 	};
 
 	fragment@3 {
-		target = <&mmc>;
+		target = <&sdhci>;
 		sdio_ovl: __overlay__ {
 			status = "okay";
 			#address-cells = <1>; /* needed to avoid dtc warning */
@@ -89,6 +94,7 @@
 			pinctrl-names = "default";
 			pinctrl-0 = <&sdio_pins>;
 			bus-width = <4>;
+			max-frequency = <50000000>; /* necessary for dtparam */
 			brcm,overclock-50 = <0>; /* necessary for dtparam */
 			mmc-pwrseq = <&wfx_pwrseq>;
 			// Comment to allow automatic chip detect after a hard reset
@@ -101,13 +107,20 @@
 				wakeup-gpios = <&gpio 12 0>;
 				// Allow to use external GPIO (not yet implemented):
 				//interrupts-extended = <&gpio 16 1>;
-				config-file = "wf200.pds";
+				config-file = "wf200.pds"; /* necessary for dtparam */
 			};
 		};
 	};
 
 	__overrides__ {
 		config_file = <&wfx>,"config-file";
+		/* About SDIO clock max frequency:
+		 *   - old Raspberry kernels only support sdio_overclock
+		 *   - newer Raspberry kernel support both sdio_overclock and max_frequency
+		 *   - vanilla kernel only support max_frequency
+		 * If user set an unsupported attribute, it has no effect
+		 */
 		sdio_overclock = <&sdio_ovl>,"brcm,overclock-50:0";
+		max_frequency = <&sdio_ovl>,"max-frequency:0";
 	};
 };
