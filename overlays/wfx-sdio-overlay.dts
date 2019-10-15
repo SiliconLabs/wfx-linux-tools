@@ -1,4 +1,5 @@
-/include/ "sdio-overlay.dts"
+/dts-v1/;
+/plugin/;
 
 /*
  * In order to allow compilation out of kernel tree, avoid including headers
@@ -26,14 +27,14 @@
  */
 
 / {
-	fragment@7 {
+	fragment@0 {
 		target = <&mmcnr>;
 		__overlay__ {
 			status = "disabled";
 		};
 	};
 
-	fragment@8 {
+	fragment@1 {
 		target = <&gpio>;
 		__overlay__ {
 			wfx_irq: wfx_irq {
@@ -53,10 +54,15 @@
 				// GPIO function are set to INPUT)
 				brcm,pull = <0>; /* BCM2835_PUD_OFF */
 			};
+			sdio_pins: sdio_pins {
+				brcm,pins = <22 23 24 25 26 27>;
+				brcm,function = <7>; /* BCM2835_FSEL_ALT3 */
+				brcm,pull = <0 2 2 2 2 2>; /* BCM2835_PUD_OFF BCM2835_PUD_UP ... */
+			};
 		};
 	};
 
-	fragment@9 {
+	fragment@2 {
 		target-path = "/";
 		__overlay__ {
 			wfx_pwrseq: wfx_pwrseq {
@@ -74,16 +80,19 @@
 		};
 	};
 
-	fragment@10 {
+	fragment@3 {
 		target = <&mmc>;
-		__overlay__ {
+		sdio_ovl: __overlay__ {
+			status = "okay";
 			#address-cells = <1>; /* needed to avoid dtc warning */
 			#size-cells = <0>; /* needed to avoid dtc warning */
+			pinctrl-names = "default";
+			pinctrl-0 = <&sdio_pins>;
+			bus-width = <4>;
+			brcm,overclock-50 = <0>; /* necessary for dtparam */
 			mmc-pwrseq = <&wfx_pwrseq>;
-
-			// Uncomment following line to allow automatic chip
-			// detect after a hard reset:
-			//   /delete-property/ non-removable;
+			// Comment to allow automatic chip detect after a hard reset
+			non-removable;
 			wfx: mmc@1 {
 				compatible = "silabs,wfx-sdio";
 				reg = <1>;
@@ -99,5 +108,6 @@
 
 	__overrides__ {
 		config_file = <&wfx>,"config-file";
+		sdio_overclock = <&sdio_ovl>,"brcm,overclock-50:0";
 	};
 };
