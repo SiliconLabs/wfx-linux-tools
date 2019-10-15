@@ -42,6 +42,7 @@
 	fragment@1 {
 		target = <&gpio>;
 		__overlay__ {
+			// Common part with wfx-spi.dtbo
 			wfx_irq: wfx_irq {
 				brcm,pins = <16>;
 				brcm,function = <0>; /* BCM2835_FSEL_GPIO_IN */
@@ -89,8 +90,8 @@
 		target = <&sdhci>;
 		sdio_ovl: __overlay__ {
 			status = "okay";
-			#address-cells = <1>; /* needed to avoid dtc warning */
-			#size-cells = <0>; /* needed to avoid dtc warning */
+			#address-cells = <1>; /* avoid dtc warning */
+			#size-cells = <0>; /* avoid dtc warning */
 			pinctrl-names = "default";
 			pinctrl-0 = <&sdio_pins>;
 			bus-width = <4>;
@@ -100,6 +101,7 @@
 			// Comment to allow automatic chip detect after a hard reset
 			non-removable;
 			wfx: mmc@1 {
+				status = "okay";
 				compatible = "silabs,wfx-sdio";
 				reg = <1>;
 				pinctrl-names = "default";

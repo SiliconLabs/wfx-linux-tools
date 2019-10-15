@@ -1,4 +1,3 @@
-// overlay for SILABS WF200/WFM200 SPI
 /dts-v1/;
 /plugin/;
 
@@ -28,11 +27,11 @@
  */
 
 / {
-	compatible = "brcm,bcm2708";
 
 	fragment@0 {
 		target = <&gpio>;
 		__overlay__ {
+			// Common part with wfx-spi.dtbo
 			wfx_irq: wfx_irq {
 				brcm,pins = <16>;
 				brcm,function = <0>; /* BCM2835_FSEL_GPIO_IN */
@@ -60,24 +59,23 @@
 	fragment@1 {
 		target = <&spi>;
 		__overlay__ {
-			#address-cells = <1>; /* needed to avoid dtc warning */
-			#size-cells = <0>; /* needed to avoid dtc warning */
 			status = "okay";
-
+			#address-cells = <1>; /* avoid dtc warning */
+			#size-cells = <0>; /* avoid dtc warning */
 			pinctrl-names = "default";
 			pinctrl-0 = <&spi_pins>;
 			wfx: spidev@0 {
-				spi-max-frequency = <42000000>; // necessary for dtparam
-				reg = <0>;
+				status = "okay";
 				// Append "spidev" to be able to also use spidev driver
 				compatible = "silabs,wfx-spi";
+				reg = <0>;
 				pinctrl-names = "default";
 				pinctrl-0 = <&wfx_irq &wfx_wakeup &wfx_reset>;
+				spi-max-frequency = <42000000>; // necessary for dtparam
 				interrupts-extended = <&gpio 16 1>;
 				wakeup-gpios = <&gpio 12 0>;
 				reset-gpios = <&gpio 13 0>;
 				config-file = "wf200.pds"; // necessary for dtparam
-				status = "okay";
 			};
 		};
 	};
