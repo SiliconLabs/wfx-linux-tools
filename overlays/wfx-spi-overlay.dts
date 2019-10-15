@@ -59,10 +59,8 @@
 			wfx: spidev@0 {
 				spi-max-frequency = <42000000>; // necessary for dtparam
 				reg = <0>;
-				// "silabs,wfx-spi" is mandatory.
-				// Use "siliconlabs,wfx-wlan-spi" for compatibility with driver < 1.3
 				// Append "spidev" to be able to also use spidev driver
-				compatible = "silabs,wfx-spi", "siliconlabs,wfx-wlan-spi";
+				compatible = "silabs,wfx-spi";
 				pinctrl-names = "default";
 				pinctrl-0 = <&wfx_irq &wfx_gpios>;
 				interrupts-extended = <&gpio 16 1>;
