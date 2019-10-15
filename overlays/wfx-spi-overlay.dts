@@ -40,6 +40,7 @@
 			wfx_wakeup: wfx_wakeup {
 				brcm,pins = <12>;
 				brcm,function = <1>; /* BCM2835_FSEL_GPIO_OUT */
+				brcm,pull = <0>; /* BCM2835_PUD_OFF */
 			};
 			wfx_reset: wfx_reset {
 				brcm,pins = <13>;
