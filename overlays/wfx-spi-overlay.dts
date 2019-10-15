@@ -38,13 +38,17 @@
 				brcm,function = <0>; /* BCM2835_FSEL_GPIO_IN */
 				brcm,pull = <1>; /* BCM2835_PUD_DOWN */
 			};
-			wfx_gpios: wfx_gpios {
-				brcm,pins = <12 13>;
-				brcm,function = <1 1>; /* BCM2835_FSEL_GPIO_OUT */
+			wfx_wakeup: wfx_wakeup {
+				brcm,pins = <12>;
+				brcm,function = <1>; /* BCM2835_FSEL_GPIO_OUT */
+			};
+			wfx_reset: wfx_reset {
+				brcm,pins = <13>;
+				brcm,function = <1>; /* BCM2835_FSEL_GPIO_OUT */
 				// This pull-up/pull-down configuration is used
 				// when device is unbind (indeed, in this case,
 				// GPIO function are set to INPUT)
-				brcm,pull = <0 0>; /* BCM2835_PUD_OFF */
+				brcm,pull = <0>; /* BCM2835_PUD_OFF */
 			};
 		};
 	};
@@ -62,7 +66,7 @@
 				// Append "spidev" to be able to also use spidev driver
 				compatible = "silabs,wfx-spi";
 				pinctrl-names = "default";
-				pinctrl-0 = <&wfx_irq &wfx_gpios>;
+				pinctrl-0 = <&wfx_irq &wfx_wakeup &wfx_reset>;
 				interrupts-extended = <&gpio 16 1>;
 				wakeup-gpios = <&gpio 12 0>;
 				reset-gpios = <&gpio 13 0>;
