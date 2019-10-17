@@ -11,15 +11,15 @@ USAGE="Usage: $(basename $0) OPTION
 Start in station mode
 
 Options:
-  --help               display this message
-  --ssid <ssid>        connect to <ssid>
-  --password <pass>    specify password
-  --conf <file>        use specific wpa_supplicant.conf
-  --interface <if>     use interface instead of default wlan0
-  --no-dhcp            do not enable DHCP client (default is yes)
-  --dhcp yes|no|ignore enable DHCP client
-  --keep-supplicant    if any, use existing wpa_supplicant
-  --scan               scan for nearby access points
+     --help                display this message
+  n, --ssid <ssid>         connect to <ssid>
+  p, --password <pass>     specify password
+     --conf <file>         use specific wpa_supplicant.conf
+  i, --interface <if>      use interface instead of default wlan0
+     --no-dhcp             do not enable DHCP client (default is yes)
+  d, --dhcp yes|no|ignore  enable DHCP client
+     --keep-supplicant     if any, use existing wpa_supplicant
+  s, --scan                scan for nearby access points
 
 If only --conf is used, the supplied file is supposed to contain the AP(s) to connect to.
 If --ssid is used, $(basename $0) wait for the connection to be established.
@@ -40,22 +40,23 @@ TIMEOUT=15
 
 [ $# -eq 0 ] && error
 LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp,dhcp:,keep-supplicant,scan"
-! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
+SHORTOPTS="n:p:i:d:s"
+! PARSED=$(getopt --options=$SHORTOPTS --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
 while true; do
     case "$1" in
-        --ssid)      SSID="$2";      shift ;;
-        --password)  PASSWD="$2";    shift ;;
-        --conf)      CONF="$2";      shift ;;
-        --interface) INTERFACE="$2"; shift ;;
-        --no-dhcp)   DHCP="no"             ;;
-        --dhcp)      DHCP="$2";      shift ;;
+        -n|--ssid)         SSID="$2";      shift ;;
+        -p|--password)     PASSWD="$2";    shift ;;
+        --conf)            CONF="$2";      shift ;;
+        -i|--interface)    INTERFACE="$2"; shift ;;
+        --no-dhcp)         DHCP="no"             ;;
+        -d|--dhcp)         DHCP="$2";      shift ;;
         --keep-supplicant) KEEP_SUPP="true" ;;
-        --scan)      SCAN="true"            ;;
-        --help)      echo "$USAGE";  exit 0 ;;
-        --)          shift; break ;;
-        *)           error ;;
+        -s|--scan)         SCAN="true"            ;;
+        --help)            echo "$USAGE";  exit 0 ;;
+        --)                shift; break ;;
+        *)                 error ;;
     esac
     shift
 done
