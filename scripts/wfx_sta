@@ -19,6 +19,7 @@ Options:
   --no-dhcp            do not enable DHCP client (default is yes)
   --dhcp yes|no|ignore enable DHCP client
   --keep-supplicant    if any, use existing wpa_supplicant
+  --scan               scan for nearby access points
 
 If only --conf is used, the supplied file is supposed to contain the AP(s) to connect to.
 If --ssid is used, $(basename $0) wait for the connection to be established.
@@ -131,7 +132,7 @@ fi
 
 if [ "$SCAN" = "true" ]; then
     echo "Scanning access points..."
-    wpa_cli -i $INTERFACE scan >/dev/null
+    wpa_cli_run scan >/dev/null
     sleep 5
     wpa_cli -i $INTERFACE scan_results
     exit 0
