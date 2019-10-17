@@ -61,13 +61,19 @@ while true; do
 done
 [ $# -ne 0 ] && error
 
-wpa_cli_run()
+wpa_cli_run_check()
 {
     COMMAND='wpa_cli -i $INTERFACE $@'
     if eval $COMMAND | grep FAIL; then
         echo "ERROR: $COMMAND failed"
         exit 1
     fi
+}
+
+wpa_cli_run()
+{
+    COMMAND='wpa_cli -i $INTERFACE $@'
+    eval $COMMAND
 }
 
 kill_wait()
@@ -116,7 +122,7 @@ if [ "$KEEP_SUPP" = "false" ];then
 fi
 kill_wait /var/run/hostapd-$INTERFACE.pid
 
-if ! wpa_cli -i $INTERFACE status &>/dev/null; then
+if ! wpa_cli_run status &>/dev/null; then
     echo "Starting  wpa_supplicant"
     CONF_DIR=/tmp/wfx_sta/$INTERFACE
     rm -rf $CONF_DIR
@@ -132,30 +138,30 @@ fi
 
 if [ "$SCAN" = "true" ]; then
     echo "Scanning access points..."
-    wpa_cli_run scan >/dev/null
+    wpa_cli_run_check scan >/dev/null
     sleep 5
-    wpa_cli -i $INTERFACE scan_results
+    wpa_cli_run scan_results
     exit 0
 fi
 
 echo "Setting up connection"
 if [ ! -z "$SSID" ]; then
-    wpa_cli_run flush
-    wpa_cli_run add_network
-    wpa_cli_run set_network 0 ssid \"$SSID\"
+    wpa_cli_run_check flush
+    wpa_cli_run_check add_network
+    wpa_cli_run_check set_network 0 ssid \"$SSID\"
     if [ -z "$PASSWD" ]; then
-        wpa_cli_run set_network 0 key_mgmt NONE
+        wpa_cli_run_check set_network 0 key_mgmt NONE
     else
-        wpa_cli_run set_network 0 psk \"$PASSWD\"
+        wpa_cli_run_check set_network 0 psk \"$PASSWD\"
     fi
-    wpa_cli_run select_network 0
+    wpa_cli_run_check select_network 0
 fi
 
 echo "Waiting for connection"
 SUCCESS="false"
 for (( n=1; n<=$TIMEOUT; n++ )); do
     sleep 1
-    if echo "$(wpa_cli -i $INTERFACE status)" | grep wpa_state | grep -q COMPLETED; then
+    if echo "$(wpa_cli_run status)" | grep wpa_state | grep -q COMPLETED; then
         SUCCESS="true"
         echo "Associated"
         break
@@ -169,7 +175,7 @@ if [ "$DHCP" = "yes" ]; then
     SUCCESS="false"
     for (( n=1; n<=$TIMEOUT; n++ )); do
         sleep 1
-        IP="$(wpa_cli -i $INTERFACE status | sed -nre 's/^ip_address=(.*)/\1/p')"
+        IP="$(wpa_cli_run status | sed -nre 's/^ip_address=(.*)/\1/p')"
         if echo "$IP" | grep -qv '169.254.'; then
             SUCCESS="true"
             echo "DHCP lease obtained"
@@ -180,6 +186,6 @@ if [ "$DHCP" = "yes" ]; then
 fi
 
 echo -n "Success: "
-echo -n "$INTERFACE connected to $(wpa_cli -i $INTERFACE status | sed -nre 's/^ssid=(.*)/\1/p') "
+echo -n "$INTERFACE connected to $(wpa_cli_run status | sed -nre 's/^ssid=(.*)/\1/p') "
 [ -n "$IP" ] && echo -n "with IP $IP"
 echo ""
