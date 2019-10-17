@@ -11,12 +11,12 @@ USAGE="Usage: $(basename $0) OPTION
 Start in access point mode
 
 Options:
-  --help               display this message
-  --conf <file>        hostapd.conf file
-  --ip <address>       set the IP (with /24 mask)
-  --dhcp yes|no|ignore enable DHCP server (default is no)
-  --forward <if>       enable traffic forwarding to interface
-  --no-forward         disable all traffic forwarding
+      --help                display this message
+      --conf <file>         hostapd.conf file
+      --ip <address>        set the IP (with /24 mask)
+  -d, --dhcp yes|no|ignore  enable DHCP server (default is no) (-d equals --dhcp yes)
+      --forward <if>        enable traffic forwarding to interface
+      --no-forward          disable all traffic forwarding
 
 Example:
   - start an ap with address 192.168.1.1 on wlan and enable DHCP server (Wi-Fi configuration depends on hostapd.conf content):
@@ -37,6 +37,7 @@ INTERFACE="wlan0"
 
 [ $# -eq 0 ] && error
 LONGOPTS="help,conf:,ip:,dhcp:,forward:,no-forward"
+SHORTOPTS="d"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
@@ -45,6 +46,7 @@ while true; do
         --conf)       CONF="$2";      shift ;;
         --ip)         SET_IP="$2";    shift ;;
         --dhcp)       DHCP="$2";      shift ;;
+        -d)           DHCP='yes' ;;
         --forward)    FWD_IF="$2";    shift ;;
         --no-forward) NO_FWD="true"         ;;
         --help)       echo "$USAGE"; exit 0 ;;
