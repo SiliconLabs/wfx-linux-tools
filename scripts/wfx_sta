@@ -162,12 +162,14 @@ for (( n=1; n<=$TIMEOUT; n++ )); do
 done
 [ "$SUCCESS" != true ] && error "Association timeout"
 
+IP=""
 if [ "$DHCP" = "yes" ]; then
     echo "Waiting for DHCP"
     SUCCESS="false"
     for (( n=1; n<=$TIMEOUT; n++ )); do
         sleep 1
-        if echo "$(wpa_cli -i $INTERFACE status)" | grep ip_address | grep -qv '169.254.'; then
+        IP="$(wpa_cli -i $INTERFACE status | sed -nre 's/^ip_address=(.*)/\1/p')"
+        if echo "$IP" | grep -qv '169.254.'; then
             SUCCESS="true"
             echo "DHCP lease obtained"
             break
@@ -178,4 +180,5 @@ fi
 
 echo -n "Success: "
 echo -n "$INTERFACE connected to $(wpa_cli -i $INTERFACE status | sed -nre 's/^ssid=(.*)/\1/p') "
-echo "with IP $(wpa_cli status | sed -nre 's/^ip_address=(.*)/\1/p')"
+[ -n "$IP" ] && echo -n "with IP $IP"
+echo ""
