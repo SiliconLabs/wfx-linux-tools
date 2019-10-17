@@ -14,22 +14,32 @@ if [ "${1}" == "-C" ] || [ "${1}" == "--clear" ]; then
 fi
 
 case "$(wfx_bus --show)" in
-    spi)
-        ;;
-    sdio)
-        IS_SDIO=1
-        ;;
-    *)
-        exit 1
-        ;;
+    spi) ;;
+    sdio) IS_SDIO=1 ;;
+    *) echo "ERROR: unable to detect bus"; exit 1 ;;
 esac
 
 set -e
+
 modprobe -v wfx -r
 # With SDIO bus, chip have to be reset by SDIO host (while SPI slave can reset itself)
-[ "$IS_SDIO" ] && echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind
+if [ "$IS_SDIO" ]; then
+    echo "Unbinding"
+    if ! echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind 2>/dev/null; then # Raspberry mmc driver with rpi-3
+        if ! echo fe300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind 2>/dev/null; then # Raspberry mmc driver with rpi-4
+            echo 3f300000.sdhci > /sys/bus/platform/drivers/sdhci-iproc/unbind 2>/dev/null # Mainstream driver
+        fi
+    fi
+fi
 [ "$CLEAR_DMESG" ] && dmesg -C
-[ "$IS_SDIO" ] && echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/bind
+if [ "$IS_SDIO" ]; then
+    echo "Rebinding"
+    if ! echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/bind 2>/dev/null; then # Raspberry mmc driver with rpi-3
+        if ! echo fe300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/bind 2>/dev/null; then # Raspberry mmc driver with rpi-4
+            echo 3f300000.sdhci > /sys/bus/platform/drivers/sdhci-iproc/bind 2>/dev/null # Mainstream driver
+        fi
+    fi
+fi
 modprobe -v wfx
 check_interface wlan0
 echo "Success"
