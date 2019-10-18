@@ -15,7 +15,7 @@ rm -f /usr/local/bin/wfx_*
 rm -f /usr/local/bin/pds_compress
 
 # Create a link under /usr/local/bin for all files matching wfx_ (ignore files with extension and backup files)
-find ! -path '*/\.*' -type f \( -name 'wfx_*' -o -name pds_compress \) ! -name '*~' ! -name '*.*' -execdir bash -c 'ln -vs $(realpath {}) /usr/local/bin/$(basename {})' \;
+find ! -path '*/\.*' -type f \( ! -name wfx_cli -name 'wfx_*' -o -name pds_compress \) ! -name '*~' ! -name '*.*' -execdir bash -c 'ln -vs $(realpath {}) /usr/local/bin/$(basename {})' \;
 
 # Disable power save for best performance
 UDEV_FILE=/etc/udev/rules.d/80-wifi-powersave.rules
