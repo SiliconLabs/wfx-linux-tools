@@ -19,7 +19,7 @@ Otpions:
 "
 
 GIT="git -C $GITHUB_DRIVER_PATH"
-WFX_GIT="wfx_git --path $GITHUB_DRIVER_PATH"
+WFX_GIT="$GITHUB_TOOLS_PATH/update/git.sh --path $GITHUB_DRIVER_PATH"
 
 case "$1" in
     --help)
