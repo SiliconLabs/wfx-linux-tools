@@ -84,5 +84,6 @@
 	__overrides__ {
 		config_file = <&wfx>,"config-file";
 		spi_max_frequency = <&wfx>,"spi-max-frequency:0";
+		max_frequency = <&wfx>,"spi-max-frequency:0";
 	};
 };
