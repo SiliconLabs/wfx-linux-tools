@@ -15,7 +15,8 @@
 # Differences between full PDS and compressed PDS are:
 #     1. Comments are stripped
 #     2. Symbolic names are replaced with their values
-#     3. Hexadecimal and binary numbers are replaced by their decimal values
+#     3. All numbers (decimal, hexadecimal and binary) are replaced by their
+#        hexadecimal values (without '0x' prefix)
 #     4. New lines and spaces are stripped
 #
 # In two words, output of this script is more or less same as:
@@ -32,7 +33,7 @@
 from __future__ import print_function
 
 # If you modify this file, please don't forget to increment version number.
-__version__ = "1.2"
+__version__ = "1.3"
 
 import io
 import os
