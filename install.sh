@@ -40,5 +40,6 @@ systemctl disable wpa_supplicant.service
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-spi-overlay.dts -o /boot/overlays/wfx-spi.dtbo
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-sdio-overlay.dts -o /boot/overlays/wfx-sdio.dtbo
 dtc -@ -W no-unit_address_vs_reg overlays/spidev-overlay.dts -o /boot/overlays/spidev.dtbo
+dtc -@ -W no-unit_address_vs_reg overlays/disable-uart-overlay.dts -o /boot/overlays/disable-uart.dtbo
 
 echo "Success"
