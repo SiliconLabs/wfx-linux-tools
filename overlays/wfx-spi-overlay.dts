@@ -65,6 +65,7 @@
 			#size-cells = <0>; /* avoid dtc warning */
 			pinctrl-names = "default";
 			pinctrl-0 = <&spi_pins>;
+			/delete-property/ cs-gpios;
 			wfx: spidev@0 {
 				status = "okay";
 				// Append "spidev" to be able to also use spidev driver
