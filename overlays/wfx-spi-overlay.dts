@@ -52,7 +52,7 @@
 			};
 			spi_pins: spi_pins {
 				brcm,pins = <7 8 9 10 11>;
-				brcm,function = <4>; /* BCM2835_FSEL_ALT0 */
+				brcm,function = <1 1 4 4 4>; /* BCM2835_FSEL_GPIO_OUT / BCM2835_FSEL_ALT0 */
 			};
 		};
 	};
@@ -65,7 +65,7 @@
 			#size-cells = <0>; /* avoid dtc warning */
 			pinctrl-names = "default";
 			pinctrl-0 = <&spi_pins>;
-			/delete-property/ cs-gpios;
+			cs-gpios = <&gpio 8 1>, <&gpio 7 1>;
 			wfx: spidev@0 {
 				status = "okay";
 				// Append "spidev" to be able to also use spidev driver
