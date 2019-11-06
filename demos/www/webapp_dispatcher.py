@@ -34,6 +34,7 @@ start_time = time.process_time()
 prev_time = start_time
 
 def dispatch(environ):
+    dmesg_print("dispatch "+ environ["REQUEST_URI"] + " " + environ["QUERY_STRING"])
     try:
         request_uri = environ["REQUEST_URI"]
         query_string = environ["QUERY_STRING"]
@@ -92,7 +93,7 @@ def bash_res(cmd, trace=0):
     return ret.decode()
 
 def start_station(query_string, trace=1):
-    bash_res("systemctl start wfx-demo-wpa_supplicant.service")
+    bash_res("sudo /bin/systemctl start wfx-demo-wpa_supplicant.service")
     missing_fields = []
 
     if "ssid=" not in query_string:
@@ -130,14 +131,13 @@ def start_station(query_string, trace=1):
         return('missing_fields: ' + str(missing_fields))
 
 def start_softap():
-    return bash_res("systemctl start wfx-demo-hostapd.service")
+    return bash_res("sudo /bin/systemctl start wfx-demo-hostapd.service")
 
 def stop_station():
-    return bash_res("systemctl stop wfx-demo-wpa_supplicant.service")
+    return bash_res("sudo /bin/systemctl stop wfx-demo-wpa_supplicant.service")
 
 def stop_softap():
-    return bash_res("systemctl stop wfx-demo-hostapd.service")
-
+    return bash_res("sudo /bin/systemctl stop wfx-demo-hostapd.service")
 
 def disconnect_client(query_string):
     if "mac=" in query_string:
@@ -156,7 +156,7 @@ def disconnect_client(query_string):
         return ("Argument error: A proper request is 'disconnect_client.cgi?mac=00:11:22:33:44:55'")
 
 def dmesg_print(txt):
-    bash_res("echo " + txt + " | sudo tee  /dev/kmsg")
+    bash_res("echo " + txt + " > /dev/kmsg")
 
 def get_interface_states():
     # We use collections.OrderedDict() instead of dict() because
@@ -167,17 +167,21 @@ def get_interface_states():
 
     softap = collections.OrderedDict()
 
+    misc = collections.OrderedDict()
+
     hostapd_running = bash_res("ps -few | grep hostapd | grep ^root")
     if hostapd_running == "":
-        softap["state"] = "off"
-        softap["ssid"] = ""
-        softap["ip"] = "0.0.0.0"
-        softap["mac"] = "00:00:00:00:00:00"
-        softap["secu"] = "none"
-        softap["channel"] = "0"
-        softap["clients"] = collections.OrderedDict()
+        softap_conf = bash_res("cat /home/pi/siliconlabs/wfx-linux-tools/demos/conf/combo_hostapd.conf")
+        show_wlan1 = bash_res("ip address show wlan1")
+        softap["state"] = "0"
+        softap["ssid"] = re.findall(r'\nssid.*=(.*)', softap_conf)[0]
+        softap["ip"] = re.findall(r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}', show_wlan1)[0]
+        softap["mac"] = re.findall(r'[0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2}', show_wlan1)[0]
+        softap["secu"] = "(AP is off)"
+        softap["channel"] = re.findall(r'\nchannel=(.*)', softap_conf)[0]
+        softap["clients"] = list()
     else:
-        softap["state"] = "on"
+        softap["state"] = "1"
         hostapd_cli_status = bash_res("hostapd_cli status")
         hostapd_cli_config = bash_res("hostapd_cli get_config")
         softap["ssid"] = re.findall(r'\nssid.*=(.*)', hostapd_cli_config)[0]
@@ -191,7 +195,6 @@ def get_interface_states():
             hostapd_cli_all_sta = bash_res("hostapd_cli all_sta")
             dnsmasq_leases = bash_res("cat /var/lib/misc/dnsmasq.leases")
             mac_all_sta = re.findall(r'dot11RSNAStatsSTAAddress.*=(.*)', hostapd_cli_all_sta)
-            softap["clients"] = list()
             for mac in mac_all_sta:
                 client = collections.OrderedDict()
                 if mac in dnsmasq_leases:
@@ -201,29 +204,42 @@ def get_interface_states():
                     client["hostname"] = hostname
                     softap["clients"].append(client)
 
-        json_string=json.dumps(softap, separators=(',', ':'))
         
-        wpa_supplicant_running = bash_res("ps -few | grep wpa_supplicant | grep ^root")
-        station = collections.OrderedDict()
+    wpa_supplicant_running = bash_res("ps -few | grep wpa_supplicant-combo | grep ^root ")
+    station = collections.OrderedDict()
 
-        station["state"] = "off"
-        station["ip"] = "0.0.0.0"
-        station["mac"] = "00:00:00:00:00:00"
-        if wpa_supplicant_running != "":
-            wpa_cli_status = bash_res("wpa_cli status")
-            station["state"] = re.findall(r'\nwpa_state.*=(.*)', wpa_cli_status)[0]
-            if station["state"] == "COMPLETED":
-                ap = collections.OrderedDict()
-                ap["ssid"] = re.findall(r'\nssid=(.*)', wpa_cli_status)[0]
-                ap["mac"] = re.findall(r'\naddress=(.*)', wpa_cli_status)[0]
-                ap["secu"] = re.findall(r'\nkey_mgmt=(.*)', wpa_cli_status)[0]
-                freq = int(re.findall(r'\nfreq=(.*)', wpa_cli_status)[0])
-                ap["channel"] = str(int((freq - 2407)/5))
-        
-        states["softap"] = softap
-        states["station"] = station
-        json_string = json.dumps(states, separators=(',', ':'))
-        return(json_string)
+    station["state"] = "0"
+    station["ip"] = "0.0.0.0"
+    station["mac"] = "00:00:00:00:00:00"
+    ap = collections.OrderedDict()
+    ap["ssid"] = ""
+    ap["mac"] = "00:00:00:00:00:00"
+    ap["secu"] = ""
+    ap["channel"] = 0
+    if wpa_supplicant_running != "":
+        wpa_cli_status = bash_res("wpa_cli status")
+        #misc["wpa_cli_status"] = wpa_cli_status
+        station["state"] = re.findall(r'\nwpa_state.*=(.*)', wpa_cli_status)[0]
+        if station["state"] == "COMPLETED":
+            station["ip"] = re.findall(r'\nip_address=(.*)', wpa_cli_status)[0]
+            station["mac"] = re.findall(r'\nbssid=(.*)', wpa_cli_status)[0]
+            station["state"] = 1
+            ap["ssid"] = re.findall(r'\nssid=(.*)', wpa_cli_status)[0]
+            ap["mac"] = re.findall(r'\naddress=(.*)', wpa_cli_status)[0]
+            ap["secu"] = re.findall(r'\nkey_mgmt=(.*)', wpa_cli_status)[0]
+            freq = int(re.findall(r'\nfreq=(.*)', wpa_cli_status)[0])
+            ap["channel"] = str(int((freq - 2407)/5))
+
+    station["ap"] = ap
+
+    misc["whoami"] = bash_res("whoami")
+
+    states["softap"] = softap
+    states["station"] = station
+    states["misc"] = misc
+
+    json_string = json.dumps(states, separators=(',', ':'))
+    return(json_string)
 
 def get_led_states():
     state=collections.OrderedDict()
@@ -317,6 +333,8 @@ def toggle_led(led):
             return ("Argument error: led_id is not a digit. A proper request is 'led_toggle.cgi?led_id=0/1'")
     else:
         return ("Argument error: A proper request is 'led_toggle.cgi?led_id=0/1'")
+
+dmesg_print("webapp_dispatcher loaded")
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
