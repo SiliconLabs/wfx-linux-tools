@@ -73,7 +73,7 @@ case "$MODE" in
         check_working_clean $REPO_PATH
         # Fetch only when unknown version or branch from remote
         if ! $GIT checkout -q "$VERSION" 2>/dev/null ||
-                $GIT branch --list --all | grep -q "remotes/$VERSION$"; then
+                $GIT branch --list --remote | grep -q "$VERSION"; then
             $GIT fetch --quiet --all --tags --prune
             if ! $GIT checkout -q "$VERSION"; then
                 echo "ERROR: cannot find version" >&2
