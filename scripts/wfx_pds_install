@@ -42,7 +42,7 @@ VERSION=""
 LIST="false"
 LIST_TAGS="false"
 PDS_DEF_PATH="$GITHUB_PDS_PATH"
-PDS_PATH_NEW="$GITHUB_PDS_PATH_NEW"
+PDS_PATH="$GITHUB_PDS_PATH_NEW"
 
 [ $# -eq 0 ] && error
 LONGOPTS="help,list-boards,auto,board:,list-tags,version:,custom:,repo:"
@@ -57,7 +57,7 @@ while true; do
         --custom)      INFILE="$2"; shift ;;
         --list-tags)   LIST_TAGS="true" ;;
         --version)     VERSION="$2"; shift ;;
-        --repo)        PDS_DEF_PATH="$2/definitions"; PDS_PATH_NEW="$2"; shift ;;
+        --repo)        PDS_DEF_PATH="$2/definitions"; PDS_PATH="$2"; shift ;;
         --help)        echo "$USAGE"; exit 0 ;;
         --)            shift; break ;;
         *)             error ;;
@@ -66,7 +66,7 @@ while true; do
 done
 [ $# -ne 0 ] && error
 
-WFX_GIT="$GITHUB_TOOLS_PATH/update/git.sh --url https://github.com/SiliconLabs/wfx-pds.git --path $PDS_PATH_NEW"
+WFX_GIT="$GITHUB_TOOLS_PATH/update/git.sh --url https://github.com/SiliconLabs/wfx-pds.git --path $PDS_PATH"
 
 if [ "$LIST_TAGS" = "true" ]; then
     $WFX_GIT --list
@@ -82,12 +82,12 @@ if [ -z "$INFILE" ]; then
         VERSION=origin/API$(sed -nre 's/#define DEFINITIONS_(.)_(.)_(.)_IN/\1.\2/p' $PDS_DEF_PATH/definitions.in)
     fi
     $WFX_GIT --version "$VERSION"
-    INFILE="$PDS_PATH_NEW/$BOARD.pds.in"
+    INFILE="$PDS_PATH/$BOARD.pds.in"
 fi
 
 if [ "$LIST" = "true" ]; then
     echo "Version $VERSION supports the following boards"
-    tree $PDS_PATH_NEW -P '*.pds.in' -I definitions --noreport
+    tree $PDS_PATH -P '*.pds.in' -I definitions --noreport
     exit 0
 fi
 
