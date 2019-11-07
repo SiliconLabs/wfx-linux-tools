@@ -22,6 +22,7 @@ Options:
   --version VER   install version VER (default is to autodetect)
   --custom FILE   install custom .pds.in FILE
   --repo REPO     use specific repository for both PDS files and definitions
+  --repo-url URL  use this address as remote for the specific repository
 
 Examples:
   - install PDS with board auto-detection and version auto-detection
@@ -43,9 +44,10 @@ LIST="false"
 LIST_TAGS="false"
 PDS_DEF_PATH="$GITHUB_PDS_PATH"
 PDS_PATH="$GITHUB_PDS_PATH_NEW"
+PDS_URL="dummy"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,list-boards,auto,board:,list-tags,version:,custom:,repo:"
+LONGOPTS="help,list-boards,auto,board:,list-tags,version:,custom:,repo:,repo-url:"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
@@ -58,6 +60,7 @@ while true; do
         --list-tags)   LIST_TAGS="true" ;;
         --version)     VERSION="$2"; shift ;;
         --repo)        PDS_DEF_PATH="$2/definitions"; PDS_PATH="$2"; shift ;;
+        --repo-url)    PDS_URL="$2"; shift ;;
         --help)        echo "$USAGE"; exit 0 ;;
         --)            shift; break ;;
         *)             error ;;
@@ -66,7 +69,7 @@ while true; do
 done
 [ $# -ne 0 ] && error
 
-WFX_GIT="$GITHUB_TOOLS_PATH/update/git.sh --url https://github.com/SiliconLabs/wfx-pds.git --path $PDS_PATH"
+WFX_GIT="$GITHUB_TOOLS_PATH/update/git.sh --url $PDS_URL --path $PDS_PATH"
 
 if [ "$LIST_TAGS" = "true" ]; then
     $WFX_GIT --list
