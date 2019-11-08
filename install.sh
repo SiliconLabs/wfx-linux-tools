@@ -37,16 +37,16 @@ perl -i -p0e 's/(-A INPUT -p tcp -m tcp --dport http -j ACCEPT\n)(\n# Allow iper
 # Disable wpa_supplicant launched by systmed to avoid conflict with demo/tests
 systemctl disable wpa_supplicant.service
 
-cat << EOF | tee /etc/sudoers.d/020_wfx-demo
+cat << EOF > /etc/sudoers.d/020_wfx-demo
 # Allow wfx demo webpage to start/stop STA/AP
-Cmnd_Alias WEBAPP = /bin/systemctl start wfx-demo-hostapd.service,\
-                    /bin/systemctl stop  wfx-demo-hostapd.service,\
-                    /bin/systemctl start wfx-demo-wpa_supplicant.service,\
+Cmnd_Alias WEBAPP = /bin/systemctl start wfx-demo-hostapd.service, \\
+                    /bin/systemctl stop  wfx-demo-hostapd.service, \\
+                    /bin/systemctl start wfx-demo-wpa_supplicant.service, \\
                     /bin/systemctl stop  wfx-demo-wpa_supplicant.service
 
 %netdev ALL=(ALL) NOPASSWD: WEBAPP
 EOF
-chown 0440 /etc/sudoers.d/020_wfx-demo
+chmod 0440 /etc/sudoers.d/020_wfx-demo
 
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-spi-overlay.dts -o /boot/overlays/wfx-spi.dtbo
 dtc -@ -W no-unit_address_vs_reg overlays/wfx-sdio-overlay.dts -o /boot/overlays/wfx-sdio.dtbo
