@@ -82,7 +82,7 @@ fi
 if [ -z "$INFILE" ]; then
     if [ -z "$VERSION" ]; then
         echo "INFO: no --version specified, autodecting..."
-        VERSION=origin/API$(sed -nre 's/#define DEFINITIONS_(.)_(.)_(.)_IN/\1.\2/p' $PDS_DEF_PATH/definitions.in)
+        VERSION=origin/API$(sed -nre 's/#define DEFINITIONS_(.)_(.)_IN/\1.\2/p' $PDS_DEF_PATH/definitions.in)
     fi
     $WFX_GIT --version "$VERSION"
     INFILE="$PDS_PATH/$BOARD.pds.in"
