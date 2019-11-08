@@ -177,7 +177,7 @@ if [ "$DHCP" = "yes" ]; then
     for (( n=1; n<=$TIMEOUT; n++ )); do
         sleep 1
         IP="$(wpa_cli_run status | sed -nre 's/^ip_address=(.*)/\1/p')"
-        if echo "$IP" | grep -qv '169.254.'; then
+        if [ -n "$IP" ] && echo "$IP" | grep -qv '169.254.'; then
             SUCCESS="true"
             echo "DHCP lease obtained"
             break
