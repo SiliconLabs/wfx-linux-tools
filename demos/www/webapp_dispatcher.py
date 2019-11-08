@@ -197,12 +197,14 @@ def get_interface_states():
             mac_all_sta = re.findall(r'dot11RSNAStatsSTAAddress.*=(.*)', hostapd_cli_all_sta)
             for mac in mac_all_sta:
                 client = collections.OrderedDict()
+                client["mac"] = mac
+                client["ip"] = ""
+                client["hostname"] = ""
                 if mac in dnsmasq_leases:
                     ip, hostname = re.findall(r' ' + mac + r' ' + r'([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})' + r' ' + r'(\S*)' , dnsmasq_leases)[0]
                     client["ip"] = ip
-                    client["mac"] = mac
                     client["hostname"] = hostname
-                    softap["clients"].append(client)
+                softap["clients"].append(client)
 
         
     wpa_supplicant_running = bash_res("ps -few | grep wpa_supplicant-combo | grep ^root ")
