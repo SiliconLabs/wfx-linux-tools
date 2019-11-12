@@ -184,17 +184,32 @@ def get_interface_states():
         softap["state"] = "1"
         hostapd_cli_status = bash_res("hostapd_cli status")
         hostapd_cli_config = bash_res("hostapd_cli get_config")
-        softap["ssid"] = re.findall(r'\nssid.*=(.*)', hostapd_cli_config)[0]
+        softap_ssid = re.findall(r'\nssid.*=(.*)', hostapd_cli_config)
+        if softap_ssid != []:
+            softap["ssid"] = softap_ssid[0]
+        else:
+            softap["ssid"] = ""
         softap["ip"] = bash_res("ip address show wlan1 | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}'")
-        softap["mac"] = re.findall(r'bssid.*=(.*)', hostapd_cli_config)[0]
-        softap["secu"] = re.findall(r'key_mgmt.*=(.*)', hostapd_cli_config)[0]
+        softap_mac = re.findall(r'bssid.*=(.*)', hostapd_cli_config)
+        if softap_mac != []:
+            softap["mac"] = softap_mac[0]
+        else:
+            softap["mac"] = "00:00:00:00:00:00"
+        softap_secu = re.findall(r'key_mgmt.*=(.*)', hostapd_cli_config)
+        if softap_secu != []:
+            print(softap_secu)
+            softap["secu"] = softap_secu[0]
+        else:
+            softap["secu"] = "NONE"
         softap["channel"] = re.findall(r'\nchannel.*=(.*)', hostapd_cli_status)[0]
         num_sta = int(re.findall(r'\nnum_sta\[.*\]=(.*)', hostapd_cli_status)[0])
+        softap["num_sta"] = num_sta
         softap["clients"] = list()
         if num_sta > 0:
             hostapd_cli_all_sta = bash_res("hostapd_cli all_sta")
             dnsmasq_leases = bash_res("cat /var/lib/misc/dnsmasq.leases")
-            mac_all_sta = re.findall(r'dot11RSNAStatsSTAAddress.*=(.*)', hostapd_cli_all_sta)
+            mac_all_sta = re.findall(r'\n([0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2})', hostapd_cli_all_sta)
+            softap["mac_all_sta"] = mac_all_sta
             for mac in mac_all_sta:
                 client = collections.OrderedDict()
                 client["mac"] = mac
