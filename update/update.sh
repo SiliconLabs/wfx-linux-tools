@@ -15,6 +15,6 @@ set -x
 
 "/home/pi/siliconlabs/wfx-linux-tools/update/wfx_tools_install" origin/SD3
 
-wfx_driver_install --version 2.2.5-public
-wfx_firmware_install --version FW3.1.0
+wfx_driver_install --version 2.2.5-publicw
+fx_firmware_install --version FW3.3.0
 wfx_pds_install --auto
