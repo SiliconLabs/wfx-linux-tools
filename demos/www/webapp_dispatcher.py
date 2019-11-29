@@ -28,6 +28,7 @@ import re
 import subprocess
 import sys
 import time
+from urllib.parse import unquote_plus
 
 profiling=list()
 start_time = time.process_time()
@@ -98,7 +99,7 @@ def start_station(query_string, trace=1):
     if "ssid=" not in query_string:
         missing_fields.append("ssid")
     else:
-        ssid = re.findall(r'ssid=([^&]*)', query_string)[0]
+        ssid = re.findall(r'ssid=([^&]*)', unquote_plus(query_string))[0]
 
     if "secu" not in query_string:
         missing_fields.append("secu")
