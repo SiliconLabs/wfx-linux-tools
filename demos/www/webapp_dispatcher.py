@@ -233,7 +233,6 @@ def get_interface_states():
     ap["channel"] = 0
     if wpa_supplicant_running != "":
         wpa_cli_status = bash_res("wpa_cli status")
-        #misc["wpa_cli_status"] = wpa_cli_status
         station["state"] = re.findall(r'\nwpa_state.*=(.*)', wpa_cli_status)[0]
         if station["state"] == "COMPLETED":
             station["ip"] = re.findall(r'\nip_address=(.*)', wpa_cli_status)[0]
@@ -247,12 +246,9 @@ def get_interface_states():
 
     station["ap"] = ap
 
-    misc["whoami"] = bash_res("whoami")
-
     states["event"] = ''
     states["softap"] = softap
     states["station"] = station
-    states["misc"] = misc
 
     json_string = json.dumps(states, separators=(',', ':'))
     return(json_string)
