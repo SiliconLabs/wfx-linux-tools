@@ -34,7 +34,7 @@ start_time = time.process_time()
 prev_time = start_time
 
 def dispatch(environ):
-    dmesg_print("dispatch "+ environ["REQUEST_URI"] + " " + environ["QUERY_STRING"])
+    log("dispatch "+ environ["REQUEST_URI"] + " " + environ["QUERY_STRING"])
     try:
         request_uri = environ["REQUEST_URI"]
         query_string = environ["QUERY_STRING"]
@@ -154,8 +154,8 @@ def disconnect_client(query_string):
     else:
         return ("Argument error: A proper request is 'disconnect_client.cgi?mac=00:11:22:33:44:55'")
 
-def dmesg_print(txt):
-    bash_res("echo " + txt + " > /dev/kmsg")
+def log(txt):
+    bash_res(f'logger {txt}')
 
 def get_interface_states():
     # We use collections.OrderedDict() instead of dict() because
@@ -349,7 +349,7 @@ def toggle_led(led):
     else:
         return ("Argument error: A proper request is 'led_toggle.cgi?led_id=0/1'")
 
-dmesg_print("webapp_dispatcher loaded")
+log("webapp_dispatcher loaded")
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
