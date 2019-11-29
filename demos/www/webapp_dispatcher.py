@@ -294,25 +294,21 @@ def start_scan():
 
     aps = list()
     for line in scan_result.split("\n"):
-        line_len = len(line.split())
-        ssid = "?"
-        secu = "?"
-        if line_len == 5:
-            (MAC, freq , rssi, secu, ssid) = line.split()
-            if "\\x00" in ssid:
-                ssid = "HIDDEN"
-        if line_len == 4:
-            (MAC, freq , rssi, secu) = line.split()
-            ssid = "HIDDEN"
-        if line_len >=4:
-            if "WPA2" in secu:
-                secu = "WPA2"
-            if "WPS" in secu:
-                secu = "WPS"
-            if "ESS" in secu:
-                secu = "OPEN"
+        fields = line.split()
+        MAC,freq,rssi,cypher = fields[:4]
+        ssid = ' '.join(fields[4:])
 
         channel = str(int((int(freq) - 2407)/5))
+
+        if ssid == '' or "\\x00" in ssid:
+            ssid = "HIDDEN"
+
+        secu = "OPEN"
+        if "WEP" in cypher:
+            secu = "WEP"
+        if "WPA2" in cypher:
+            secu = "WPA2"
+
         aps.append((MAC, freq, channel, rssi, secu, ssid))
 
     aps.sort(key = lambda elt : elt[3], reverse = False)
