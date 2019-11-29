@@ -93,7 +93,6 @@ def bash_res(cmd, trace=0):
     return ret.decode()
 
 def start_station(query_string, trace=1):
-    bash_res("sudo /bin/systemctl start wfx-demo-wpa_supplicant.service")
     missing_fields = []
 
     if "ssid=" not in query_string:
@@ -134,7 +133,7 @@ def start_softap():
     return bash_res("sudo /bin/systemctl start wfx-demo-hostapd.service")
 
 def stop_station():
-    return bash_res("sudo /bin/systemctl stop wfx-demo-wpa_supplicant.service")
+    return bash_res('wpa_cli disconnect')
 
 def stop_softap():
     return bash_res("sudo /bin/systemctl stop wfx-demo-hostapd.service")
