@@ -559,6 +559,9 @@
           url: '/get_interface_states.cgi?&buster=' + new Date().getTime(),
           dataType: 'json',
           success: function(info) {
+            if(info.event != ""){
+              alert(info.event);
+            }
             if (info.softap.state == 1) {
               station_prev_state = "off";
               $("#softap_state").removeClass("ui-btn-c");

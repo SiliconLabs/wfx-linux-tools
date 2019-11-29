@@ -249,6 +249,7 @@ def get_interface_states():
 
     misc["whoami"] = bash_res("whoami")
 
+    states["event"] = ''
     states["softap"] = softap
     states["station"] = station
     states["misc"] = misc
