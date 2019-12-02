@@ -220,7 +220,6 @@ def get_interface_states():
                     client["hostname"] = hostname
                 softap["clients"].append(client)
 
-        
     wpa_supplicant_running = bash_res("ps -few | grep wpa_supplicant-combo | grep ^root ")
     station = collections.OrderedDict()
 
@@ -247,12 +246,42 @@ def get_interface_states():
 
     station["ap"] = ap
 
+        get_supplicant_last_event()
+
     states["event"] = ''
     states["softap"] = softap
     states["station"] = station
 
     json_string = json.dumps(states, separators=(',', ':'))
     return(json_string)
+
+def get_supplicant_last_event():
+    # Get supplicant events since last call
+    timestamp_file = '/tmp/wfx-demo-combo.timestamp'
+
+    try:
+        with open(timestamp_file, 'r') as content:
+            last_timestamp = content.read()
+    except OSError:
+        # Avoid getting full log the first time
+        last_timestamp = '-10'
+
+    cmd = f'/bin/journalctl --output=short-full -u wfx-demo-wpa_supplicant.service --since="{last_timestamp}"'
+    traces = subprocess.run(cmd, capture_output=True, shell=True).stdout.decode('utf-8')
+
+    new_timestamp = ''
+    for line in reversed(traces.splitlines()):
+        if new_timestamp == '':
+            new_timestamp = ' '.join(line.split()[:4])
+
+        if 'completed' in line:
+            log('youpi on est connecte')
+        log(line)
+
+    if new_timestamp != '':
+        with open(timestamp_file, 'w') as content:
+            content.write(new_timestamp)
+
 
 def get_led_states():
     state=collections.OrderedDict()
