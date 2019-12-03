@@ -28,7 +28,7 @@ import re
 import subprocess
 import sys
 import time
-from urllib.parse import unquote_plus
+import urllib.parse
 import traceback
 
 profiling=list()
@@ -103,41 +103,23 @@ def findall_no_exc(pattern, text):
         return ''
 
 def start_station(query_string, trace=1):
-    missing_fields = []
+    params = urllib.parse.parse_qs(query_string, strict_parsing=True, encoding='utf-8')
 
-    if "ssid=" not in query_string:
-        missing_fields.append("ssid")
-    else:
-        ssid = re.findall(r'ssid=([^&]*)', unquote_plus(query_string))[0]
+    bash_res("wpa_cli flush", trace)
+    network_id = bash_res("wpa_cli add_network", trace).split()[3]
+    try:
+        ssid = params['ssid'][0]
+        bash_res(f'wpa_cli set_network {network_id} ssid \\"{ssid}\\"', trace)
+        if 'pwd' in params.keys():
+            pwd = params['pwd'][0]
+            bash_res(f'wpa_cli set_network {network_id} psk \\"{pwd}\\"', trace)
+        else:
+            bash_res(f'wpa_cli set_network {network_id} key_mgmt NONE', trace)
+        bash_res(f'wpa_cli select_network {network_id}', trace)
+    except KeyError as e:
+        return(f'missing field: {str(e)}')
 
-    if "secu" not in query_string:
-        missing_fields.append("secu")
-    else:
-        secu = re.findall(r'secu=([^&]*)*', query_string)[0]
-        if secu != "OPEN":
-            if "pwd" not in query_string:
-                missing_fields.append("pwd")
-            else:
-                pwd = re.findall(r'pwd=([^&]*)*', query_string)[0]
-
-        if len(missing_fields) == 0:
-            bash_res("wpa_cli flush", trace)
-            network_id = bash_res("wpa_cli add_network", trace).split()[3]
-            bash_res('wpa_cli set_network    ' + network_id + ' ssid \\"' + ssid + '\\"', trace)
-
-            if secu == "WPA2":
-                bash_res('wpa_cli set_network    ' + network_id + ' key_mgmt ' + 'WPA-PSK' + '', trace)
-                bash_res('wpa_cli set_network    ' + network_id + ' psk \\"' + pwd + '\\"', trace)
-            else:
-                bash_res('wpa_cli set_network    ' + network_id + ' key_mgmt ' + 'NONE' + '', trace)
-                bash_res('wpa_cli set_network    ' + network_id + ' proto ' + 'RSN' + '', trace)
-
-            bash_res('wpa_cli select_network    ' + network_id, trace)
-            # we have to return something, so let's return the ssid
-            return(ssid)
-
-    if len(missing_fields):
-        return('missing_fields: ' + str(missing_fields))
+    return('')
 
 def start_softap():
     return bash_res("sudo /bin/systemctl start wfx-demo-hostapd.service")
