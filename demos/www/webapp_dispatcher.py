@@ -29,6 +29,7 @@ import subprocess
 import sys
 import time
 from urllib.parse import unquote_plus
+import traceback
 
 profiling=list()
 start_time = time.process_time()
@@ -70,6 +71,8 @@ def dispatch(environ):
         return "Can't dispatch " + request_uri
 
     except Exception as e:
+        with open('/tmp/webapp.err', 'a') as log_file:
+            traceback.print_exc(file=log_file)
         return str(e)
 
 def bash_res(cmd, trace=0):
