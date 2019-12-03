@@ -255,9 +255,7 @@ def get_interface_states():
 
     station["ap"] = ap
 
-        get_supplicant_last_event()
-
-    states["event"] = ''
+    states["event"] = get_supplicant_last_event()
     states["softap"] = softap
     states["station"] = station
 
@@ -270,26 +268,38 @@ def get_supplicant_last_event():
 
     try:
         with open(timestamp_file, 'r') as content:
-            last_timestamp = content.read()
-    except OSError:
+            last_line = content.read()
+            last_timestamp = ' '.join(last_line.split()[:4])
+    except:
         # Avoid getting full log the first time
-        last_timestamp = '-10'
+        last_line = ''
+        last_timestamp = '-60'
 
     cmd = f'/bin/journalctl --output=short-full -u wfx-demo-wpa_supplicant.service --since="{last_timestamp}"'
-    traces = subprocess.run(cmd, capture_output=True, shell=True).stdout.decode('utf-8')
+    result = subprocess.run(cmd, capture_output=True, shell=True).stdout.decode('utf-8')
 
     new_timestamp = ''
-    for line in reversed(traces.splitlines()):
-        if new_timestamp == '':
-            new_timestamp = ' '.join(line.split()[:4])
+    event = ''
+    if 'No entries' not in result:
+        for line in reversed(result.splitlines()):
+            if line.strip() == '':
+                break
+            if new_timestamp == '':
+                new_timestamp = ' '.join(line.split()[:4])
 
-        if 'completed' in line:
-            log('youpi on est connecte')
-        log(line)
+            if line == last_line:
+                break
 
-    if new_timestamp != '':
-        with open(timestamp_file, 'w') as content:
-            content.write(new_timestamp)
+            if 'completed' in line:
+                log('CONNECTION ESTABLISHED!!!!')
+                event = 'connected'
+            log(line)
+
+        if new_timestamp != '':
+            with open(timestamp_file, 'w') as content:
+                content.write(result.splitlines()[-1])
+
+    return event
 
 
 def get_led_states():
