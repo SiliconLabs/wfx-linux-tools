@@ -103,7 +103,10 @@ def findall_no_exc(pattern, text):
         return ''
 
 def start_station(query_string, trace=1):
-    params = urllib.parse.parse_qs(query_string, strict_parsing=True, encoding='utf-8')
+
+    clear_supplicant_last_event()
+
+    params = urllib.parse.parse_qs(query_string, strict_parsing=True)
 
     bash_res("wpa_cli flush", trace)
     network_id = bash_res("wpa_cli add_network", trace).split()[3]
@@ -244,10 +247,12 @@ def get_interface_states():
     json_string = json.dumps(states, separators=(',', ':'))
     return(json_string)
 
+
+timestamp_file = '/tmp/wfx-demo-combo.timestamp'
+event_file = '/tmp/last_event'
+
 def get_supplicant_last_event():
     # Get supplicant events since last call
-    timestamp_file = '/tmp/wfx-demo-combo.timestamp'
-
     try:
         with open(timestamp_file, 'r') as content:
             last_line = content.read()
@@ -281,7 +286,26 @@ def get_supplicant_last_event():
             with open(timestamp_file, 'w') as content:
                 content.write(result.splitlines()[-1])
 
+    # Avoid event repetition
+    if event != '':
+        try:
+            with open(event_file, 'r') as content:
+                last_event = content.read()
+        except:
+            last_event = ''
+
+        if event == last_event:
+            event = ''
+        else:
+            with open(event_file, 'w') as content:
+                content.write(event)
+
     return event
+
+
+def clear_supplicant_last_event():
+    with open(event_file, 'w') as content:
+        content.write('')
 
 
 def get_led_states():
