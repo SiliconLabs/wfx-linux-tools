@@ -272,10 +272,10 @@ def get_supplicant_last_event():
             if line == last_line:
                 break
 
-            if 'completed' in line:
-                log('CONNECTION ESTABLISHED!!!!')
-                event = 'connected'
-            log(line)
+            if 'reason=WRONG_KEY' in line:
+                event = 'Connection authentication failure'
+            elif 'auth_failures' in line:
+                event = 'Connection rejected by the access point'
 
         if new_timestamp != '':
             with open(timestamp_file, 'w') as content:
