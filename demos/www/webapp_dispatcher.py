@@ -96,6 +96,12 @@ def bash_res(cmd, trace=0):
         print("<>res<>" + ret.decode() + "<>res<>")
     return ret.decode()
 
+def findall_no_exc(pattern, text):
+    try:
+        return re.findall(pattern, text)[0]
+    except:
+        return ''
+
 def start_station(query_string, trace=1):
     missing_fields = []
 
@@ -238,13 +244,13 @@ def get_interface_states():
         wpa_cli_status = bash_res("wpa_cli status")
         station["state"] = re.findall(r'\nwpa_state.*=(.*)', wpa_cli_status)[0]
         if station["state"] == "COMPLETED":
-            station["ip"] = re.findall(r'\nip_address=(.*)', wpa_cli_status)[0]
-            station["mac"] = re.findall(r'\nbssid=(.*)', wpa_cli_status)[0]
+            station["ip"] = findall_no_exc(r'\nip_address=(.*)', wpa_cli_status)
+            station["mac"] = findall_no_exc(r'\nbssid=(.*)', wpa_cli_status)
             station["state"] = 1
-            ap["ssid"] = re.findall(r'\nssid=(.*)', wpa_cli_status)[0]
-            ap["mac"] = re.findall(r'\naddress=(.*)', wpa_cli_status)[0]
-            ap["secu"] = re.findall(r'\nkey_mgmt=(.*)', wpa_cli_status)[0]
-            freq = int(re.findall(r'\nfreq=(.*)', wpa_cli_status)[0])
+            ap["ssid"] = findall_no_exc(r'\nssid=(.*)', wpa_cli_status)
+            ap["mac"] = findall_no_exc(r'\naddress=(.*)', wpa_cli_status)
+            ap["secu"] = findall_no_exc(r'\nkey_mgmt=(.*)', wpa_cli_status)
+            freq = int(findall_no_exc(r'\nfreq=(.*)', wpa_cli_status))
             ap["channel"] = str(int((freq - 2407)/5))
 
     station["ap"] = ap
