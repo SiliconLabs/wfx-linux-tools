@@ -30,6 +30,7 @@ import sys
 import time
 import urllib.parse
 import traceback
+import shlex
 
 profiling=list()
 start_time = time.process_time()
@@ -102,23 +103,34 @@ def findall_no_exc(pattern, text):
     except:
         return ''
 
+
+def wpa_cli(command):
+    print(command)
+    args = ['wpa_cli'] + shlex.split(command)
+    result = subprocess.run(args, capture_output=True, timeout=10, check=True, text=True)
+    print(result.stdout)
+    if 'FAIL' == result.stdout.splitlines()[-1]:
+        raise ValueError
+    return result.stdout
+
+
 def start_station(query_string, trace=1):
 
     clear_supplicant_last_event()
 
     params = urllib.parse.parse_qs(query_string, strict_parsing=True)
 
-    bash_res("wpa_cli flush", trace)
-    network_id = bash_res("wpa_cli add_network", trace).split()[3]
+    wpa_cli('flush')
+    network_id = wpa_cli('add_network').splitlines()[-1]
     try:
         ssid = params['ssid'][0]
-        bash_res(f'wpa_cli set_network {network_id} ssid \\"{ssid}\\"', trace)
+        wpa_cli(f'set_network {network_id} ssid \\"{ssid}\\"')
         if 'pwd' in params.keys():
             pwd = params['pwd'][0]
-            bash_res(f'wpa_cli set_network {network_id} psk \\"{pwd}\\"', trace)
+            wpa_cli(f'set_network {network_id} psk \\"{pwd}\\"')
         else:
-            bash_res(f'wpa_cli set_network {network_id} key_mgmt NONE', trace)
-        bash_res(f'wpa_cli select_network {network_id}', trace)
+            wpa_cli(f'set_network {network_id} key_mgmt NONE')
+        wpa_cli(f'select_network {network_id}')
     except KeyError as e:
         return(f'missing field: {str(e)}')
 
