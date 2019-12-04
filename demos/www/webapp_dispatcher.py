@@ -285,14 +285,16 @@ event_file = '/tmp/last_event'
 
 def get_supplicant_last_event():
     # Get supplicant events since last call
+
+    ctx = load_context()
+    ctx.setdefault('last_line', '')
+    ctx.setdefault('last_event', '')
+
     try:
-        with open(timestamp_file, 'r') as content:
-            last_line = content.read()
-            last_timestamp = ' '.join(last_line.split()[:4])
+        last_timestamp = ' '.join(ctx['last_line'].split()[:4])
     except:
         # Avoid getting full log the first time
-        last_line = ''
-        last_timestamp = '-60'
+        last_timestamp = '60'
 
     cmd = f'/bin/journalctl --output=short-full -u wfx-demo-wpa_supplicant.service --since="{last_timestamp}"'
     result = subprocess.run(cmd, capture_output=True, shell=True).stdout.decode('utf-8')
@@ -315,29 +317,24 @@ def get_supplicant_last_event():
                 event = 'Connection rejected by the access point'
 
         if new_timestamp != '':
-            with open(timestamp_file, 'w') as content:
-                content.write(result.splitlines()[-1])
+            ctx['last_line'] = result.splitlines()[-1]
 
     # Avoid event repetition
-    if event != '':
-        try:
-            with open(event_file, 'r') as content:
-                last_event = content.read()
-        except:
-            last_event = ''
+    if event != '' and event != ctx['last_event']:
+        ctx['last_event'] = event
 
-        if event == last_event:
-            event = ''
-        else:
-            with open(event_file, 'w') as content:
-                content.write(event)
+    if event != '':
+        log(f'event returned: {event}')
+
+    store_context(ctx)
 
     return event
 
 
 def clear_supplicant_last_event():
-    with open(event_file, 'w') as content:
-        content.write('')
+    ctx = load_context()
+    ctx['last_event'] = ''
+    store_context(ctx)
 
 
 def get_led_states():
