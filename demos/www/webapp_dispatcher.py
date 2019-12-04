@@ -154,6 +154,10 @@ def start_station(query_string, trace=1):
         wpa_cli(f'select_network {network_id}')
     except KeyError as e:
         result = f'missing field: {str(e)}'
+    except ValueError:
+        ctx['next_event'] = 'Wrong parameter'
+    except subprocess.CalledProcessError:
+        ctx['next_event'] = 'wpa_supplicant error'
 
     store_context(ctx)
     return(result)
@@ -283,42 +287,44 @@ def get_interface_states():
 
 def get_supplicant_last_event():
     # Get supplicant events since last call
-
     ctx = load_context()
     ctx.setdefault('last_line', '')
     ctx.setdefault('last_event', '')
 
-    last_timestamp = ' '.join(ctx['last_line'].split()[:4])
-    if last_timestamp.strip() == '':
-        # Avoid getting full log the first time
-        last_timestamp = '-60'
+    event = ctx.get('next_event', '')
+    ctx['next_event'] = ''
+    if event == '':
 
-    cmd = f'/bin/journalctl --output=short-full -u wfx-demo-wpa_supplicant.service --since="{last_timestamp}"'
-    result = subprocess.run(cmd, capture_output=True, shell=True).stdout.decode('utf-8')
+        last_timestamp = ' '.join(ctx['last_line'].split()[:4])
+        if last_timestamp.strip() == '':
+            # Avoid getting full log the first time
+            last_timestamp = '-60'
 
-    update = False
-    event = ''
-    if 'No entries' not in result:
-        for line in reversed(result.splitlines()):
-            if line.strip() == '':
-                break
+        cmd = f'/bin/journalctl --output=short-full -u wfx-demo-wpa_supplicant.service --since="{last_timestamp}"'
+        result = subprocess.run(cmd, capture_output=True, shell=True).stdout.decode('utf-8')
 
-            update = True
+        update = False
+        if 'No entries' not in result:
+            for line in reversed(result.splitlines()):
+                if line.strip() == '':
+                    break
 
-            if line == ctx['last_line']:
-                break
+                update = True
 
-            if 'reason=WRONG_KEY' in line:
-                event = 'Connection authentication failure'
-            elif 'auth_failures' in line:
-                event = 'Connection rejected by the access point'
+                if line == ctx['last_line']:
+                    break
 
-        if update:
-            ctx['last_line'] = result.splitlines()[-1]
+                if 'reason=WRONG_KEY' in line:
+                    event = 'Connection authentication failure'
+                elif 'auth_failures' in line:
+                    event = 'Connection rejected by the access point'
 
-    # Avoid event repetition
-    if event != '' and event != ctx['last_event']:
-        ctx['last_event'] = event
+            if update:
+                ctx['last_line'] = result.splitlines()[-1]
+
+        # Avoid event repetition
+        if event != '' and event != ctx['last_event']:
+            ctx['last_event'] = event
 
     if event != '':
         log(f'event returned: {event}')
