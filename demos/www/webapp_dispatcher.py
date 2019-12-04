@@ -35,6 +35,7 @@ import shlex
 profiling=list()
 start_time = time.process_time()
 prev_time = start_time
+context_file = '/tmp/webapp_context.json'
 
 def dispatch(environ):
     log("dispatch "+ environ["REQUEST_URI"] + " " + environ["QUERY_STRING"])
@@ -75,6 +76,25 @@ def dispatch(environ):
         with open('/tmp/webapp.err', 'a') as log_file:
             traceback.print_exc(file=log_file)
         return str(e)
+
+
+def load_context():
+    try:
+        with open(context_file, 'r') as content:
+            context = json.load(content)
+    except Exception as e:
+        print(str(e))
+        context = {}
+    return context
+
+
+def store_context(context):
+    try:
+        with open(context_file, 'w') as content:
+            json.dump(context, content, indent=4)
+    except Exception as e:
+        print(str(e))
+
 
 def bash_res(cmd, trace=0):
     trace_cmd = 0
