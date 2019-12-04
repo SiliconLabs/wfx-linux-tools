@@ -5,8 +5,8 @@
 
 # Several functions in this module can be tested from command line using:
 #  python3 webapp_dispatcher.py disconnect_client.cgi?mac=<00:11:22:33:44:55>
-#  python3 webapp_dispatcher.py get_interface_states
-#  python3 webapp_dispatcher.py get_led_states
+#  python3 webapp_dispatcher.py get_interface_states.cgi
+#  python3 webapp_dispatcher.py get_led_states.cgi
 #  python3 webapp_dispatcher.py start_scan.cgi
 #  python3 webapp_dispatcher.py start_softap.cgi
 #  python3 webapp_dispatcher.py start_station.cgi?ssid=<ssid>&pwd=<pwd>&secu=<None/WPA2>
