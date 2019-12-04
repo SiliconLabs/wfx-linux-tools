@@ -135,13 +135,14 @@ def wpa_cli(command):
 
 
 def start_station(query_string, trace=1):
-
-    clear_supplicant_last_event()
+    ctx = load_context()
+    ctx['last_event'] = ''
 
     params = urllib.parse.parse_qs(query_string, strict_parsing=True)
 
     wpa_cli('flush')
     network_id = wpa_cli('add_network').splitlines()[-1]
+    result = ''
     try:
         ssid = params['ssid'][0]
         wpa_cli(f'set_network {network_id} ssid \\"{ssid}\\"')
@@ -152,9 +153,10 @@ def start_station(query_string, trace=1):
             wpa_cli(f'set_network {network_id} key_mgmt NONE')
         wpa_cli(f'select_network {network_id}')
     except KeyError as e:
-        return(f'missing field: {str(e)}')
+        result = f'missing field: {str(e)}'
 
-    return('')
+    store_context(ctx)
+    return(result)
 
 def start_softap():
     return bash_res("sudo /bin/systemctl start wfx-demo-hostapd.service")
@@ -279,10 +281,6 @@ def get_interface_states():
     json_string = json.dumps(states, separators=(',', ':'))
     return(json_string)
 
-
-timestamp_file = '/tmp/wfx-demo-combo.timestamp'
-event_file = '/tmp/last_event'
-
 def get_supplicant_last_event():
     # Get supplicant events since last call
 
@@ -290,25 +288,24 @@ def get_supplicant_last_event():
     ctx.setdefault('last_line', '')
     ctx.setdefault('last_event', '')
 
-    try:
-        last_timestamp = ' '.join(ctx['last_line'].split()[:4])
-    except:
+    last_timestamp = ' '.join(ctx['last_line'].split()[:4])
+    if last_timestamp.strip() == '':
         # Avoid getting full log the first time
-        last_timestamp = '60'
+        last_timestamp = '-60'
 
     cmd = f'/bin/journalctl --output=short-full -u wfx-demo-wpa_supplicant.service --since="{last_timestamp}"'
     result = subprocess.run(cmd, capture_output=True, shell=True).stdout.decode('utf-8')
 
-    new_timestamp = ''
+    update = False
     event = ''
     if 'No entries' not in result:
         for line in reversed(result.splitlines()):
             if line.strip() == '':
                 break
-            if new_timestamp == '':
-                new_timestamp = ' '.join(line.split()[:4])
 
-            if line == last_line:
+            update = True
+
+            if line == ctx['last_line']:
                 break
 
             if 'reason=WRONG_KEY' in line:
@@ -316,7 +313,7 @@ def get_supplicant_last_event():
             elif 'auth_failures' in line:
                 event = 'Connection rejected by the access point'
 
-        if new_timestamp != '':
+        if update:
             ctx['last_line'] = result.splitlines()[-1]
 
     # Avoid event repetition
@@ -329,12 +326,6 @@ def get_supplicant_last_event():
     store_context(ctx)
 
     return event
-
-
-def clear_supplicant_last_event():
-    ctx = load_context()
-    ctx['last_event'] = ''
-    store_context(ctx)
 
 
 def get_led_states():
