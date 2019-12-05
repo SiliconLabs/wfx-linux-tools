@@ -158,7 +158,7 @@ def start_station(query_string, trace=1):
     except KeyError as e:
         result = f'missing field: {str(e)}'
     except ValueError:
-        ctx['next_event'] = 'Wrong parameter'
+        ctx['next_event'] = 'Connection authentication failure'
     except subprocess.CalledProcessError:
         ctx['next_event'] = 'wpa_supplicant error'
 
