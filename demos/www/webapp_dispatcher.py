@@ -146,8 +146,10 @@ def start_station(query_string, trace=1):
     try:
         ssid = params['ssid'][0]
         wpa_cli(f'set_network {network_id} ssid \\"{ssid}\\"')
-        if 'pwd' in params.keys():
-            pwd = params['pwd'][0]
+        if params.get('secu', ['OPEN'])[0] != 'OPEN':
+            pwd = params.get('pwd', [''])[0]
+            if pwd == '':
+                raise ValueError
             wpa_cli(f'set_network {network_id} psk \\"{pwd}\\"')
         else:
             wpa_cli(f'set_network {network_id} key_mgmt NONE')
