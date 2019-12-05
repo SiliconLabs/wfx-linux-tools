@@ -282,7 +282,7 @@
         <label for="ssid">SSID</label>
         <input type="text" id="ssid" name="ssid" readonly required>
         <label for="pwd">Password</label>
-        <input type="password" placeholder="Enter Password" id="pwd" name="pwd" required>
+        <input type="password" placeholder="Enter Password" id="pwd" name="pwd">
         <label for="secu">Security</label>
         <input type="text" id="secu" name="secu" readonly required>
         <button type="submit" id="connect_btn" onclick="connection_modal.style.display = 'none';">Connect</button>
@@ -633,10 +633,8 @@
       $("#pwd").val("");
       if (secu == "OPEN") {
         $("#pwd").hide();
-        $("#pwd").prop('required', false);
       } else {
         $("#pwd").show();
-        $("#pwd").prop('required', true);
       }
     }
 
