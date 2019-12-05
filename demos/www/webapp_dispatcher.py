@@ -137,6 +137,7 @@ def wpa_cli(command):
 def start_station(query_string, trace=1):
     ctx = load_context()
     ctx['last_event'] = ''
+    ctx['next_event'] = ''
 
     params = urllib.parse.parse_qs(query_string, strict_parsing=True)
 
@@ -295,8 +296,8 @@ def get_supplicant_last_event():
 
     event = ctx.get('next_event', '')
     ctx['next_event'] = ''
-    if event == '':
 
+    if event == '':
         last_timestamp = ' '.join(ctx['last_line'].split()[:4])
         if last_timestamp.strip() == '':
             # Avoid getting full log the first time
@@ -305,34 +306,25 @@ def get_supplicant_last_event():
         cmd = f'/bin/journalctl --output=short-full -u wfx-demo-wpa_supplicant.service --since="{last_timestamp}"'
         result = subprocess.run(cmd, capture_output=True, shell=True).stdout.decode('utf-8')
 
-        update = False
-        if 'No entries' not in result:
-            for line in reversed(result.splitlines()):
-                if line.strip() == '':
-                    break
-
-                update = True
-
-                if line == ctx['last_line']:
-                    break
-
+        logs = result.splitlines()
+        last_log = logs[-1]
+        if last_log.strip() != '' and 'No entries' not in last_log and last_log != ctx['last_line']:
+            ctx['last_line'] = last_log
+            for line in reversed(logs):
                 if 'reason=WRONG_KEY' in line:
                     event = 'Connection authentication failure'
                 elif 'auth_failures' in line:
                     event = 'Connection rejected by the access point'
 
-            if update:
-                ctx['last_line'] = result.splitlines()[-1]
-
         # Avoid event repetition
-        if event != '' and event != ctx['last_event']:
-            ctx['last_event'] = event
+        if event == ctx['last_event']:
+            event = ''
 
     if event != '':
         log(f'event returned: {event}')
+        ctx['last_event'] = event
 
     store_context(ctx)
-
     return event
 
 
