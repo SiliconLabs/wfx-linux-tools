@@ -242,7 +242,11 @@ def get_interface_states():
         softap["clients"] = list()
         if num_sta > 0:
             hostapd_cli_all_sta = bash_res("hostapd_cli all_sta")
-            dnsmasq_leases = bash_res("cat /var/lib/misc/dnsmasq.leases")
+            try:
+                with open('/var/lib/misc/dnsmasq.leases', 'r') as f:
+                    dnsmasq_leases = f.read()
+            except:
+                dnsmasq_leases = ''
             mac_all_sta = re.findall(r'\n([0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2}\:[0-9|a-f]{2})', hostapd_cli_all_sta)
             for mac in mac_all_sta:
                 client = collections.OrderedDict()

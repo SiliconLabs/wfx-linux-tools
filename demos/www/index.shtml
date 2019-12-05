@@ -592,7 +592,7 @@
               var client_mac = $("#client" + id + "_mac");
               var client_link = $("#relclient" + id);
               client_name.css("display", "block");
-              client_name.attr("name", client.name);
+              client_name.attr("name", client.hostname);
               client_ip.text(client.ip);
               client_mac.text(client.mac);
               client_link.css("display", "block");
