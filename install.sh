@@ -37,6 +37,9 @@ perl -i -p0e 's/(-A INPUT -p tcp -m tcp --dport http -j ACCEPT\n)(\n# Allow iper
 # Disable wpa_supplicant launched by systmed to avoid conflict with demo/tests
 systemctl disable wpa_supplicant.service
 
+# Allow wfx-demo to access wpa_supplicant logs
+usermod -aG systemd-journal www-data
+
 cat << EOF > /etc/sudoers.d/020_wfx-demo
 # Allow wfx demo webpage to start/stop STA/AP
 Cmnd_Alias WEBAPP = /bin/systemctl start wfx-demo-hostapd.service, \\
