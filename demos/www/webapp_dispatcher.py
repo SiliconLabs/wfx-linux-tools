@@ -73,9 +73,7 @@ def dispatch(environ):
         return "Can't dispatch " + request_uri
 
     except Exception as e:
-        with open('/tmp/webapp.err', 'a') as log_file:
-            traceback.print_exc(file=log_file)
-        return str(e)
+        return traceback.format_exc()
 
 
 def load_context():
