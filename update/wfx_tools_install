@@ -22,10 +22,7 @@ export GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
 
 GIT="git -C $GITHUB_TOOLS_PATH"
 
-# Fetch if version is unknown
-if ! $GIT rev-parse --verify $TOOLS_VERSION &>/dev/null; then
-    $GIT fetch --all --tags --prune
-fi
+$GIT fetch --all --tags --prune
 
 # Launch install for a specific version
 git -C $GITHUB_TOOLS_PATH show $TOOLS_VERSION:update/tools_install.sh | bash -s
