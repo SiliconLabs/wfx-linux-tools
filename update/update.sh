@@ -7,38 +7,45 @@
 set -euo pipefail
 
 TOOLS_VERSION="origin/SD3"
+COMMON_TOOLS_VERSION="663391d"
 DRIVER_VERSION="2.2.5-public"
 FIRMWARE_VERSION="FW3.3.1"
+
+GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
+COMMON_TOOLS_PATH="/home/pi/siliconlabs/wfx-common-tools"
 
 if [ $(id -u) == 0 ]; then
     echo "ERROR: running this script as root is not recommended" >&2
     exit 1
 fi
 
+repo_checkout_version()
+{
+    local REPO_PATH=$1
+    local VERSION=$2
+
+    STATUS=$(git -C $REPO_PATH status --porcelain --untracked-files=no)
+    if ! [ -z "$STATUS" ]; then
+        echo "ERROR: the following files where modified in the directory $GITHUB_TOOLS_PATH"
+        echo "$STATUS"
+        echo "To DISCARD modifications, run \"git reset --hard\" in this directory"
+        echo "To SAVE modifications, run \"git stash\" in this directory"
+        exit 1
+    fi
+
+    git -C $REPO_PATH fetch --all --tags --prune
+    if ! git -C $REPO_PATH checkout -q $VERSION; then
+        echo "ERROR: cannot get version $VERSION" >&2
+        exit 1
+    fi
+}
+
 set -x
 
 # Update tools
-GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
-GIT="git -C $GITHUB_TOOLS_PATH"
-
-STATUS=$($GIT status --porcelain --untracked-files=no)
-if ! [ -z "$STATUS" ]; then
-    echo "ERROR: the following files where modified in the directory $GITHUB_TOOLS_PATH"
-    echo "$STATUS"
-    echo "To DISCARD modifications, run \"git reset --hard\" in this directory"
-    echo "To SAVE modifications, run \"git stash\" in this directory"
-    exit 1
-fi
-
-$GIT fetch --all --tags --prune
-if ! $GIT checkout -q $TOOLS_VERSION; then
-    echo "ERROR: cannot get version $TOOLS_VERSION" >&2
-    exit 1
-fi
-
-# Launch updated tools install script
+repo_checkout_version $GITHUB_TOOLS_PATH $TOOLS_VERSION
 ( cd "$GITHUB_TOOLS_PATH"; sudo ./install.sh )
-
+repo_checkout_version $COMMON_TOOLS_PATH $COMMON_TOOLS_VERSION
 
 # Update driver, firmware and PDS
 wfx_driver_install --version $DRIVER_VERSION
