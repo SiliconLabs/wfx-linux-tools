@@ -305,11 +305,14 @@ def get_supplicant_last_event():
             # Avoid getting full log the first time
             last_timestamp = '-60'
 
-        cmd = f'/bin/journalctl --output=short-full -u wfx-demo-wpa_supplicant.service --since="{last_timestamp}"'
-        result = subprocess.run(cmd, capture_output=True, shell=True).stdout.decode('utf-8')
+        try:
+            cmd = f'/bin/journalctl --output=short-full -u wfx-demo-wpa_supplicant.service --since="{last_timestamp}"'
+            result = subprocess.run(cmd, capture_output=True, shell=True).stdout.decode('utf-8')
+            logs = result.splitlines()
+            last_log = logs[-1]
+        except:
+            last_log = ''
 
-        logs = result.splitlines()
-        last_log = logs[-1]
         if last_log.strip() != '' and 'No entries' not in last_log and last_log != ctx['last_line']:
             ctx['last_line'] = last_log
             for line in reversed(logs):
