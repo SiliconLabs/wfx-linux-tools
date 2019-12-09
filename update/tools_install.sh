@@ -3,14 +3,12 @@
 # See license terms contained in COPYING file
 
 # DO NOT MOVE THIS SCRIPT OR MAKE IT EXECUTABLE
-# this script is to be run by wfx_tools_install
+# this script is to be run by update.sh
 #
 # This second stage is designed just to update wfx-linux-tools code
 # The installation itself is then delegated to install.sh
 
 set -ex
-
-GITHUB_TOOLS_INTERNAL_PATH="$GITHUB_TOOLS_PATH/internal"
 
 GIT="git -C $GITHUB_TOOLS_PATH"
 
