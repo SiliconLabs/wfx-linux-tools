@@ -69,7 +69,7 @@ def dispatch(environ):
 
         if "/toggle_led.cgi" in request_uri:
             return toggle_led(query_string)
-              
+
         return "Can't dispatch " + request_uri
 
     except Exception as e:
@@ -435,4 +435,3 @@ if __name__ == '__main__':
             environ["REQUEST_URI"] = "/" + sys.argv[1]
             environ["QUERY_STRING"] = ""
         print(dispatch(environ))
-    
