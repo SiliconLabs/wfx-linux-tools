@@ -34,6 +34,9 @@ perl -i -p0e 's/# Allow DHCP server for wfx-demo-combo\n-A INPUT -i wlan1 -p udp
 # Allow DNS
 perl -i -p0e 's/(-A INPUT -p tcp -m tcp --dport http -j ACCEPT\n)(\n# Allow iperf and iperf3)/$1\n# Allow DNS server\n-A INPUT -p udp --dport 53 -j ACCEPT\n$2/igs' /etc/iptables/rules.v4
 
+# Disable UART to free FEM pins
+perl -i -p0e 's/(# Disable Broadcom integrated Bluetooth and Wi-Fi\n)/# Disable UART, Broadcom integrated Bluetooth and Wi-Fi\ndtoverlay=disable-uart\n/igs' /boot/config.txt
+
 # Disable wpa_supplicant launched by systmed to avoid conflict with demo/tests
 systemctl disable wpa_supplicant.service
 
