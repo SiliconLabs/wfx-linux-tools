@@ -22,7 +22,7 @@ print_command "Driver loaded version" "cat /sys/module/wfx/version"
 printf "\n"
 
 print_command "Firmware loaded version" \
-              "sed -nre 's/Firmware:.* WFM(.*)/\1/p' /sys/kernel/debug/ieee80211/phy*/wfx/status | sed -nre 's/[^0-9]*([0-9]+).([0-9]+).([0-9]+).*/\1.\2.\3/p' || \
+              "sed -nre 's/Firmware:.* WFM[^0-9]*([0-9]+).([0-9]+).([0-9]+).*/\1.\2.\3/p' /sys/kernel/debug/ieee80211/phy*/wfx/status || \
               ethtool -i wlan0 | sed -nre 's/firmware-version: (.*)/\1/p'"
 
 printf "\n"

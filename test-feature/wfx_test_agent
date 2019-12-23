@@ -38,7 +38,8 @@ case "$1" in
         exit 0
         ;;
     read_fw_version)
-        echo "$(sed -nre 's/Firmware:.* WFM(.*)/\1/p' /sys/kernel/debug/ieee80211/phy*/wfx/status | xargs | tr ' ' .)"
+        sed -nre 's/Firmware:.* WFM[^0-9]*([0-9]+).([0-9]+).([0-9]+).*/\1.\2.\3/p' /sys/kernel/debug/ieee80211/phy*/wfx/status 2>/dev/null || \
+            ethtool -i wlan0 | sed -nre 's/firmware-version: (.*)/\1/p'
         exit 0
         ;;
     read_driver_version)
