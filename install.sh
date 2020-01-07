@@ -12,10 +12,11 @@ set -e
 ! [ -e install.sh ] && echo "This script must be run from wfx-linux-tools" && exit 1 || true
 
 rm -f /usr/local/bin/wfx_*
+rm -f /usr/local/bin/pta_*
 rm -f /usr/local/bin/pds_compress
 
-# Create a link under /usr/local/bin for all files matching wfx_ (ignore files with extension and backup files)
-find ! -path '*/\.*' -type f \( ! -name wfx_cli -name 'wfx_*' -o -name pds_compress \) ! -name '*~' ! -name '*.*' -execdir bash -c 'ln -vs $(realpath {}) /usr/local/bin/$(basename {})' \;
+# Create a link under /usr/local/bin for all files matching wfx_ and pta_ (ignore files with extension and backup files)
+find ! -path '*/\.*' -type f \( ! -name wfx_cli -name 'wfx_*' -o -name 'pta_*' -o -name pds_compress \) ! -name '*~' ! -name '*.*' -execdir bash -c 'ln -vs $(realpath {}) /usr/local/bin/$(basename {})' \;
 
 # Disable power save for best performance
 UDEV_FILE=/etc/udev/rules.d/80-wifi-powersave.rules
