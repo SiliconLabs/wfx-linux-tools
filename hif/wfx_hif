@@ -63,7 +63,7 @@ hif_send_msg()
 case "$1" in
     --help)               echo "$USAGE" ;;
     read_agent_version)   echo "${VERSION}" ;;
-    send_msg)             wfx_exec hif_send_msg "${2}" ;;
+    send_msg)             hif_send_msg "${2}" ;;
     log_message)          echo "${2}" | tee /dev/kmsg; echo "Done" ;;
     *)                    echo "ERROR: unknown $(basename $0) option $1" >&2
                           echo "$USAGE" >&2
