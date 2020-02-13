@@ -58,6 +58,14 @@
 	};
 
 	fragment@1 {
+		target = <&alt0>;
+		__overlay__ {
+			brcm,pins = <4 5>;
+			brcm,function = <4>; /* BCM2835_FSEL_ALT0 */
+		};
+	};
+
+	fragment@2 {
 		target = <&spi>;
 		__overlay__ {
 			status = "okay";
