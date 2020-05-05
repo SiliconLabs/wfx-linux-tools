@@ -13,6 +13,7 @@ Options:
   --help                display this message
   write_test_data       write test data to debugfs
   read_rx_stats         read rx_stats from debugfs
+  read_tx_info          read tx_power_loop from debugfs
   read_fw_version       return current firmware version
   read_driver_version   return current driver version
 "
@@ -35,6 +36,11 @@ case "$1" in
     read_rx_stats)
         rx_stats_output='/sys/kernel/debug/ieee80211/phy*/wfx/rx_stats'
         echo "$(cat ${rx_stats_output})"
+        exit 0
+        ;;
+    read_tx_info)
+        tx_info_output='/sys/kernel/debug/ieee80211/phy*/wfx/tx_power_loop'
+        echo "$(cat ${tx_info_output})"
         exit 0
         ;;
     read_fw_version)
