@@ -38,7 +38,7 @@ perl -i -p0e 's/(-A INPUT -p tcp -m tcp --dport http -j ACCEPT\n)(\n# Allow iper
 # Disable UART to free FEM pins
 perl -i -p0e 's/(# Disable Broadcom integrated Bluetooth and Wi-Fi\n)/# Disable UART, Broadcom integrated Bluetooth and Wi-Fi\ndtoverlay=disable-uart\n/igs' /boot/config.txt
 
-# Disable wpa_supplicant launched by systmed to avoid conflict with demo/tests
+# Disable wpa_supplicant launched by systemd to avoid conflict with demo/tests
 systemctl disable wpa_supplicant.service
 
 # Allow wfx-demo to access wpa_supplicant logs
