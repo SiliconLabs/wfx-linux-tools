@@ -8,8 +8,8 @@ set -euo pipefail
 
 TOOLS_VERSION="3.2"
 COMMON_TOOLS_VERSION="3.2"
-DRIVER_VERSION="2.5.1-public"
-FIRMWARE_VERSION="FW3.8.0"
+DRIVER_VERSION="2.5.2-public"
+FIRMWARE_VERSION="FW3.9.0"
 
 GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
 COMMON_TOOLS_PATH="/home/pi/siliconlabs/wfx-common-tools"
