@@ -15,6 +15,7 @@ Options:
       --conf <file>         hostapd.conf file
       --ip <address>        set the IP (with /24 mask)
   -d, --dhcp yes|no|ignore  enable DHCP server (default is no) (-d equals --dhcp yes)
+      --dbg                 start hostapd with -dd option (get debug traces using 'sudo cat /tmp/hostapd.log')
       --forward <if>        enable traffic forwarding to interface
       --no-forward          disable all traffic forwarding
 
@@ -31,12 +32,13 @@ and edited.
 CONF=""
 SET_IP=""
 DHCP="no"
+DEBUG=""
 FWD_IF=""
 NO_FWD="false"
 INTERFACE="wlan0"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,conf:,ip:,dhcp:,forward:,no-forward"
+LONGOPTS="help,conf:,ip:,dhcp:,forward:,no-forward,dbg"
 SHORTOPTS="d"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
@@ -47,6 +49,7 @@ while true; do
         --ip)         SET_IP="$2";    shift ;;
         --dhcp)       DHCP="$2";      shift ;;
         -d)           DHCP='yes' ;;
+        --dbg)        DEBUG='-dd -t -f /tmp/hostapd.log' ;;
         --forward)    FWD_IF="$2";    shift ;;
         --no-forward) NO_FWD="true"         ;;
         --help)       echo "$USAGE"; exit 0 ;;
@@ -128,7 +131,7 @@ if [ ! -z "$CONF" ]; then
     echo "Starting hostapd"
     kill_wait "$HOSTAPD_PIDFILE"
     kill_wait /var/run/wpa_supplicant-$INTERFACE.pid
-    hostapd -B "$CONF" -P "$HOSTAPD_PIDFILE"
+    hostapd -B "$CONF" -P "$HOSTAPD_PIDFILE" ${DEBUG}
 fi
 
 echo "Success"
