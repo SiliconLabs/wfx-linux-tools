@@ -77,9 +77,9 @@ HOSTAPD_PIDFILE=/var/run/hostapd-$INTERFACE.pid
 DNSMASQ_PIDFILE=/var/run/dnsmasq-$INTERFACE.pid
 
 if [ ! -z "$SET_IP" ] || [ "$DHCP" = yes ]; then
-    # Disable DHCP client on the interface before reconfiguring it
+    # Disable DHCP client on the interface
     dhcpcd --release "$INTERFACE" 2>/dev/null
-    # dhcpcd release is not instant
+    # dhcpcd release is not instantaneous
     sleep 1
 fi
 
