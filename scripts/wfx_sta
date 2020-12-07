@@ -14,6 +14,7 @@ Options:
      --help                display this message
   n, --ssid <ssid>         connect to <ssid>
   p, --password <pass>     specify password
+     --wpa3                use key_mgmt SAE / ieee80211w 2 for WPA3
      --conf <file>         use specific wpa_supplicant.conf
   i, --interface <if>      use interface instead of default wlan0
      --no-dhcp             do not enable DHCP client (default is yes)
@@ -37,22 +38,24 @@ DHCP="yes"
 KEEP_SUPP="false"
 SCAN="false"
 TIMEOUT=15
+WPA3="false"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp,dhcp:,keep-supplicant,scan"
+LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp,dhcp:,keep-supplicant,scan,wpa3"
 SHORTOPTS="n:p:i:d:s"
 ! PARSED=$(getopt --options=$SHORTOPTS --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
 while true; do
     case "$1" in
-        -n|--ssid)         SSID="$2";      shift ;;
-        -p|--password)     PASSWD="$2";    shift ;;
-        --conf)            CONF="$2";      shift ;;
-        -i|--interface)    INTERFACE="$2"; shift ;;
-        --no-dhcp)         DHCP="no"             ;;
-        -d|--dhcp)         DHCP="$2";      shift ;;
-        --keep-supplicant) KEEP_SUPP="true" ;;
+        -n|--ssid)         SSID="$2";      shift  ;;
+        -p|--password)     PASSWD="$2";    shift  ;;
+        --conf)            CONF="$2";      shift  ;;
+        --wpa3)            WPA3="true";           ;;
+        -i|--interface)    INTERFACE="$2"; shift  ;;
+        --no-dhcp)         DHCP="no"              ;;
+        -d|--dhcp)         DHCP="$2";      shift  ;;
+        --keep-supplicant) KEEP_SUPP="true"       ;;
         -s|--scan)         SCAN="true"            ;;
         --help)            echo "$USAGE";  exit 0 ;;
         --)                shift; break ;;
@@ -168,6 +171,12 @@ if [ ! -z "$SSID" ]; then
     if [ -z "$PASSWD" ]; then
         wpa_cli_run_check set_network 0 key_mgmt NONE
     else
+        if [ "$WPA3" = "false" ]; then
+            wpa_cli_run_check set_network 0 key_mgmt WPA-PSK
+        else
+            wpa_cli_run_check set_network 0 key_mgmt SAE
+            wpa_cli_run_check set_network 0 ieee80211w 2
+        fi
         wpa_cli_run_check set_network 0 psk \"$PASSWD\"
     fi
     wpa_cli_run_check select_network 0
