@@ -64,16 +64,19 @@ done
 
 wpa_cli_run_check()
 {
-    COMMAND='wpa_cli -i $INTERFACE $@'
-    if eval $COMMAND | grep FAIL; then
-        echo "ERROR: $COMMAND failed"
+    set +ex
+    COMMAND="wpa_cli -i $INTERFACE $@"
+    RES=$($COMMAND 2>&1)
+    if echo $RES | grep -i FAIL; then
+        echo "\nERROR: '$COMMAND' failed: $RES\n"
         exit 1
     fi
 }
 
 wpa_cli_run()
 {
-    COMMAND='wpa_cli -i $INTERFACE $@'
+    set +ex
+    COMMAND="wpa_cli -i $INTERFACE $@"
     eval $COMMAND
 }
 
@@ -115,7 +118,7 @@ if [ "$SCAN" = "false" ]; then
             ;;
     esac
 else
-    KEEP_SUPP="true"    
+    KEEP_SUPP="true"
 fi
 
 if [ "$KEEP_SUPP" = "false" ];then
@@ -135,6 +138,7 @@ if ! wpa_cli_run status &>/dev/null; then
         WPA_ARGS="-c $CONF"
     fi
     wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS -P $PIDFILE
+    sleep 1
 fi
 
 if [ "$SCAN" = "true" ]; then
