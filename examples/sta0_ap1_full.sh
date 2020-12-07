@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # Starting a STA on wlan0 then an AP on wlan1
 
 STA_SSID="HOME_AP"
