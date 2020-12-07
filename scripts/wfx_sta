@@ -62,6 +62,17 @@ while true; do
 done
 [ $# -ne 0 ] && error
 
+run_check()
+{
+    set +ex
+    COMMAND="$@"
+    RES=$($COMMAND 2>&1)
+    if echo $RES | grep -i FAIL; then
+        echo "\nERROR: '$COMMAND' failed: $RES\n"
+        exit 1
+    fi
+}
+
 wpa_cli_run_check()
 {
     set +ex
@@ -137,7 +148,7 @@ if ! wpa_cli_run status &>/dev/null; then
     else
         WPA_ARGS="-c $CONF"
     fi
-    wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS -P $PIDFILE
+    run_check wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS -P $PIDFILE
     sleep 1
 fi
 
