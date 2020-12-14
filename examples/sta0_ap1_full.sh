@@ -22,10 +22,10 @@ wfx_driver_reload -C
 
 # Fill SoftAP configuration
 cat > hostapd.conf << EOF
+interface=${SOFTAP_INTERFACE}
+driver=nl80211
 ctrl_interface=/var/run/hostapd
 ctrl_interface_group=netdev
-
-interface=${SOFTAP_INTERFACE}
 
 ssid=${SOFTAP_SSID}
 wpa_passphrase=${SOFTAP_PASSWORD}
@@ -35,13 +35,13 @@ wpa_key_mgmt=WPA-PSK
 rsn_pairwise=CCMP
 
 country_code=${COUNTRY}
-channel=7
+channel=6
 
-driver=nl80211
 auth_algs=1
 hw_mode=g
 ieee80211n=1
 dtim_period=1
+beacon_int=100
 max_num_sta=8
 ieee80211w=1
 EOF
@@ -76,7 +76,7 @@ done
 set -x
 
 # Start the STA
-sudo wpa_supplicant -i ${STA_INTERFACE} -Bst -c wpa_supplicant.conf
+sudo /sbin/wpa_supplicant -i ${STA_INTERFACE} -Bst -c wpa_supplicant.conf
 
 # Wait (max 10 sec) for the SOFTAP interface to be different from 'DORMANT' or 'UNKNOWN'
 set +ex
@@ -91,7 +91,7 @@ done
 set -x
 
 # Start the SoftAP
-sudo hostapd -B hostapd.conf
+sudo /usr/sbin/hostapd -B hostapd.conf
 
 # Wait (max 10 sec) for the STA to obtain an IP address
 set +ex
@@ -106,12 +106,12 @@ done
 
 # Print STA status
 printf "\nSTA: "
-wpa_cli status | grep -E "interface|^ssid|state|ip_address"
+/sbin/wpa_cli status | grep -E "interface|^ssid|state|ip_address"
 state=$(sudo ip link show ${STA_INTERFACE} | grep -oE "state \w*")
 echo "${STA_INTERFACE} ${state}"
 
 # Print SoftAP status
 printf "\nAP: "
-hostapd_cli status | grep -E "interface|ssid|state"
+/usr/sbin/hostapd_cli status | grep -E "interface|ssid|state"
 state=$(sudo ip link show ${SOFTAP_INTERFACE} | grep -oE "state \w*")
 echo "${SOFTAP_INTERFACE} ${state}"
