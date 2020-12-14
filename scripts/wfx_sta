@@ -79,7 +79,7 @@ run_check()
 wpa_cli_run_check()
 {
     set +ex
-    COMMAND="wpa_cli -i $INTERFACE $@"
+    COMMAND="/sbin/wpa_cli -i $INTERFACE $@"
     RES=$($COMMAND 2>&1)
     if echo $RES | grep -i FAIL; then
         echo "\nERROR: '$COMMAND' failed: $RES\n"
@@ -90,7 +90,7 @@ wpa_cli_run_check()
 wpa_cli_run()
 {
     set +ex
-    COMMAND="wpa_cli -i $INTERFACE $@"
+    COMMAND="/sbin/wpa_cli -i $INTERFACE $@"
     eval $COMMAND
 }
 
@@ -165,7 +165,7 @@ fi
 
 echo "Setting up connection"
 if [ ! -z "$SSID" ]; then
-    wpa_cli_run_check flush
+    wpa_cli_run flush
     wpa_cli_run_check add_network
     wpa_cli_run_check set_network 0 ssid \"$SSID\"
     if [ -z "$PASSWD" ]; then
