@@ -108,7 +108,7 @@
 				pinctrl-names = "default";
 				pinctrl-0 = <&wfx_irq &wfx_wakeup>;
 				wakeup-gpios = <&gpio 12 0>;
-				// Allow to use external GPIO (not yet implemented):
+				// Allow to use external GPIO:
 				//interrupts-extended = <&gpio 16 1>;
 				config-file = "wf200.pds"; /* necessary for dtparam */
 			};
