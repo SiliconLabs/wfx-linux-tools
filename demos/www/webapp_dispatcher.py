@@ -9,7 +9,7 @@
 #  python3 webapp_dispatcher.py get_led_states.cgi
 #  python3 webapp_dispatcher.py start_scan.cgi
 #  python3 webapp_dispatcher.py start_softap.cgi
-#  python3 webapp_dispatcher.py start_station.cgi?ssid=<ssid>&pwd=<pwd>&secu=<None/WPA2>
+#  python3 webapp_dispatcher.py start_station.cgi?ssid=<ssid>&pwd=<pwd>&secu=<None/WPA2/WPA3>
 #  python3 webapp_dispatcher.py stop_softap.cgi
 #  python3 webapp_dispatcher.py stop_station.cgi
 #  python3 webapp_dispatcher.py toggle_led?led_id=0/1
@@ -150,6 +150,10 @@ def start_station(query_string, trace=1):
             if pwd == '':
                 raise ValueError
             wpa_cli(f'set_network {network_id} psk \\"{pwd}\\"')
+            secu = params.get('secu', [''])[0]
+            if secu == 'WPA3':
+                wpa_cli(f'set_network {network_id} key_mgmt SAE')
+                wpa_cli(f'set_network {network_id} ieee80211w 2')
         else:
             wpa_cli(f'set_network {network_id} key_mgmt NONE')
         wpa_cli(f'select_network {network_id}')
@@ -385,6 +389,8 @@ def start_scan():
             secu = "WEP"
         if "WPA2" in cypher:
             secu = "WPA2"
+        if "WPA2-PSK+SAE" in cypher:
+            secu = "WPA3"
 
         aps.append((MAC, freq, channel, rssi, secu, ssid))
 
