@@ -14,16 +14,17 @@ Options:
      --help                display this message
   n, --ssid <ssid>         connect to <ssid>
   p, --password <pass>     specify password
-     --wpa3                use key_mgmt SAE / ieee80211w 2 for WPA3
+     --wpa3                use key_mgmt SAE / ieee80211w 2(=required) for WPA3 (will only connect on WPA3-Personal APs)
      --conf <file>         use specific wpa_supplicant.conf
   i, --interface <if>      use interface instead of default wlan0
      --no-dhcp             do not enable DHCP client (default is yes)
   d, --dhcp yes|no|ignore  enable DHCP client
      --keep-supplicant     if any, use existing wpa_supplicant
   s, --scan                scan for nearby access points
+  v, --verbose             trace wpa_cli calls
 
 If only --conf is used, the supplied file is supposed to contain the AP(s) to connect to.
-If --ssid is used, $(basename $0) wait for the connection to be established.
+If --ssid is used, $(basename $0) waits for the connection to be established.
 
 Example:
   - use wlan0 to connect to the AP 'foo' with password 'bar' and get an IP via DHCP:
@@ -39,10 +40,11 @@ KEEP_SUPP="false"
 SCAN="false"
 TIMEOUT=15
 WPA3="false"
+VERBOSE="false"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp,dhcp:,keep-supplicant,scan,wpa3"
-SHORTOPTS="n:p:i:d:s"
+LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp,dhcp:,keep-supplicant,scan,wpa3,verbose"
+SHORTOPTS="n:p:i:d:s:v"
 ! PARSED=$(getopt --options=$SHORTOPTS --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
@@ -57,6 +59,7 @@ while true; do
         -d|--dhcp)         DHCP="$2";      shift  ;;
         --keep-supplicant) KEEP_SUPP="true"       ;;
         -s|--scan)         SCAN="true"            ;;
+        -v|--verbose)      VERBOSE="true"         ;;
         --help)            echo "$USAGE";  exit 0 ;;
         --)                shift; break ;;
         *)                 error ;;
@@ -80,6 +83,9 @@ wpa_cli_run_check()
 {
     set +ex
     COMMAND="/sbin/wpa_cli -i $INTERFACE $@"
+    if [ "$VERBOSE" = "true" ]; then
+        echo "$COMMAND"
+    fi
     RES=$($COMMAND 2>&1)
     if echo $RES | grep -i FAIL; then
         echo "\nERROR: '$COMMAND' failed: $RES\n"
@@ -91,6 +97,9 @@ wpa_cli_run()
 {
     set +ex
     COMMAND="/sbin/wpa_cli -i $INTERFACE $@"
+    if [ "$VERBOSE" = "true" ]; then
+        echo "$COMMAND"
+    fi
     eval $COMMAND
 }
 
@@ -171,9 +180,7 @@ if [ ! -z "$SSID" ]; then
     if [ -z "$PASSWD" ]; then
         wpa_cli_run_check set_network 0 key_mgmt NONE
     else
-        if [ "$WPA3" = "false" ]; then
-            wpa_cli_run_check set_network 0 key_mgmt WPA-PSK
-        else
+        if [ "$WPA3" = "true" ]; then
             wpa_cli_run_check set_network 0 key_mgmt SAE
             wpa_cli_run_check set_network 0 ieee80211w 2
         fi
