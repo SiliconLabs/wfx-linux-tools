@@ -98,6 +98,12 @@ set -x
 # Start the SoftAP
 sudo /usr/sbin/hostapd -B hostapd.conf
 
+# Start DHCP and DNS on softAP interface
+set +x
+RANGE="${SOFTAP_IP%.*}.100,${SOFTAP_IP%.*}.200"
+set -x
+sudo dnsmasq --conf-file=/dev/null --interface="$SOFTAP_INTERFACE" --bind-interfaces --except-interface=lo --dhcp-range="$RANGE"
+
 # Wait (max 10 sec) for the STA to obtain an IP address
 set +ex
 echo ""

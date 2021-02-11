@@ -63,6 +63,11 @@ set -ex
 # Add wlan1 interface on wlan0 device
 sudo iw dev wlan0 interface add wlan1 type managed
 
+
+
+
+
+
 # Wait (max 10 sec) for the STA interface to be different from 'DORMANT' or 'UNKNOWN'
 set +ex
 for (( n=1; n<=10; n++ )); do
@@ -93,11 +98,17 @@ set -x
 # Start the SoftAP
 sudo /usr/sbin/hostapd -B hostapd.conf
 
+# Start DHCP and DNS on softAP interface
+set +x
+RANGE="${SOFTAP_IP%.*}.100,${SOFTAP_IP%.*}.200"
+set -x
+sudo dnsmasq --conf-file=/dev/null --interface="$SOFTAP_INTERFACE" --bind-interfaces --except-interface=lo --dhcp-range="$RANGE"
+
 # Wait (max 10 sec) for the STA to obtain an IP address
 set +ex
 echo ""
 for (( n=1; n<=10; n++ )); do
-	state=$(wpa_cli status | grep -E "ip_address")
+	state=$(/sbin/wpa_cli status | grep -E "ip_address")
 	if echo "${STA_INTERFACE} ${state}" | grep -E "ip_address" ; then
         break
     fi
