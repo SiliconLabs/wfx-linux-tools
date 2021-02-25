@@ -261,7 +261,7 @@ def get_interface_states():
                     client["hostname"] = hostname
                 softap["clients"].append(client)
 
-    wpa_supplicant_running = bash_res("ps -few | grep wpa_supplicant-combo | grep ^root ")
+    wpa_supplicant_running = bash_res("ps -few | grep wpa_supplicant | grep ^root ")
     station = collections.OrderedDict()
 
     station["state"] = "0"
