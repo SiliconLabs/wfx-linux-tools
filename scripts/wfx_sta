@@ -185,6 +185,7 @@ if [ ! -z "$SSID" ]; then
             wpa_cli_run_check set_network 0 ieee80211w 2
         fi
         wpa_cli_run_check set_network 0 psk \"$PASSWD\"
+        wpa_cli_run_check set_network 0 ieee80211w 1
     fi
     wpa_cli_run_check select_network 0
 fi
