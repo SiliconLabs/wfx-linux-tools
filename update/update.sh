@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Copyright (c) 2018, Silicon Laboratories
 # See license terms contained in COPYING file
 
@@ -8,8 +9,8 @@ set -euo pipefail
 
 TOOLS_VERSION="4.0"
 COMMON_TOOLS_VERSION="3.2"
-DRIVER_VERSION="2.8.1-public"
-FIRMWARE_VERSION="FW3.12.1"
+DRIVER_VERSION="2.9-public"
+FIRMWARE_VERSION="FW3.12.2"
 
 GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
 COMMON_TOOLS_PATH="/home/pi/siliconlabs/wfx-common-tools"
