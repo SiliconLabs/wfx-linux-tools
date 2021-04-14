@@ -1,0 +1,21 @@
+#!/bin/bash
+# usage:
+# sudo ./trace_pipe <0/1>
+
+if [ -z "$1" ]; then
+	echo "no parameter passed"
+	FLAG=0
+else
+	FLAG=${1}
+fi
+
+if [ "${FLAG}" = "1" ] ; then
+	cat /sys/kernel/debug/tracing/trace_pipe
+else
+	cat_processes=$(ps -few | grep ^root.*cat | grep tracing/trace_pipe | awk '{ print $2}')
+	for p in ${cat_processes}
+	do
+		printf "Killing process $p\n"
+		kill $p > /dev/null
+	done
+fi
