@@ -1,0 +1,6 @@
+#!/bin/bash
+# usage:
+# sudo ./trace_hif <0/1>
+
+echo ${1} | tee /sys/kernel/debug/tracing/events/wfx/hif_send/enable
+echo ${1} | tee /sys/kernel/debug/tracing/events/wfx/hif_recv/enable

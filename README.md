@@ -84,6 +84,16 @@ Updating the tools
 ```
 cd /home/pi/siliconlabs/wfx-linux-tools/
 git fetch
-git checkout origin/master
+git checkout origin/SD3
 ./install.sh
 ```
+
+In case of startup issues
+------------------
+
+Use some of `trace_` scripts under `scripts` to gather traces
+
+Under `examples/` are 2 logs of the init phase:
+
+- [SDIO init](examples/WF200_SDIO_init.log): retrieved using `trace_sdio_startup`
+- [SPI init](examples/WF200_SPI_init.log): retrieved using `trace_spi_startup`

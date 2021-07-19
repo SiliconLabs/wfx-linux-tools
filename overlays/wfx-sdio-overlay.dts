@@ -1,4 +1,5 @@
-/include/ "sdio-overlay.dts"
+/dts-v1/;
+/plugin/;
 
 /*
  * In order to allow compilation out of kernel tree, avoid including headers
@@ -10,35 +11,65 @@
  *   - from <dt-bindings/gpio/gpio.h>
  *       #define GPIO_ACTIVE_LOW         1
  *       #define GPIO_ACTIVE_HIGH        0
+ *   - from <dt-bindings/pinctrl/bcm2835.h>
+ *       #define BCM2835_FSEL_GPIO_IN    0
+ *       #define BCM2835_FSEL_GPIO_OUT   1
+ *       #define BCM2835_FSEL_ALT5       2
+ *       #define BCM2835_FSEL_ALT4       3
+ *       #define BCM2835_FSEL_ALT0       4
+ *       #define BCM2835_FSEL_ALT1       5
+ *       #define BCM2835_FSEL_ALT2       6
+ *       #define BCM2835_FSEL_ALT3       7
+ *
+ *       #define BCM2835_PUD_OFF         0
+ *       #define BCM2835_PUD_DOWN        1
+ *       #define BCM2835_PUD_UP          2
  */
 
 / {
-	compatible = "brcm,bcm2708";
-
+	/*
+	 * On Raspberry kernels, wireless chip is connected on device "mmcnr"
+	 * and conflict with "sdhci". If you use device tree from vanilla
+	 * kernel, make sure this node exist (or comment fragment below).
+	 */
 	fragment@0 {
-		target = <&gpio>;
+		target = <&mmcnr>;
 		__overlay__ {
-			wfx_irq: wfx_irq {
-				brcm,pins = <16>;
-				brcm,function = <0>; /* in */
-				brcm,pull = <1>; /* pull-down */
-			};
-			wfx_wakeup: wfx_wakeup {
-				brcm,pins = <12>;
-				brcm,function = <1>; /* out */
-			};
-			wfx_reset: wfx_reset {
-				brcm,pins = <13>;
-				brcm,function = <1>; /* out */
-				// This pull-up/pull-down configuration is used
-				// when device is unbind (indeed, in this case,
-				// GPIO function are set to INPUT)
-				brcm,pull = <0>; /* no pull-up/pull-down */
-			};
+			status = "disabled";
 		};
 	};
 
 	fragment@1 {
+		target = <&gpio>;
+		__overlay__ {
+			// Common part with wfx-spi.dtbo
+			wfx_irq: wfx_irq {
+				brcm,pins = <16>;
+				brcm,function = <0>; /* BCM2835_FSEL_GPIO_IN */
+				brcm,pull = <1>; /* BCM2835_PUD_DOWN */
+			};
+			wfx_wakeup: wfx_wakeup {
+				brcm,pins = <12>;
+				brcm,function = <1>; /* BCM2835_FSEL_GPIO_OUT */
+				brcm,pull = <0>; /* BCM2835_PUD_OFF */
+			};
+			wfx_reset: wfx_reset {
+				brcm,pins = <13>;
+				brcm,function = <1>; /* BCM2835_FSEL_GPIO_OUT */
+				// This pull-up/pull-down configuration is used
+				// when device is unbind (indeed, in this case,
+				// GPIO function are set to INPUT)
+				brcm,pull = <0>; /* BCM2835_PUD_OFF */
+			};
+			sdio_pins: sdio_pins {
+				brcm,pins = <22 23 24 25 26 27>;
+				brcm,function = <7>; /* BCM2835_FSEL_ALT3 */
+				brcm,pull = <0 2 2 2 2 2>; /* BCM2835_PUD_OFF BCM2835_PUD_UP ... */
+			};
+		};
+	};
+
+	fragment@2 {
 		target-path = "/";
 		__overlay__ {
 			wfx_pwrseq: wfx_pwrseq {
@@ -56,30 +87,43 @@
 		};
 	};
 
-	fragment@2 {
-		target = <&mmc>;
-		__overlay__ {
-			#address-cells = <1>; /* needed to avoid dtc warning */
-			#size-cells = <0>; /* needed to avoid dtc warning */
+	fragment@3 {
+		target = <&sdhci>;
+		sdio_ovl: __overlay__ {
+			status = "okay";
+			#address-cells = <1>; /* avoid dtc warning */
+			#size-cells = <0>; /* avoid dtc warning */
+			pinctrl-names = "default";
+			pinctrl-0 = <&sdio_pins>;
+			bus-width = <4>;
+			max-frequency = <50000000>; /* necessary for dtparam */
+			brcm,overclock-50 = <0>; /* necessary for dtparam */
 			mmc-pwrseq = <&wfx_pwrseq>;
-
-			// Uncomment following line to allow automatic chip
-			// detect after a hard reset:
-			//   /delete-property/ non-removable;
+			// Comment to allow automatic chip detect after a hard reset
+			non-removable;
 			wfx: mmc@1 {
+				status = "okay";
 				compatible = "silabs,wfx-sdio";
 				reg = <1>;
 				pinctrl-names = "default";
 				pinctrl-0 = <&wfx_irq &wfx_wakeup>;
 				wakeup-gpios = <&gpio 12 0>;
-				// Allow to use external GPIO (not yet implemented):
+				// Allow to use external GPIO:
 				//interrupts-extended = <&gpio 16 1>;
-				config-file = "wf200.pds";
+				config-file = "wf200.pds"; /* necessary for dtparam */
 			};
 		};
 	};
 
 	__overrides__ {
 		config_file = <&wfx>,"config-file";
+		/* About SDIO clock max frequency:
+		 *   - old Raspberry kernels only support sdio_overclock
+		 *   - newer Raspberry kernel support both sdio_overclock and max_frequency
+		 *   - vanilla kernel only support max_frequency
+		 * If user set an unsupported attribute, it has no effect
+		 */
+		sdio_overclock = <&sdio_ovl>,"brcm,overclock-50:0";
+		max_frequency = <&sdio_ovl>,"max-frequency:0";
 	};
 };

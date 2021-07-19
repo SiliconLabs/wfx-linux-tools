@@ -11,27 +11,35 @@ USAGE="Usage: $(basename $0) OPTION
 Start in access point mode
 
 Options:
-  --help               display this message
-  --conf <file>        hostapd.conf file
-  --ip <address>       set the IP (with /24 mask)
-  --dhcp yes|no|ignore enable DHCP server (default is no)
-  --forward <if>       enable traffic forwarding to interface
-  --no-forward         disable all traffic forwarding
+      --help                display this message
+      --conf <file>         hostapd.conf file
+      --ip <address>        set the IP (with /24 mask)
+  -d, --dhcp yes|no|ignore  enable DHCP server (default is no) (-d equals --dhcp yes)
+      --dbg                 start hostapd with -dd option (get debug traces using 'sudo cat /tmp/hostapd.log')
+      --forward <if>        enable traffic forwarding to interface
+      --no-forward          disable all traffic forwarding
 
 Example:
   - start an ap with address 192.168.1.1 on wlan and enable DHCP server (Wi-Fi configuration depends on hostapd.conf content):
       $(basename $0) --conf /home/pi/access_point/hostapd.conf --ip 192.168.1.1 --dhcp yes
+
+Note:
+An example hostapd.conf file is provided in /home/pi/siliconlabs/wfx-linux-tools/examples/,
+it can be copied outside of Silicon Labs repositories (e.g. /home/pi/access_point)
+and edited.
 "
 
 CONF=""
 SET_IP=""
 DHCP="no"
+DEBUG=""
 FWD_IF=""
 NO_FWD="false"
 INTERFACE="wlan0"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,conf:,ip:,dhcp:,forward:,no-forward"
+LONGOPTS="help,conf:,ip:,dhcp:,forward:,no-forward,dbg"
+SHORTOPTS="d"
 ! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
@@ -40,6 +48,8 @@ while true; do
         --conf)       CONF="$2";      shift ;;
         --ip)         SET_IP="$2";    shift ;;
         --dhcp)       DHCP="$2";      shift ;;
+        -d)           DHCP='yes' ;;
+        --dbg)        DEBUG='-dd -t -f /tmp/hostapd.log' ;;
         --forward)    FWD_IF="$2";    shift ;;
         --no-forward) NO_FWD="true"         ;;
         --help)       echo "$USAGE"; exit 0 ;;
@@ -70,9 +80,9 @@ HOSTAPD_PIDFILE=/var/run/hostapd-$INTERFACE.pid
 DNSMASQ_PIDFILE=/var/run/dnsmasq-$INTERFACE.pid
 
 if [ ! -z "$SET_IP" ] || [ "$DHCP" = yes ]; then
-    # Disable DHCP client on the interface before reconfiguring it
+    # Disable DHCP client on the interface
     dhcpcd --release "$INTERFACE" 2>/dev/null
-    # dhcpcd release is not instant
+    # dhcpcd release is not instantaneous
     sleep 1
 fi
 
@@ -108,7 +118,7 @@ if [ ! -z "$FWD_IF" ]; then
     echo "Enabling traffic forwarding"
     echo 1 > /proc/sys/net/ipv4/ip_forward
     RULE="POSTROUTING -o $FWD_IF -j MASQUERADE"
-    iptables -t nat -C $RULE || iptables -t nat -A $RULE
+    iptables -t nat -C $RULE 2>/dev/null || iptables -t nat -A $RULE
 fi
 
 if [ "$NO_FWD" = "true" ]; then
@@ -121,7 +131,7 @@ if [ ! -z "$CONF" ]; then
     echo "Starting hostapd"
     kill_wait "$HOSTAPD_PIDFILE"
     kill_wait /var/run/wpa_supplicant-$INTERFACE.pid
-    hostapd -B "$CONF" -P "$HOSTAPD_PIDFILE" >/dev/null
+    hostapd -B "$CONF" -P "$HOSTAPD_PIDFILE" ${DEBUG}
 fi
 
 echo "Success"

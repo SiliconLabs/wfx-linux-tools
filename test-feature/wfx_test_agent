@@ -2,10 +2,8 @@
 # Copyright (c) 2019, Silicon Laboratories
 # See license terms contained in COPYING file
 
-if [ $(id -u) != 0 ]; then
-    echo "ERROR: please run this script as root (running 'sudo $(basename $0)' should work)" >&2
-    exit 1
-fi
+. wfx_set_env
+run_as_root
 
 USAGE="Usage: $(basename $0) OPTION
 
@@ -15,6 +13,7 @@ Options:
   --help                display this message
   write_test_data       write test data to debugfs
   read_rx_stats         read rx_stats from debugfs
+  read_tx_info          read tx_power_loop from debugfs
   read_fw_version       return current firmware version
   read_driver_version   return current driver version
 "
@@ -39,8 +38,14 @@ case "$1" in
         echo "$(cat ${rx_stats_output})"
         exit 0
         ;;
+    read_tx_info)
+        tx_info_output='/sys/kernel/debug/ieee80211/phy*/wfx/tx_power_loop'
+        echo "$(cat ${tx_info_output})"
+        exit 0
+        ;;
     read_fw_version)
-        echo "$(sed -nre 's/Firmware:.* WFM(.*)/\1/p' /sys/kernel/debug/ieee80211/phy*/wfx/status | xargs | tr ' ' .)"
+        sed -nre 's/Firmware:.* WFM[^0-9]*([0-9]+).([0-9]+).([0-9]+).*/\1.\2.\3/p' /sys/kernel/debug/ieee80211/phy*/wfx/status 2>/dev/null || \
+            ethtool -i wlan0 | sed -nre 's/firmware-version: (.*)/\1/p'
         exit 0
         ;;
     read_driver_version)

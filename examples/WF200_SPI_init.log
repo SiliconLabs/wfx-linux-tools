@@ -1,0 +1,400 @@
+pi@rpi-rns-apps-cl2-xmac1:~/siliconlabs/wfx-linux-tools/scripts $ sudo ./trace_spi_startup
+./trace_spi_startup: line 19: echo: write error: No such device
+ trace_spi_start-945     [002] ....   445.778733: io_write32: CONFIG: 00044600
+ trace_spi_start-945     [002] ....   445.778803: io_read32: CONFIG: 02044600
+ trace_spi_start-945     [002] ....   445.778861: io_write32: SET_GEN_R_W: 07208775
+ trace_spi_start-945     [002] ....   445.778920: io_write32: SET_GEN_R_W: 082ec020
+ trace_spi_start-945     [002] ....   445.778977: io_write32: SET_GEN_R_W: 093c3c3c
+ trace_spi_start-945     [002] ....   445.779033: io_write32: SET_GEN_R_W: 0b322c44
+ trace_spi_start-945     [002] ....   445.779090: io_write32: SET_GEN_R_W: 0ca06497
+ trace_spi_start-945     [002] ....   445.779147: io_write32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779207: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779264: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779320: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779377: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779434: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779491: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779548: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779606: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779664: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779722: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779778: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779835: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779892: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.779949: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780005: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780061: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780117: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780174: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780230: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780287: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780343: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780400: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780456: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780512: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780573: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780629: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780686: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780742: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780799: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780855: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780912: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.780969: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.781025: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.781082: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.781138: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.781195: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.781252: io_read32: CONTROL: 00001000
+ trace_spi_start-945     [002] ....   445.781308: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.781366: io_read32: CONFIG: 02044600
+ trace_spi_start-945     [002] ....   445.781422: io_write32: CONFIG: 02040600
+ trace_spi_start-945     [002] ....   445.781532: io_write32: SRAM/0900c00c: 87654321
+ trace_spi_start-945     [002] ....   445.781807: io_read32: SRAM/0900c010: bd53ef99
+ trace_spi_start-945     [002] ....   445.782101: io_read: SRAM/0900c084: 42 4c 5f 28 73 65 63 75 72 65 62 6f 6f 74 29 5f76 32 2e 30 62 30 00 00 00 00 00 00 00 00 00 00 ... (60 bytes)
+ trace_spi_start-945     [002] ....   445.782375: io_read: SRAM/0900c0c0: 4d c9 63 9f fd 90 00 00 00 00 00 00 00 c0 12 d7 (16 bytes)
+ trace_spi_start-945     [002] ....   445.798135: io_write32: SRAM/0900c00c: a753bd99
+ trace_spi_start-945     [002] ....   445.798425: io_read32: SRAM/0900c010: bd53ef99
+ trace_spi_start-945     [002] ....   445.798698: io_read32: SRAM/0900c010: bd53ef99
+ trace_spi_start-945     [002] ....   445.798970: io_read32: SRAM/0900c010: bd53ef99
+ trace_spi_start-945     [002] ....   445.799241: io_read32: SRAM/0900c010: 87654321
+ trace_spi_start-945     [002] ....   445.799353: io_write32: SRAM/09004000: ffffffff
+ trace_spi_start-945     [002] ....   445.799470: io_write: SRAM/0900c05c: 01 00 00 00 (4 bytes)
+ trace_spi_start-945     [002] ....   445.799599: io_write: SRAM/0900c014: 54 db 0f bf 80 ab 1a 84 0b cb e1 62 1d 86 8d af36 f3 68 84 32 31 f5 d7 ac 48 cf f5 f6 4e 08 a8 ... (64 bytes)
+ trace_spi_start-945     [002] ....   445.799711: io_write: SRAM/0900c054: 85 a7 6b f8 ed 52 3d 82 (8 bytes)
+ trace_spi_start-945     [002] ....   445.799822: io_write32: SRAM/0900c000: 0004a800
+ trace_spi_start-945     [002] ....   445.799933: io_write32: SRAM/0900c00c: abcddcba
+ trace_spi_start-945     [002] ....   445.800205: io_read32: SRAM/0900c010: abcddcba
+ trace_spi_start-945     [002] ....   445.800584: io_write: SRAM/09004000: 7c 97 4c 3c 74 04 e9 bc 12 b9 38 62 43 de 1e 1327 a5 28 03 24 41 90 f0 a1 e8 32 69 9c d4 47 02 ... (1024 bytes)
+ trace_spi_start-945     [002] ....   445.800698: io_write32: SRAM/0900c004: 00000400
+ trace_spi_start-945     [002] ....   445.801049: io_write: SRAM/09004400: 18 54 08 02 b3 87 59 96 34 93 7a 09 31 d6 99 a3ec e9 09 23 77 2b a0 12 61 9a 97 fe 9a dc e5 56 ... (1024 bytes)
+ trace_spi_start-945     [002] ....   445.801165: io_write32: SRAM/0900c004: 00000800
+ trace_spi_start-945     [002] ....   445.801515: io_write: SRAM/09004800: 34 6f d3 67 7b 3b da 7f 26 aa e7 96 01 6f ae c90f ab 08 47 32 3f a3 8c 11 f3 ec 5a c1 50 59 98 ... (1024 bytes)
+ trace_spi_start-945     [002] ....   445.801627: io_write32: SRAM/0900c004: 00000c00
+ trace_spi_start-945     [002] ....   445.801980: io_write: SRAM/09004c00: 4a 04 fc fd c4 0e 19 5e e0 1b dd b1 7e 3f 3c 8fef 71 95 1a 3c 53 50 85 a3 51 f5 11 5f c8 c5 48 ... (1024 bytes)
+ trace_spi_start-945     [002] ....   445.802092: io_write32: SRAM/0900c004: 00001000
+
+. . . FW download . . .
+
+ trace_spi_start-945     [002] ....   445.926569: io_write32: SRAM/0900c004: 00049c00
+ trace_spi_start-945     [002] ....   445.926889: io_write: SRAM/09005c00: 6b 6c 13 e3 3c 4b 09 66 36 75 ea 59 c2 83 a0 f38a aa 90 dd 22 f2 b6 76 2b 84 23 e2 b7 46 79 bd ... (1024 bytes)
+ trace_spi_start-945     [002] ....   445.926978: io_write32: SRAM/0900c004: 0004a000
+ trace_spi_start-945     [002] ....   445.927295: io_write: SRAM/09006000: 48 28 b3 bc bb 2d f5 16 76 aa e2 a2 68 87 eb 40e5 06 9d ef 3a 6b 28 f6 26 da be 7e 8e 32 22 b9 ... (1024 bytes)
+ trace_spi_start-945     [002] ....   445.927383: io_write32: SRAM/0900c004: 0004a400
+ trace_spi_start-945     [002] ....   445.927701: io_write: SRAM/09006400: 1f f0 61 fa 9f eb fc e6 1b e9 f4 81 4e 48 88 6db6 81 33 97 b1 10 aa 9e 21 de 5e e9 12 f9 eb 89 ... (1024 bytes)
+ trace_spi_start-945     [002] ....   445.927789: io_write32: SRAM/0900c004: 0004a800
+ trace_spi_start-945     [002] ....   445.927876: io_write32: SRAM/0900c00c: d4c64a99
+ trace_spi_start-945     [002] ....   445.928117: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.928329: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.928541: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.928754: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.928966: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.929181: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.929393: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.929606: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.929818: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.930032: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.930244: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.930457: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.930669: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.930881: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.931095: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.931308: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.931519: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.931732: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.931944: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.932157: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.932369: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.932581: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.932792: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.933004: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.933218: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.933429: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.933641: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.933853: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.934064: io_read32: SRAM/0900c010: cafefeca
+ trace_spi_start-945     [002] ....   445.934278: io_read32: SRAM/0900c010: d4c64a99
+ trace_spi_start-945     [002] ....   445.934365: io_write32: SRAM/0900c00c: 174fc882
+ trace_spi_start-945     [002] ....   445.934533: io_read32: CONFIG: 02040600
+ trace_spi_start-945     [002] ....   445.934577: io_write32: CONFIG: 02050200
+ trace_spi_start-945     [002] ....   445.934623: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.934867: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.935112: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.935358: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.935603: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.935847: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.936093: io_read32: CONTROL: 00007062
+ trace_spi_start-945     [002] ....   445.936137: io_read32: CONTROL: 00007062
+    kworker/2:1H-88      [002] ....   445.936276: io_read: QUEUE: c4 00 e1 00 00 00 00 00 02 10 57 46 32 30 30 5343 00 00 00 00 00 00 00 c0 01 0b 1c 00 1f 5d 04 ... (200 bytes)
+    kworker/2:1H-88      [002] ....   445.936280: hif_recv: 0:0:IND_STARTUP: 00 00 00 00 02 10 57 46 32 30 30 53 43 00 00 0000 00 00 00 c0 01 0b 1c 00 1f 5d 04 1e 00 50 0608 02 90 fd 9f 63 c9 4d 90 fd 9f 63 c9 4e 07 0302 00 00 00 01 0c 03 01 00 00 60 00 cf ff 3f 0057 46 32 30 30 5f 41 53 49 43 5f 57 46 4d 5f 284a 65 6e 6b 69 6e 73 29 5f 46 57 33 2e 31 32 2e31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0000 00 00 00 00 00 00 00 00 00 00 00 ... (196 bytes)
+    kworker/2:1H-88      [002] ....   445.936323: io_read32: CONFIG: 02050200
+    kworker/2:1H-88      [002] ....   445.949226: io_write: QUEUE: 13 00 09 04 0d 00 7b 61 3a 7b 61 3a 34 2c 62 3a31 7d 7d 00 (20 bytes)
+    kworker/2:1H-88      [002] ....   445.949230: hif_send: 1:2:REQ_CONFIGURATION: 0d 00 7b 61 3a 7b 61 3a 34 2c 62 3a 31 7d 7d (19 bytes)
+ trace_spi_start-945     [002] ....   445.949297: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.949543: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.949788: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.950034: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.950279: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.950526: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.950771: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.951020: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.951267: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.951511: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.951756: io_read32: CONTROL: 00003004
+ trace_spi_start-945     [002] ....   445.951800: io_read32: CONTROL: 00003004
+    kworker/2:1H-88      [002] ....   445.951858: io_read: QUEUE: 08 00 09 0c 00 00 00 00 3a 7b 00 30 (12 bytes)
+    kworker/2:1H-88      [002] ....   445.951861: hif_recv: 0:2:CNF_CONFIGURATION: 00 00 00 00 (8 bytes)
+    kworker/2:1H-88      [002] ....   445.951896: io_read32: CONFIG: 02050200
+    kworker/2:1H-88      [002] ....   445.952099: io_write: QUEUE: 43 01 09 0c 3d 01 7b 62 3a 7b 61 3a 7b 61 3a 342c 62 3a 30 2c 63 3a 30 2c 64 3a 30 2c 65 3a 41 ... (324 bytes)
+    kworker/2:1H-88      [002] ....   445.952102: hif_send: 1:2:REQ_CONFIGURATION: 3d 01 7b 62 3a 7b 61 3a 7b 61 3a 34 2c 62 3a 302c 63 3a 30 2c 64 3a 30 2c 65 3a 41 7d 2c 62 3a7b 61 3a 34 2c 62 3a 30 2c 63 3a 30 2c 64 3a 302c 65 3a 42 7d 2c 63 3a 7b 61 3a 34 2c 62 3a 302c 63 3a 30 2c 64 3a 30 2c 65 3a 43 7d 2c 64 3a7b 61 3a 34 2c 62 3a 30 2c 63 3a 30 2c 64 3a 302c 65 3a 44 7d 2c 65 3a 7b 61 3a 34 2c 62 3a 302c 63 3a 30 2c 64 3a 30 2c 65 3a 45 ... (323 bytes)
+ trace_spi_start-945     [002] ....   445.952165: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.952410: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.952655: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.952899: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.953145: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.953390: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.953634: io_read32: CONTROL: 00003004
+ trace_spi_start-945     [002] ....   445.953679: io_read32: CONTROL: 00003004
+    kworker/2:1H-88      [002] ....   445.953727: io_read: QUEUE: 08 00 09 14 00 00 00 00 3a 7b 00 30 (12 bytes)
+    kworker/2:1H-88      [002] ....   445.953729: hif_recv: 0:2:CNF_CONFIGURATION: 00 00 00 00 (8 bytes)
+    kworker/2:1H-88      [002] ....   445.953760: io_read32: CONFIG: 02050200
+    kworker/2:1H-88      [002] ....   445.953839: io_write: QUEUE: 3f 00 09 14 39 00 7b 63 3a 7b 61 3a 7b 61 3a 347d 2c 62 3a 7b 61 3a 36 7d 2c 63 3a 7b 61 3a 36 ... (64 bytes)
+    kworker/2:1H-88      [002] ....   445.953841: hif_send: 1:2:REQ_CONFIGURATION: 39 00 7b 63 3a 7b 61 3a 7b 61 3a 34 7d 2c 62 3a7b 61 3a 36 7d 2c 63 3a 7b 61 3a 36 2c 63 3a 307d 2c 64 3a 7b 61 3a 36 7d 2c 65 3a 7b 61 3a 367d 2c 66 3a 7b 61 3a 36 7d 7d 7d (63 bytes)
+ trace_spi_start-945     [002] ....   445.953901: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.954148: io_read32: CONTROL: 00003004
+ trace_spi_start-945     [002] ....   445.954192: io_read32: CONTROL: 00003004
+    kworker/2:1H-88      [002] ....   445.954240: io_read: QUEUE: 08 00 09 1c 00 00 00 00 3a 7b 00 30 (12 bytes)
+    kworker/2:1H-88      [002] ....   445.954242: hif_recv: 0:2:CNF_CONFIGURATION: 00 00 00 00 (8 bytes)
+    kworker/2:1H-88      [002] ....   445.954272: io_read32: CONFIG: 02050200
+    kworker/2:1H-88      [002] ....   445.954344: io_write: QUEUE: 25 00 09 1c 1f 00 7b 65 3a 7b 61 3a 7b 61 3a 332c 62 3a 36 45 2c 63 3a 36 45 7d 2c 62 3a 30 2c ... (40 bytes)
+    kworker/2:1H-88      [002] ....   445.954346: hif_send: 1:2:REQ_CONFIGURATION: 1f 00 7b 65 3a 7b 61 3a 7b 61 3a 33 2c 62 3a 3645 2c 63 3a 36 45 7d 2c 62 3a 30 2c 63 3a 30 7d7d (37 bytes)
+ trace_spi_start-945     [002] ....   445.954406: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.954651: io_read32: CONTROL: 00003004
+ trace_spi_start-945     [002] ....   445.954695: io_read32: CONTROL: 00003004
+    kworker/2:1H-88      [002] ....   445.954743: io_read: QUEUE: 08 00 09 24 00 00 00 00 3a 7b 00 30 (12 bytes)
+    kworker/2:1H-88      [002] ....   445.954745: hif_recv: 0:2:CNF_CONFIGURATION: 00 00 00 00 (8 bytes)
+    kworker/2:1H-88      [002] ....   445.954775: io_read32: CONFIG: 02050200
+    kworker/2:1H-88      [002] ....   445.954918: io_write: QUEUE: c2 00 09 24 bc 00 7b 68 3a 7b 65 3a 30 2c 61 3a35 30 2c 62 3a 30 2c 64 3a 30 2c 63 3a 5b 7b 61 ... (196 bytes)
+    kworker/2:1H-88      [002] ....   445.954920: hif_send: 1:2:REQ_CONFIGURATION: bc 00 7b 68 3a 7b 65 3a 30 2c 61 3a 35 30 2c 623a 30 2c 64 3a 30 2c 63 3a 5b 7b 61 3a 31 2c 623a 5b 30 2c 30 2c 30 2c 30 2c 30 2c 30 5d 7d 2c7b 61 3a 32 2c 62 3a 5b 30 2c 30 2c 30 2c 30 2c30 2c 30 5d 7d 2c 7b 61 3a 5b 33 2c 39 5d 2c 623a 5b 30 2c 30 2c 30 2c 30 2c 30 2c 30 5d 7d 2c7b 61 3a 41 2c 62 3a 5b 30 2c 30 2c 30 2c 30 2c30 2c 30 5d 7d 2c 7b 61 3a 42 2c 62 ... (194 bytes)
+ trace_spi_start-945     [002] ....   445.954982: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.955229: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.955473: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.955718: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.955962: io_read32: CONTROL: 00003004
+ trace_spi_start-945     [002] ....   445.956007: io_read32: CONTROL: 00003004
+    kworker/2:1H-88      [002] ....   445.956055: io_read: QUEUE: 08 00 09 2c 00 00 00 00 3a 7b 00 30 (12 bytes)
+    kworker/2:1H-88      [002] ....   445.956060: hif_recv: 0:2:CNF_CONFIGURATION: 00 00 00 00 (8 bytes)
+    kworker/2:1H-88      [002] ....   445.956090: io_read32: CONFIG: 02050200
+    kworker/2:1H-88      [002] ....   445.956158: io_write: QUEUE: 13 00 09 2c 0d 00 7b 6a 3a 7b 61 3a 30 2c 62 3a30 7d 7d 00 (20 bytes)
+    kworker/2:1H-88      [002] ....   445.956160: hif_send: 1:2:REQ_CONFIGURATION: 0d 00 7b 6a 3a 7b 61 3a 30 2c 62 3a 30 7d 7d (19 bytes)
+ trace_spi_start-945     [002] ....   445.956220: io_read32: CONTROL: 00003000
+ trace_spi_start-945     [002] ....   445.956467: io_read32: CONTROL: 00003004
+ trace_spi_start-945     [002] ....   445.956511: io_read32: CONTROL: 00003004
+    kworker/2:1H-88      [002] ....   445.956559: io_read: QUEUE: 08 00 09 34 00 00 00 00 3a 7b 00 30 (12 bytes)
+    kworker/2:1H-88      [002] ....   445.956560: hif_recv: 0:2:CNF_CONFIGURATION: 00 00 00 00 (8 bytes)
+    kworker/2:1H-88      [002] ....   445.956590: io_read32: CONFIG: 02050200
+    kworker/2:1H-88      [002] ....   445.956944: io_write: QUEUE: 0c 00 06 34 02 20 04 00 01 00 00 00 (12 bytes)
+    kworker/2:1H-88      [002] ....   445.956945: hif_send: 1:2:REQ_WRITE_MIB/GL_SET_MULTI_MSG: 01 00 00 00 (12 bytes)
+     irq/166-wfx-948     [001] ....   445.957008: io_read32: CONTROL: 00003004
+    kworker/1:1H-76      [001] ....   445.957068: io_read: QUEUE: 08 00 06 3c 00 00 00 00 01 00 00 30 (12 bytes)
+    kworker/1:1H-76      [001] ....   445.957070: hif_recv: 0:2:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/1:1H-76      [001] ....   445.957117: io_read32: CONFIG: 02050200
+ trace_spi_start-945     [002] ....   445.957165: io_write32: CONTROL: 00000000
+     irq/166-wfx-948     [001] ....   445.958766: io_read32: CONTROL: 00006002
+    kworker/2:1H-88      [002] ....   445.958822: io_write: QUEUE: 0c 00 06 3c 00 20 04 00 82 00 00 00 (12 bytes)
+    kworker/2:1H-88      [002] ....   445.958824: hif_send: 1:2:REQ_WRITE_MIB/GL_OPERATIONAL_POWER_MODE: 82 00 00 00 (12 bytes)
+    kworker/2:1H-88      [002] ....   445.958856: io_read: QUEUE: 04 00 e2 04 00 80 04 20 (8 bytes)
+    kworker/2:1H-88      [002] ....   445.958858: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:1H-88      [002] ....   445.958913: io_read: QUEUE: 08 00 06 0c 00 00 00 00 82 00 00 20 (12 bytes)
+    kworker/2:1H-88      [002] ....   445.958914: hif_recv: 0:2:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/2:1H-88      [002] ....   445.958953: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.213611: io_read32: CONTROL: 00006002
+           <...>-949     [002] ....   446.213699: io_write: QUEUE: 10 00 06 00 40 20 08 00 90 fd 9f 63 c9 4d 00 00 (16 bytes)
+           <...>-949     [002] ....   446.213708: hif_send: 1:0:REQ_WRITE_MIB/DOT11_MAC_ADDRESS: 90 fd 9f 63 c9 4d 00 00 (16 bytes)
+           <...>-949     [002] ....   446.213753: io_read: QUEUE: 04 00 e2 14 00 00 04 20 (8 bytes)
+           <...>-949     [002] ....   446.213756: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:0H-949     [002] ....   446.213795: io_read: QUEUE: 08 00 06 18 00 00 00 00 90 fd 00 20 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.213796: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.213842: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.213955: io_read32: CONTROL: 00006002
+    kworker/2:2H-249     [002] ....   446.214024: io_write: QUEUE: 0c 00 06 08 4b 20 04 00 ff 00 ff 00 (12 bytes)
+    kworker/2:2H-249     [002] ....   446.214026: hif_send: 1:0:REQ_WRITE_MIB/BLOCK_ACK_POLICY: ff 00 ff 00 (12 bytes)
+    kworker/2:2H-249     [002] ....   446.214063: io_read: QUEUE: 04 00 e2 24 00 00 04 20 (8 bytes)
+    kworker/2:2H-249     [002] ....   446.214065: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:2H-249     [002] ....   446.214097: io_read: QUEUE: 08 00 06 28 00 00 00 00 ff 00 00 20 (12 bytes)
+    kworker/2:2H-249     [002] ....   446.214098: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/2:2H-249     [002] ....   446.214135: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.216160: io_read32: CONTROL: 00006002
+    kworker/2:0H-949     [002] ....   446.216232: io_write: QUEUE: 0c 00 06 10 47 20 04 00 00 00 00 00 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.216238: hif_send: 1:0:REQ_WRITE_MIB/NON_ERP_PROTECTION: 00 00 00 00 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.216283: io_read: QUEUE: 04 00 e2 34 00 00 04 20 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.216285: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:0H-949     [002] ....   446.216319: io_read: QUEUE: 08 00 06 38 00 00 00 00 00 00 00 20 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.216323: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.216370: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.218177: io_read32: CONTROL: 00006002
+    kworker/2:0H-949     [002] ....   446.218242: io_write: QUEUE: 0c 00 06 18 45 20 04 00 14 00 00 00 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.218245: hif_send: 1:0:REQ_WRITE_MIB/SLOT_TIME: 14 00 00 00 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.218284: io_read: QUEUE: 04 00 e2 04 00 80 04 20 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.218286: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:0H-949     [002] ....   446.218319: io_read: QUEUE: 08 00 06 08 00 00 00 00 14 00 00 20 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.218321: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.218367: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.218505: io_read32: CONTROL: 00006002
+    kworker/2:2H-249     [002] ....   446.218868: io_write: QUEUE: 14 00 13 20 03 00 02 00 0f 00 ff 03 00 00 00 0000 00 00 00 (20 bytes)
+    kworker/2:2H-249     [002] ....   446.218879: hif_send: 1:0:REQ_EDCA_QUEUE_PARAMS: 03 00 02 00 0f 00 ff 03 00 00 00 00 00 00 00 00 (20 bytes)
+    kworker/2:2H-249     [002] ....   446.218918: io_read: QUEUE: 04 00 e2 14 00 00 04 20 (8 bytes)
+    kworker/2:2H-249     [002] ....   446.218919: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:2H-249     [002] ....   446.218952: io_read: QUEUE: 08 00 13 18 00 00 00 00 0f 00 00 20 (12 bytes)
+    kworker/2:2H-249     [002] ....   446.218954: hif_recv: 0:0:CNF_EDCA_QUEUE_PARAMS: 00 00 00 00 (8 bytes)
+    kworker/2:2H-249     [002] ....   446.218997: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.221072: io_read32: CONTROL: 00006002
+    kworker/2:0H-949     [002] ....   446.221139: io_write: QUEUE: 14 00 13 28 02 00 02 00 0f 00 ff 03 00 00 00 0000 00 00 00 (20 bytes)
+    kworker/2:0H-949     [002] ....   446.221141: hif_send: 1:0:REQ_EDCA_QUEUE_PARAMS: 02 00 02 00 0f 00 ff 03 00 00 00 00 00 00 00 00 (20 bytes)
+    kworker/2:0H-949     [002] ....   446.221180: io_read: QUEUE: 04 00 e2 24 00 00 04 20 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.221181: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:0H-949     [002] ....   446.221215: io_read: QUEUE: 08 00 13 28 00 00 00 00 0f 00 00 20 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.221216: hif_recv: 0:0:CNF_EDCA_QUEUE_PARAMS: 00 00 00 00 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.221260: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.223206: io_read32: CONTROL: 00006002
+    kworker/2:2H-249     [002] ....   446.223276: io_write: QUEUE: 14 00 13 30 01 00 02 00 0f 00 ff 03 00 00 00 0000 00 00 00 (20 bytes)
+    kworker/2:2H-249     [002] ....   446.223278: hif_send: 1:0:REQ_EDCA_QUEUE_PARAMS: 01 00 02 00 0f 00 ff 03 00 00 00 00 00 00 00 00 (20 bytes)
+    kworker/2:2H-249     [002] ....   446.223316: io_read: QUEUE: 04 00 e2 34 00 00 04 20 (8 bytes)
+    kworker/2:2H-249     [002] ....   446.223317: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:2H-249     [002] ....   446.223350: io_read: QUEUE: 08 00 13 38 00 00 00 00 0f 00 00 20 (12 bytes)
+    kworker/2:2H-249     [002] ....   446.223352: hif_recv: 0:0:CNF_EDCA_QUEUE_PARAMS: 00 00 00 00 (8 bytes)
+    kworker/2:2H-249     [002] ....   446.223395: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.225342: io_read32: CONTROL: 00006002
+    kworker/2:2H-249     [002] ....   446.225405: io_write: QUEUE: 14 00 13 38 00 00 02 00 0f 00 ff 03 00 00 00 0000 00 00 00 (20 bytes)
+    kworker/2:2H-249     [002] ....   446.225407: hif_send: 1:0:REQ_EDCA_QUEUE_PARAMS: 00 00 02 00 0f 00 ff 03 00 00 00 00 00 00 00 00 (20 bytes)
+    kworker/2:2H-249     [002] ....   446.225445: io_read: QUEUE: 04 00 e2 04 00 80 04 20 (8 bytes)
+    kworker/2:2H-249     [002] ....   446.225447: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:2H-249     [002] ....   446.225480: io_read: QUEUE: 08 00 13 08 00 00 00 00 0f 00 00 20 (12 bytes)
+    kworker/2:2H-249     [002] ....   446.225481: hif_recv: 0:0:CNF_EDCA_QUEUE_PARAMS: 00 00 00 00 (8 bytes)
+    kworker/2:2H-249     [002] ....   446.225525: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.227574: io_read32: CONTROL: 00006002
+    kworker/2:0H-949     [002] ....   446.227883: io_write: QUEUE: 24 00 06 00 1c 20 1c 00 03 00 00 00 dd 07 50 6f9a 00 00 00 3d 07 00 00 00 00 00 00 2a 07 00 00 ... (36 bytes)
+    kworker/2:0H-949     [002] ....   446.227902: hif_send: 1:0:REQ_WRITE_MIB/BEACON_FILTER_TABLE: 03 00 00 00 dd 07 50 6f 9a 00 00 00 3d 07 00 0000 00 00 00 2a 07 00 00 00 00 00 00 (36 bytes)
+    kworker/2:0H-949     [002] ....   446.228020: io_read: QUEUE: 04 00 e2 14 00 00 04 20 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.228023: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:0H-949     [002] ....   446.228060: io_read: QUEUE: 08 00 06 18 00 00 00 00 03 00 00 20 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.228061: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.228111: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.229805: io_read32: CONTROL: 00006002
+    kworker/2:0H-949     [002] ....   446.230073: io_write: QUEUE: 10 00 06 08 1d 20 08 00 01 00 00 00 00 00 00 00 (16 bytes)
+    kworker/2:0H-949     [002] ....   446.230087: hif_send: 1:0:REQ_WRITE_MIB/BEACON_FILTER_ENABLE: 01 00 00 00 00 00 00 00 (16 bytes)
+    kworker/2:0H-949     [002] ....   446.230138: io_read: QUEUE: 04 00 e2 24 00 00 04 20 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.230141: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:0H-949     [002] ....   446.230180: io_read: QUEUE: 08 00 06 28 00 00 00 00 01 00 00 20 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.230181: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.230229: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.231931: io_read32: CONTROL: 00006002
+    kworker/2:0H-949     [002] ....   446.232019: io_write: QUEUE: 0c 00 06 10 1b 20 04 00 02 00 00 00 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.232023: hif_send: 1:0:REQ_WRITE_MIB/RX_FILTER: 02 00 00 00 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.232069: io_read: QUEUE: 04 00 e2 34 00 00 04 20 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.232072: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:0H-949     [002] ....   446.232110: io_read: QUEUE: 08 00 06 38 00 00 00 00 02 00 00 20 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.232112: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.232163: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.232305: io_read32: CONTROL: 00006002
+    kworker/2:2H-249     [002] ....   446.232558: io_write: QUEUE: 24 00 06 18 1c 20 1c 00 03 00 00 00 dd 07 50 6f9a 00 00 00 3d 07 00 00 00 00 00 00 2a 07 00 00 ... (36 bytes)
+    kworker/2:2H-249     [002] ....   446.232560: hif_send: 1:0:REQ_WRITE_MIB/BEACON_FILTER_TABLE: 03 00 00 00 dd 07 50 6f 9a 00 00 00 3d 07 00 0000 00 00 00 2a 07 00 00 00 00 00 00 (36 bytes)
+    kworker/2:2H-249     [002] ....   446.232606: io_read: QUEUE: 04 00 e2 04 00 80 00 20 (8 bytes)
+    kworker/2:2H-249     [002] ....   446.232608: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:2H-249     [002] ....   446.232645: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.232673: io_read32: CONTROL: 00002004
+    kworker/1:1H-76      [001] ....   446.232734: io_read: QUEUE: 08 00 06 08 00 00 00 00 03 00 00 20 (12 bytes)
+    kworker/1:1H-76      [001] ....   446.232736: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/1:1H-76      [001] ....   446.232775: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.234547: io_read32: CONTROL: 00006002
+    kworker/2:0H-949     [002] ....   446.234806: io_write: QUEUE: 10 00 06 20 1d 20 08 00 01 00 00 00 00 00 00 00 (16 bytes)
+    kworker/2:0H-949     [002] ....   446.234817: hif_send: 1:0:REQ_WRITE_MIB/BEACON_FILTER_ENABLE: 01 00 00 00 00 00 00 00 (16 bytes)
+    kworker/2:0H-949     [002] ....   446.234867: io_read: QUEUE: 04 00 e2 14 00 00 04 20 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.234870: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/2:0H-949     [002] ....   446.234909: io_read: QUEUE: 08 00 06 18 00 00 00 00 01 00 00 20 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.234911: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/2:0H-949     [002] ....   446.234980: io_read32: CONFIG: 02050200
+    kworker/2:0H-949     [002] ....   446.235031: io_write: QUEUE: 0c 00 06 28 1b 20 04 00 02 00 00 00 (12 bytes)
+    kworker/2:0H-949     [002] ....   446.235032: hif_send: 1:0:REQ_WRITE_MIB/RX_FILTER: 02 00 00 00 (12 bytes)
+     irq/166-wfx-948     [001] ....   446.235098: io_read32: CONTROL: 00002004
+    kworker/1:1H-76      [001] ....   446.235176: io_read: QUEUE: 08 00 06 20 00 00 00 00 02 00 00 20 (12 bytes)
+    kworker/1:1H-76      [001] ....   446.235178: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/1:1H-76      [001] ....   446.235223: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.246341: io_read32: CONTROL: 00006002
+           <...>-78      [003] ....   446.246465: io_write: QUEUE: 24 00 06 30 1c 20 1c 00 03 00 00 00 dd 07 50 6f9a 00 00 00 3d 07 00 00 00 00 00 00 2a 07 00 00 ... (36 bytes)
+           <...>-78      [003] ....   446.246473: hif_send: 1:0:REQ_WRITE_MIB/BEACON_FILTER_TABLE: 03 00 00 00 dd 07 50 6f 9a 00 00 00 3d 07 00 0000 00 00 00 2a 07 00 00 00 00 00 00 (36 bytes)
+           <...>-78      [003] ....   446.246535: io_read: QUEUE: 04 00 e2 2c 00 00 00 20 (8 bytes)
+           <...>-78      [003] ....   446.246538: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+     irq/166-wfx-948     [001] ....   446.246582: io_read32: CONTROL: 00002004
+           <...>-78      [003] ....   446.246611: io_read32: CONFIG: 02050200
+    kworker/3:1H-78      [003] ....   446.246661: io_read: QUEUE: 08 00 06 30 00 00 00 00 03 00 00 20 (12 bytes)
+    kworker/3:1H-78      [003] ....   446.246662: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/3:1H-78      [003] ....   446.246712: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.248399: io_read32: CONTROL: 00006002
+    kworker/3:0H-943     [003] ....   446.248527: io_write: QUEUE: 10 00 06 38 1d 20 08 00 01 00 00 00 00 00 00 00 (16 bytes)
+    kworker/3:0H-943     [003] ....   446.248539: hif_send: 1:0:REQ_WRITE_MIB/BEACON_FILTER_ENABLE: 01 00 00 00 00 00 00 00 (16 bytes)
+    kworker/3:0H-943     [003] ....   446.248595: io_read: QUEUE: 04 00 e2 3c 00 00 04 20 (8 bytes)
+    kworker/3:0H-943     [003] ....   446.248598: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/3:0H-943     [003] ....   446.248646: io_read: QUEUE: 08 00 06 00 00 00 00 00 01 00 00 20 (12 bytes)
+    kworker/3:0H-943     [003] ....   446.248648: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/3:0H-943     [003] ....   446.248710: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.250398: io_read32: CONTROL: 00006002
+    kworker/3:1H-78      [003] ....   446.250493: io_write: QUEUE: 0c 00 06 00 1b 20 04 00 02 00 00 00 (12 bytes)
+    kworker/3:1H-78      [003] ....   446.250500: hif_send: 1:0:REQ_WRITE_MIB/RX_FILTER: 02 00 00 00 (12 bytes)
+    kworker/3:1H-78      [003] ....   446.250545: io_read: QUEUE: 04 00 e2 0c 00 80 04 20 (8 bytes)
+    kworker/3:1H-78      [003] ....   446.250548: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/3:1H-78      [003] ....   446.250587: io_read: QUEUE: 08 00 06 10 00 00 00 00 02 00 00 20 (12 bytes)
+    kworker/3:1H-78      [003] ....   446.250588: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/3:1H-78      [003] ....   446.250634: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.283278: io_read32: CONTROL: 00006002
+    kworker/3:0H-943     [003] ....   446.283401: io_write: QUEUE: 24 00 06 08 1c 20 1c 00 03 00 00 00 dd 07 50 6f9a 00 00 00 3d 07 00 00 00 00 00 00 2a 07 00 00 ... (36 bytes)
+    kworker/3:0H-943     [003] ....   446.283406: hif_send: 1:0:REQ_WRITE_MIB/BEACON_FILTER_TABLE: 03 00 00 00 dd 07 50 6f 9a 00 00 00 3d 07 00 0000 00 00 00 2a 07 00 00 00 00 00 00 (36 bytes)
+    kworker/3:0H-943     [003] ....   446.283457: io_read: QUEUE: 04 00 e2 1c 00 00 00 20 (8 bytes)
+    kworker/3:0H-943     [003] ....   446.283460: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/3:0H-943     [003] ....   446.283501: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.283528: io_read32: CONTROL: 00002004
+    kworker/1:1H-76      [001] ....   446.283594: io_read: QUEUE: 08 00 06 20 00 00 00 00 03 00 00 20 (12 bytes)
+    kworker/1:1H-76      [001] ....   446.283596: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/1:1H-76      [001] ....   446.283639: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.285295: io_read32: CONTROL: 00006002
+           <...>-77      [000] ....   446.285402: io_write: QUEUE: 10 00 06 10 1d 20 08 00 01 00 00 00 00 00 00 00 (16 bytes)
+           <...>-77      [000] ....   446.285411: hif_send: 1:0:REQ_WRITE_MIB/BEACON_FILTER_ENABLE: 01 00 00 00 00 00 00 00 (16 bytes)
+           <...>-77      [000] ....   446.285464: io_read: QUEUE: 04 00 e2 2c 00 00 04 20 (8 bytes)
+    kworker/0:1H-77      [000] ....   446.285467: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/0:1H-77      [000] ....   446.285512: io_read: QUEUE: 08 00 06 30 00 00 00 00 01 00 00 20 (12 bytes)
+    kworker/0:1H-77      [000] ....   446.285513: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/0:1H-77      [000] ....   446.285567: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.285667: io_read32: CONTROL: 00006002
+    kworker/1:1H-76      [001] ....   446.285732: io_write: QUEUE: 0c 00 06 18 1b 20 04 00 02 00 00 00 (12 bytes)
+    kworker/1:1H-76      [001] ....   446.285734: hif_send: 1:0:REQ_WRITE_MIB/RX_FILTER: 02 00 00 00 (12 bytes)
+    kworker/1:1H-76      [001] ....   446.285776: io_read: QUEUE: 04 00 e2 3c 00 00 04 20 (8 bytes)
+    kworker/1:1H-76      [001] ....   446.285778: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/1:1H-76      [001] ....   446.285821: io_read: QUEUE: 08 00 06 00 00 00 00 00 02 00 00 20 (12 bytes)
+    kworker/1:1H-76      [001] ....   446.285822: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/1:1H-76      [001] ....   446.285859: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.287542: io_read32: CONTROL: 00006002
+    kworker/1:1H-76      [001] ....   446.287673: io_write: QUEUE: 24 00 06 20 1c 20 1c 00 03 00 00 00 dd 07 50 6f9a 00 00 00 3d 07 00 00 00 00 00 00 2a 07 00 00 ... (36 bytes)
+    kworker/1:1H-76      [001] ....   446.287679: hif_send: 1:0:REQ_WRITE_MIB/BEACON_FILTER_TABLE: 03 00 00 00 dd 07 50 6f 9a 00 00 00 3d 07 00 0000 00 00 00 2a 07 00 00 00 00 00 00 (36 bytes)
+    kworker/1:1H-76      [001] ....   446.287731: io_read: QUEUE: 04 00 e2 0c 00 80 00 20 (8 bytes)
+    kworker/1:1H-76      [001] ....   446.287733: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/1:1H-76      [001] .n..   446.287806: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.287851: io_read32: CONTROL: 00002004
+    kworker/1:1H-76      [001] ....   446.288113: io_read: QUEUE: 08 00 06 10 00 00 00 00 03 00 00 20 (12 bytes)
+    kworker/1:1H-76      [001] ....   446.288116: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/1:1H-76      [001] ....   446.288166: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.288278: io_read32: CONTROL: 00006002
+    kworker/0:1H-77      [000] ....   446.288354: io_write: QUEUE: 10 00 06 28 1d 20 08 00 01 00 00 00 00 00 00 00 (16 bytes)
+    kworker/0:1H-77      [000] ....   446.288356: hif_send: 1:0:REQ_WRITE_MIB/BEACON_FILTER_ENABLE: 01 00 00 00 00 00 00 00 (16 bytes)
+    kworker/0:1H-77      [000] ....   446.288404: io_read: QUEUE: 04 00 e2 1c 00 00 04 20 (8 bytes)
+    kworker/0:1H-77      [000] ....   446.288406: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/0:1H-77      [000] ....   446.288475: io_read: QUEUE: 08 00 06 20 00 00 00 00 01 00 00 20 (12 bytes)
+    kworker/0:1H-77      [000] ....   446.288477: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/0:1H-77      [000] ....   446.288523: io_read32: CONFIG: 02050200
+     irq/166-wfx-948     [001] ....   446.288662: io_read32: CONTROL: 00006002
+    kworker/0:0H-929     [000] ....   446.288765: io_write: QUEUE: 0c 00 06 30 1b 20 04 00 02 00 00 00 (12 bytes)
+    kworker/0:0H-929     [000] ....   446.288770: hif_send: 1:0:REQ_WRITE_MIB/RX_FILTER: 02 00 00 00 (12 bytes)
+    kworker/0:0H-929     [000] ....   446.288806: io_read: QUEUE: 04 00 e2 2c 00 00 04 20 (8 bytes)
+    kworker/0:0H-929     [000] ....   446.288808: hif_recv: 1:2:IND_WAKEUP:  (4 bytes)
+    kworker/0:0H-929     [000] ....   446.288843: io_read: QUEUE: 08 00 06 30 00 00 00 00 02 00 00 20 (12 bytes)
+    kworker/0:0H-929     [000] ....   446.288845: hif_recv: 0:0:CNF_WRITE_MIB: 00 00 00 00 (8 bytes)
+    kworker/0:0H-929     [000] ....   446.288889: io_read32: CONFIG: 02050200
+pi@rpi-rns-apps-cl2-xmac1:~/siliconlabs/wfx-linux-tools/scripts $

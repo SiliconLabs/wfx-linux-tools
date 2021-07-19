@@ -11,17 +11,20 @@ USAGE="Usage: $(basename $0) OPTION
 Start in station mode
 
 Options:
-  --help               display this message
-  --ssid <ssid>        connect to <ssid>
-  --password <pass>    specify password
-  --conf <file>        use specific wpa_supplicant.conf
-  --interface <if>     use interface instead of default wlan0
-  --no-dhcp            do not enable DHCP client (default is yes)
-  --dhcp yes|no|ignore enable DHCP client
-  --keep-supplicant    if any, use existing wpa_supplicant
+     --help                display this message
+  n, --ssid <ssid>         connect to <ssid>
+  p, --password <pass>     specify password
+     --wpa3                use key_mgmt SAE / ieee80211w 2(=required) for WPA3 (will only connect on WPA3-Personal APs)
+     --conf <file>         use specific wpa_supplicant.conf
+  i, --interface <if>      use interface instead of default wlan0
+     --no-dhcp             do not enable DHCP client (default is yes)
+  d, --dhcp yes|no|ignore  enable DHCP client
+     --keep-supplicant     if any, use existing wpa_supplicant
+  s, --scan                scan for nearby access points
+  v, --verbose             trace wpa_cli calls
 
 If only --conf is used, the supplied file is supposed to contain the AP(s) to connect to.
-If --ssid is used, $(basename $0) wait for the connection to be established.
+If --ssid is used, $(basename $0) waits for the connection to be established.
 
 Example:
   - use wlan0 to connect to the AP 'foo' with password 'bar' and get an IP via DHCP:
@@ -34,36 +37,70 @@ CONF=""
 INTERFACE="wlan0"
 DHCP="yes"
 KEEP_SUPP="false"
+SCAN="false"
+TIMEOUT=15
+WPA3="false"
+VERBOSE="false"
 
 [ $# -eq 0 ] && error
-LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp,dhcp:,keep-supplicant"
-! PARSED=$(getopt --options="" --longoptions=$LONGOPTS --name "$0" -- "$@")
+LONGOPTS="help,ssid:,password:,conf:,interface:,no-dhcp,dhcp:,keep-supplicant,scan,wpa3,verbose"
+SHORTOPTS="n:p:i:d:s:v"
+! PARSED=$(getopt --options=$SHORTOPTS --longoptions=$LONGOPTS --name "$0" -- "$@")
 [[ ${PIPESTATUS[0]} -ne 0 ]] && error
 eval set -- "$PARSED"
 while true; do
     case "$1" in
-        --ssid)      SSID="$2";      shift ;;
-        --password)  PASSWD="$2";    shift ;;
-        --conf)      CONF="$2";      shift ;;
-        --interface) INTERFACE="$2"; shift ;;
-        --no-dhcp)   DHCP="no"          ;;
-        --dhcp)      DHCP="$2";      shift ;;
-        --keep-supplicant) KEEP_SUPP="true" ;;
-        --help)      echo "$USAGE";  exit 0 ;;
-        --)          shift; break ;;
-        *)           error ;;
+        -n|--ssid)         SSID="$2";      shift  ;;
+        -p|--password)     PASSWD="$2";    shift  ;;
+        --conf)            CONF="$2";      shift  ;;
+        --wpa3)            WPA3="true";           ;;
+        -i|--interface)    INTERFACE="$2"; shift  ;;
+        --no-dhcp)         DHCP="no"              ;;
+        -d|--dhcp)         DHCP="$2";      shift  ;;
+        --keep-supplicant) KEEP_SUPP="true"       ;;
+        -s|--scan)         SCAN="true"            ;;
+        -v|--verbose)      VERBOSE="true"         ;;
+        --help)            echo "$USAGE";  exit 0 ;;
+        --)                shift; break ;;
+        *)                 error ;;
     esac
     shift
 done
 [ $# -ne 0 ] && error
 
-wpa_cli_run()
+run_check()
 {
-    COMMAND='wpa_cli -i $INTERFACE $@'
-    if eval $COMMAND | grep FAIL; then
-        echo "ERROR: $COMMAND failed"
+    set +ex
+    COMMAND="$@"
+    RES=$($COMMAND 2>&1)
+    if echo $RES | grep -i FAIL; then
+        echo "\nERROR: '$COMMAND' failed: $RES\n"
         exit 1
     fi
+}
+
+wpa_cli_run_check()
+{
+    set +ex
+    COMMAND="/sbin/wpa_cli -i $INTERFACE $@"
+    if [ "$VERBOSE" = "true" ]; then
+        echo "$COMMAND"
+    fi
+    RES=$($COMMAND 2>&1)
+    if echo $RES | grep -i FAIL; then
+        echo "\nERROR: '$COMMAND' failed: $RES\n"
+        exit 1
+    fi
+}
+
+wpa_cli_run()
+{
+    set +ex
+    COMMAND="/sbin/wpa_cli -i $INTERFACE $@"
+    if [ "$VERBOSE" = "true" ]; then
+        echo "$COMMAND"
+    fi
+    eval $COMMAND
 }
 
 kill_wait()
@@ -79,83 +116,109 @@ kill_wait()
 check_interface "$INTERFACE"
 PIDFILE=/var/run/wpa_supplicant-$INTERFACE.pid
 
-# Needed to disable background scan
-killall -q lxpanel || true
+if [ "$SCAN" = "false" ]; then
+    # Needed to disable background scan
+    killall -q lxpanel || true
 
-kill_wait /var/run/dnsmasq-$INTERFACE.pid
-case "$DHCP" in
-    yes)
-        echo "Asking dhcpcd to control $INTERFACE"
-        ip addr flush dev "$INTERFACE"
-        dhcpcd --rebind "$INTERFACE" 2>/dev/null
-        ;;
-    no)
-        echo "Asking dhcpcd to release $INTERFACE"
-        dhcpcd --release "$INTERFACE" 2>/dev/null
-        # dhcpcd release is not instant
-        sleep 1
-        ;;
-    ignore)
-        ;;
-    *)
-        echo "ERROR: invalid value for --dhcp: $DHCP"
-        exit 1
-        ;;
-esac
+    kill_wait /var/run/dnsmasq-$INTERFACE.pid
+    case "$DHCP" in
+        yes)
+            echo "Asking dhcpcd to control $INTERFACE"
+            ip addr flush dev "$INTERFACE"
+            dhcpcd --rebind "$INTERFACE" 2>/dev/null
+            ;;
+        no)
+            echo "Asking dhcpcd to release $INTERFACE"
+            dhcpcd --release "$INTERFACE" 2>/dev/null
+            # dhcpcd release is not instant
+            sleep 1
+            ;;
+        ignore)
+            ;;
+        *)
+            echo "ERROR: invalid value for --dhcp: $DHCP"
+            exit 1
+            ;;
+    esac
+else
+    KEEP_SUPP="true"
+fi
 
 if [ "$KEEP_SUPP" = "false" ];then
     kill_wait $PIDFILE
 fi
-
 kill_wait /var/run/hostapd-$INTERFACE.pid
 
-if ! wpa_cli -i $INTERFACE status &>/dev/null; then
+if ! wpa_cli_run status &>/dev/null; then
     echo "Starting  wpa_supplicant"
+    CONF_DIR=/tmp/wfx_sta/$INTERFACE
+    rm -rf $CONF_DIR
     if [ -z "$CONF" ]; then
-        WPA_ARGS="-C /var/run/wpa_supplicant"
+        mkdir -p $CONF_DIR
+        echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev" > $CONF_DIR/wpa_supplicant.conf
+        WPA_ARGS="-c $CONF_DIR/wpa_supplicant.conf"
     else
         WPA_ARGS="-c $CONF"
     fi
-    wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS -P $PIDFILE
+    run_check wpa_supplicant -i "$INTERFACE" -Bs $WPA_ARGS -P $PIDFILE
+    sleep 1
+fi
+
+if [ "$SCAN" = "true" ]; then
+    echo "Scanning access points..."
+    wpa_cli_run_check scan >/dev/null
+    sleep 5
+    wpa_cli_run scan_results
+    exit 0
 fi
 
 echo "Setting up connection"
 if [ ! -z "$SSID" ]; then
     wpa_cli_run flush
-    wpa_cli_run add_network
-    wpa_cli_run set_network 0 ssid \"$SSID\"
+    wpa_cli_run_check add_network
+    wpa_cli_run_check set_network 0 ssid \"$SSID\"
     if [ -z "$PASSWD" ]; then
-        wpa_cli_run set_network 0 key_mgmt NONE
+        wpa_cli_run_check set_network 0 key_mgmt NONE
     else
-        wpa_cli_run set_network 0 psk \"$PASSWD\"
+        if [ "$WPA3" = "true" ]; then
+            wpa_cli_run_check set_network 0 key_mgmt SAE
+            wpa_cli_run_check set_network 0 ieee80211w 2
+        fi
+        wpa_cli_run_check set_network 0 psk \"$PASSWD\"
+        wpa_cli_run_check set_network 0 ieee80211w 1
     fi
-    wpa_cli_run select_network 0
+    wpa_cli_run_check select_network 0
+fi
 
-    echo "Waiting for connection"
+echo "Waiting for connection"
+SUCCESS="false"
+for (( n=1; n<=$TIMEOUT; n++ )); do
+    sleep 1
+    if echo "$(wpa_cli_run status)" | grep wpa_state | grep -q COMPLETED; then
+        SUCCESS="true"
+        echo "Associated"
+        break
+    fi
+done
+[ "$SUCCESS" != true ] && error "Association timeout"
+
+IP=""
+if [ "$DHCP" = "yes" ]; then
+    echo "Waiting for DHCP"
     SUCCESS="false"
-    for n in {1..10}; do
+    for (( n=1; n<=$TIMEOUT; n++ )); do
         sleep 1
-        if echo "$(wpa_cli -i $INTERFACE status)" | grep wpa_state | grep -q COMPLETED; then
+        IP="$(wpa_cli_run status | sed -nre 's/^ip_address=(.*)/\1/p')"
+        if [ -n "$IP" ] && echo "$IP" | grep -qv '169.254.'; then
             SUCCESS="true"
-            echo "Associated"
+            echo "DHCP lease obtained"
             break
         fi
     done
-    [ "$SUCCESS" != true ] && error "Association timeout"
-
-    if [ "$DHCP" = "yes" ]; then
-        echo "Waiting for DHCP"
-        SUCCESS="false"
-        for n in {1..10}; do
-            sleep 1
-            if echo "$(wpa_cli -i $INTERFACE status)" | grep ip_address | grep -qv '169.254.'; then
-                SUCCESS="true"
-                echo "DHCP lease obtained"
-                break
-            fi
-        done
-        [ "$SUCCESS" != true ] && echo "DHCP timeout" >&2 && exit 1
-    fi
+    [ "$SUCCESS" != true ] && echo "DHCP timeout" >&2 && exit 1
 fi
 
-echo "Success"
+echo -n "Success: "
+echo -n "$INTERFACE connected to $(wpa_cli_run status | sed -nre 's/^ssid=(.*)/\1/p') "
+[ -n "$IP" ] && echo -n "with IP $IP"
+echo ""
