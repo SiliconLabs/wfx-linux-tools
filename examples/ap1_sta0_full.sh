@@ -41,7 +41,7 @@ auth_algs=1
 hw_mode=g
 ieee80211n=1
 dtim_period=1
-beacon_int=100
+beacon_int=107
 max_num_sta=8
 ieee80211w=1
 EOF
