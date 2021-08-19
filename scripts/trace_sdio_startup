@@ -16,6 +16,7 @@ dmesg -C > /dev/null
 
 echo "Loading wfx SDIO driver..." > /dev/kmsg
 
+
 if ! echo 3f300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind 2>/dev/null; then # Raspberry mmc driver with rpi-3
     if ! echo fe300000.mmc > /sys/bus/platform/drivers/mmc-bcm2835/unbind 2>/dev/null; then # Raspberry mmc driver with rpi-4
         echo 3f300000.sdhci > /sys/bus/platform/drivers/sdhci-iproc/unbind 2>/dev/null # Mainstream driver
@@ -44,7 +45,11 @@ fi
 
 cat /sys/kernel/debug/tracing/trace_pipe &
 
-sleep 30
+# Write the UTC time to traces to allow aligning traces
+date --rfc-3339=ns > /sys/kernel/debug/tracing/trace_marker
+date --rfc-3339=ns > /dev/kmsg
+
+sleep 10
 
 echo "Disabling traces..." > /dev/kmsg
 echo 0 > /sys/kernel/debug/tracing/events/mmc/mmc_request_start/enable
@@ -56,5 +61,9 @@ echo 0 > /sys/kernel/debug/tracing/events/wfx/io_read/enable
 echo 0 > /sys/kernel/debug/tracing/events/wfx/io_write/enable
 echo 0 > /sys/kernel/debug/tracing/events/wfx/io_read32/enable
 echo 0 > /sys/kernel/debug/tracing/events/wfx/io_write32/enable
+
+# Write the UTC time at the end
+date --rfc-3339=ns > /sys/kernel/debug/tracing/trace_marker
+date --rfc-3339=ns > /dev/kmsg
 
 exit 0

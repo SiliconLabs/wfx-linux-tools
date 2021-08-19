@@ -1,8 +1,0 @@
-#!/bin/bash
-# usage:
-# sudo ./trace_mmc <0/1> <mmcX>
-
-echo "name == '${2}'" > /sys/kernel/debug/tracing/events/mmc/mmc_request_start/filter
-
-echo ${1} | tee /sys/kernel/debug/tracing/events/mmc/mmc_request_start/enable
-echo ${1} | tee /sys/kernel/debug/tracing/events/mmc/mmc_request_done/enable
