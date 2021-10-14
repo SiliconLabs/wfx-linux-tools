@@ -39,6 +39,7 @@ import io
 import os
 import sys
 import re
+import struct
 import textwrap
 import argparse
 
@@ -433,6 +434,24 @@ def formattiny(f_out, pds):
             f_out.write("\n" + "    " * stack);
     f_out.write("\n");
 
+def formattlv(f_out, pds):
+    stack = 0
+    buf = ''
+    for c in pds:
+        if c in [ '{', '[' ]:
+            stack += 1
+        if c in [ '}', ']' ]:
+            stack -= 1
+        if c in [ ',' ] and stack == 1:
+            buf = '{'
+        elif c in [ '}', ']' ] and stack == 1:
+            buf += c
+            buf += '}'
+            f_out.write(struct.pack('<HH', 0x4450, len(buf) + 4).decode('charmap'));
+            f_out.write(buf);
+        elif stack > 0:
+            buf += c
+
 def parse_cmdline(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(usage="%(prog)s [options] INPUT [OUTPUT]",
                   description="Generate a compressed version of PDS from a full PDS")
@@ -448,14 +467,16 @@ def parse_cmdline(args=sys.argv[1:]):
                   help="predefine DEF with value VAL")
     parser.add_argument("-f", "--force", action="store_true", dest="force",
                   help="try to produce (probably broken) output even if errors are detected")
-    parser.add_argument("--out", dest="out_format", default="pds", choices=['pds', 'tinypds', 'c', 'json'],
-                  help="specify output format. Accepted values: pds (compressed PDS), tinypds (indented PDS), c (C file), json. Default: pds")
+    parser.add_argument("--out", dest="out_format", default="pds", choices=['tlv', 'pds', 'tinypds', 'c', 'json'],
+                  help="specify output format. Accepted values: pds (compressed PDS), tlv (compressed PDS in TLV structs), tinypds (indented PDS), c (C file), json. Default: pds")
     parser.add_argument("-j", action="store_const", const="json", dest="out_format",
                   help="shortcut for --out=json")
     parser.add_argument("-c", action="store_const", const="c", dest="out_format",
                   help="shortcut for --out=c")
     parser.add_argument("-p", action="store_const", const="pds", dest="out_format",
                   help="shortcut for --out=pds")
+    parser.add_argument("-l", action="store_const", const="tlv", dest="out_format",
+                  help="shortcut for --out=tlv")
     parser.add_argument("-t", action="store_const", const="tinypds", dest="out_format",
                   help="shortcut for --out=tinypds")
     parser.add_argument("-r", action="store_const", const="rust", dest="out_format",
@@ -503,6 +524,11 @@ def main(options):
         formatrust(options.output, str_result)
     elif options.out_format == "tinypds":
         formattiny(options.output, str_result)
+    elif options.out_format == "tlv":
+        # We may apply this encoding to all the other outputs. However, the TLV
+        # is the only one which generates binary data.
+        options.output.reconfigure(encoding='charmap', newline='')
+        formattlv(options.output, str_result)
     elif options.out_format == "pds":
         options.output.write(str_result)
     else:
