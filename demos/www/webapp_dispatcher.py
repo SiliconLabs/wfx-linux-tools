@@ -284,7 +284,7 @@ def get_interface_states():
             ap["secu"] = findall_no_exc(r'\nkey_mgmt=(.*)', wpa_cli_status)
             freq = int(findall_no_exc(r'\nfreq=(.*)', wpa_cli_status))
             ap["channel"] = str(int((freq - 2407)/5))
-            if ap["channel"] > 14: ap["channel"] = 14
+            if int(ap["channel"]) > 14: ap["channel"] = 14
 
     station["ap"] = ap
 
