@@ -277,13 +277,14 @@ def get_interface_states():
         station["state"] = re.findall(r'\nwpa_state.*=(.*)', wpa_cli_status)[0]
         if station["state"] == "COMPLETED":
             station["ip"] = findall_no_exc(r'\nip_address=(.*)', wpa_cli_status)
-            station["mac"] = findall_no_exc(r'\nbssid=(.*)', wpa_cli_status)
+            station["mac"] = findall_no_exc(r'\naddress=(.*)', wpa_cli_status)
             station["state"] = 1
             ap["ssid"] = findall_no_exc(r'\nssid=(.*)', wpa_cli_status)
-            ap["mac"] = findall_no_exc(r'\naddress=(.*)', wpa_cli_status)
+            ap["mac"] = findall_no_exc(r'\nbssid=(.*)', wpa_cli_status)
             ap["secu"] = findall_no_exc(r'\nkey_mgmt=(.*)', wpa_cli_status)
             freq = int(findall_no_exc(r'\nfreq=(.*)', wpa_cli_status))
             ap["channel"] = str(int((freq - 2407)/5))
+            if ap["channel"] > 14: ap["channel"] = 14
 
     station["ap"] = ap
 
