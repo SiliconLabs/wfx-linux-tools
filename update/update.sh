@@ -7,10 +7,10 @@
 
 set -euo pipefail
 
-TOOLS_VERSION="4.0"
-COMMON_TOOLS_VERSION="3.2"
-DRIVER_VERSION="2.9-public"
-FIRMWARE_VERSION="FW3.12.2"
+TOOLS_VERSION="5.1.5"
+COMMON_TOOLS_VERSION="5.0"
+DRIVER_VERSION="2.13.2-public"
+FIRMWARE_VERSION="FW3.15.0"
 
 GITHUB_TOOLS_PATH="/home/pi/siliconlabs/wfx-linux-tools"
 COMMON_TOOLS_PATH="/home/pi/siliconlabs/wfx-common-tools"
