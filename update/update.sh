@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2018, Silicon Laboratories
+# Copyright (c) 2018-2022, Silicon Laboratories
 # See license terms contained in COPYING file
 
 # Do not make this script executable, it is to be executed remotely:
