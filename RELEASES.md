@@ -6,7 +6,7 @@ Releases
 
 | SD Card download                                                                                                                              | kernel       | Raspbian      | wfx-linux-driver | wfx-firmware | wfx-linux-tools | RPi 2B  | RPi 3B | RPi 3B+ | RPi 4B 2GB | RPi 4B 8GB |
 |-----------------------------------------------------------------------------------------------------------------------------------------------|--------------|---------------|------------------|--------------|-----------------|---------|--------|---------|------------|------------|
-| [5.2](https://webftp.silabs.com/download?domain=silabs.com&id=bc79809712594c76bb31643cbafe3612-771664b71a7b487b946282bd8bf7746c)              | 5.15.32-v7+  | 11 (bullseye) | 2.13.2-public    | FW3.16.0     | 5.2               | yes     | yes    | yes     | yes        | possible/untested due to RPi unavailability |
+| [5.2](https://webftp.silabs.com/download?domain=silabs.com&id=5bc58ef38c554d13bada1279a3351837-7d29977d12a6466688851e89960718a9)              | 5.15.32-v7+  | 11 (bullseye) | 2.13.2-public    | FW3.16.0     | 5.2               | yes     | yes    | yes     | yes        | possible/untested due to RPi unavailability |
 | 5.1 (Deprecated)              | 5.15.32-v7+  | 11 (bullseye) | 2.13.2-public    | FW3.15.0     | 5.1.5             | yes     | yes    | yes     | yes        | possible/untested due to RPi unavailability |
 | 3.3 (Deprecated)              | 4.19.57-v7l+ | 10 (buster)   | 2.5.2-public     | FW3.9.1      | 3.3             | yes     | yes    | yes     | yes        | no         |
 | 3.2 (Deprecated)              | 4.19.57-v7l+ | 10 (buster)   | 2.3.5-public     | FW3.3.2      | 3.2             | yes     | yes    | yes     | yes        | no         |
