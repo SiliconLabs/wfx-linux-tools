@@ -30,9 +30,16 @@ case "$1" in
         exit 0
         ;;
     write_test_data)
+        if [ -z "$2" ]; then
+          echo "$USAGE"
+          exit 1
+        fi
+
         test_data_input=$(ls /sys/kernel/debug/ieee80211/phy*/wfx/send_pds)
-        echo ${2} > ${test_data_input}
-        echo "'${2}' sent to ${test_data_input}"
+        pds_data="$2"
+        printf "$pds_data" > "$test_data_input"
+        echo "'$pds_data' sent to ${test_data_input}"
+
         exit 0
         ;;
     read_rx_stats)
