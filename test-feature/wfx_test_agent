@@ -7,13 +7,12 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-USAGE="Usage: $(basename $0) OPTION
+USAGE="Usage: $(basename $0) [-h|--help] COMMAND
 
 Rf Tests
 
-Options:
-  --help                display this message
-  write_test_data       write test data to debugfs
+Commands:
+  write_test_data DATA  write test data to debugfs
   read_rx_stats         read rx_stats from debugfs
   read_tx_info          read tx_power_loop from debugfs
   read_fw_version       return current firmware version
@@ -21,7 +20,7 @@ Options:
 "
 
 case "$1" in
-    --help)
+    -h|--help)
         echo "$USAGE"
         exit 0
         ;;
@@ -71,8 +70,11 @@ case "$1" in
         exit 0
         ;;
     *)
-        echo "ERROR: unknown $(basename $0) option $1" >&2
-        echo "$USAGE" >&2
+        if [ -z "$1" ]; then
+          echo "$USAGE"
+        else
+          echo "ERROR: unknown $(basename $0) command '$1'" >&2
+        fi
         exit 1
         ;;
 esac
